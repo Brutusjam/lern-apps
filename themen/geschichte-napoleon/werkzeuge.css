@@ -1,0 +1,54 @@
+/* Zeichnungen für das Bild-Quiz: Kaiserkrönung, Helvetische Fahne, Schema Bundesstaat */
+/* Kaiserkrönung */
+.k-wall { fill: var(--relief-soft); }
+.k-shade { fill: var(--relief); opacity: .25; }
+.k-arch { fill: var(--sheet); opacity: .55; }
+.k-col { fill: var(--sheet); stroke: var(--relief); stroke-width: 1.5; }
+.k-floor { fill: var(--earth); opacity: .55; }
+.k-step { fill: var(--rock); }
+.k-skin { fill: var(--moon-lit); stroke: var(--relief); stroke-width: 1.2; }
+.k-red { fill: var(--bad); stroke: var(--ink); stroke-width: 1.2; }
+.k-white { fill: var(--snow); stroke: var(--ink); stroke-width: 1.2; }
+.k-gold { fill: var(--sun); stroke: var(--relief); stroke-width: 1.2; }
+.k-dark { fill: var(--ink); }
+.k-blue { fill: var(--water); }
+.k-grey { fill: var(--rock); }
+.k-sand { fill: var(--sand); }
+.k-ermine { fill: none; stroke: var(--snow); stroke-width: 6; stroke-dasharray: 8 5; stroke-linecap: round; }
+.k-line { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.k-arm { fill: none; stroke: var(--moon-lit); stroke-width: 7; stroke-linecap: round; }
+/* Fahne */
+.f-bg { fill: var(--paper); }
+.f-pole { stroke: var(--relief); stroke-width: 8; stroke-linecap: round; }
+.f-green { fill: var(--earth); }
+.f-red { fill: var(--bad); }
+.f-yellow { fill: var(--sand); }
+.f-edge { fill: none; stroke: var(--relief); stroke-width: 2; }
+.f-word { font-family: var(--f-display); font-weight: 800; font-size: 46px; fill: var(--ink); }
+.f-ground { fill: var(--relief); opacity: .45; }
+.f-bush { fill: var(--earth); stroke: var(--ink); stroke-width: 1.2; }
+.f-leg { fill: none; stroke: var(--snow); stroke-width: 9; stroke-linecap: round; }
+.f-coat { fill: var(--relief); stroke: var(--ink); stroke-width: 1.2; }
+.f-son { fill: var(--water); stroke: var(--ink); stroke-width: 1.2; }
+.f-beard { fill: var(--relief); }
+.f-hat { fill: var(--ink); }
+.f-feather { fill: var(--snow); stroke: var(--ink); stroke-width: 1; }
+.f-bow { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
+/* Schema Bundesstaat */
+.b-head-t { font-family: var(--f-mono); font-size: 13px; letter-spacing: .08em; fill: var(--muted); }
+.b-bv { fill: var(--water-soft); stroke: var(--water); stroke-width: 2; }
+.b-box { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.5; }
+.b-exe { stroke: var(--bad); stroke-width: 2.5; }
+.b-jud { stroke: var(--ok); stroke-width: 2.5; }
+.b-seat { fill: var(--water); }
+.b-seat2 { fill: var(--mark); }
+.b-scale { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.b-pan { fill: var(--sun); stroke: var(--ink); stroke-width: 1.2; }
+.b-volk { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; }
+.b-arrow { fill: none; stroke: var(--ink); stroke-width: 2.5; }
+.b-dash { stroke-dasharray: 7 5; }
+.b-head { fill: var(--ink); }
+.b-label { font-family: var(--f-body); font-size: 14px; font-weight: 700; fill: var(--ink); }
+.b-small { font-family: var(--f-body); font-size: 12px; fill: var(--muted); }
+.k-sleeve { fill: none; stroke: var(--bad); stroke-width: 9; stroke-linecap: round; }
+.f-string { fill: none; stroke: var(--ink); stroke-width: 1.2; }
