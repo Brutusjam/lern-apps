@@ -18,6 +18,7 @@ const HEART = '<svg class="heart" viewBox="0 0 24 24" width="20" height="20" rol
 
 function start(C) {
 const KEY = C.speicher || 'lernapp:' + C.id;
+if (C.farbe) document.documentElement.dataset.farbe = C.farbe;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };

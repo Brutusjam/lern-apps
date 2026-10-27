@@ -37,7 +37,7 @@ Dazu: welche **eigenen Werkzeuge** das Thema braucht (z.B. Zeitstrahl, Ursache-F
 cp -r themen/_vorlage themen/<id>
 ```
 
-`<id>` in Kleinbuchstaben mit Bindestrichen, z.B. `geschichte-napoleon`. In `index.html` Titel und Beschreibung setzen, in `inhalt.js` die `id` = Ordnername.
+`<id>` in Kleinbuchstaben mit Bindestrichen, z.B. `geschichte-napoleon`. In `index.html` Titel und Beschreibung setzen, in `inhalt.js` die `id` = Ordnername. Dazu in `inhalt.js` ein Farbschema `farbe` wählen, das noch keine andere App hat (siehe CLAUDE.md, Design).
 
 ## 4. Inhalt schreiben (`inhalt.js`)
 
@@ -65,6 +65,6 @@ Was auch andere Themen brauchen könnten (z.B. ein Zeitstrahl), gehört ins Grun
 
 ## 7. Abschliessen
 
-1. Karte auf der Startseite `index.html` und Zeile in `README.md` ergänzen.
+1. Karte auf der Startseite `index.html` (mit demselben `data-farbe`) und Zeile in `README.md` ergänzen.
 2. Commit (Deutsch) und Push auf `main`.
 3. Dem Auftraggeber kurz berichten: was die App enthält, wo die Unterlagen dünn waren, was er fachlich prüfen sollte, und den Link (`themen/<id>/index.html`, bei GitHub Pages `https://<benutzer>.github.io/lern-apps/themen/<id>/`). Einen persönlichen Link mit `?name=…&widmung=…` anbieten.

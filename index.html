@@ -13,6 +13,7 @@
   .start { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px; display: grid; gap: 28px; }
   .apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
   .app { display: grid; gap: 10px; align-content: start; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+  .app { border-top: 6px solid var(--water); background: linear-gradient(var(--head), var(--sheet) 90px); }
   .app:hover { border-color: var(--water); }
   .app h2 { font-size: 1.35rem; }
   .app .go { color: var(--water); font-weight: 700; }
@@ -36,13 +37,13 @@
 <main class="start">
   <section class="apps" aria-label="Alle Lern-Apps">
     <!-- Neue App: Karte hier ergänzen (siehe CLAUDE.md) -->
-    <a class="panel app" href="themen/geografie-naturphaenomene/">
+    <a class="panel app" href="themen/geografie-naturphaenomene/" data-farbe="blau">
       <span class="eyebrow">Geografie · 2. Gymnasium</span>
       <h2>Landschaft im Wandel</h2>
       <p>Naturkräfte, Wasser formt die Landschaft, Hochwasser in Uri, Gletscher. 18 Lernziele mit gezeichneten Fluss- und Gletscherlandschaften.</p>
       <span class="go">App öffnen →</span>
     </a>
-    <a class="panel app" href="themen/geschichte-napoleon/">
+    <a class="panel app" href="themen/geschichte-napoleon/" data-farbe="apricot">
       <span class="eyebrow">Geschichte · Neuzeit</span>
       <h2>Napoleon und die Schweiz</h2>
       <p>Napoleon, Wiener Kongress und die Schweiz von der Alten Eidgenossenschaft bis zum Bundesstaat 1848. 15 Lernziele mit Zeitstrahl und Bild-Quiz.</p>
