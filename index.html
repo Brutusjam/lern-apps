@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lern-Apps</title>
+<meta name="description" content="Lern-Apps für Schulthemen am Gymnasium: Tagestraining, Erklär-Aufgaben und Probeprüfung zu den Lernzielen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="engine/lernapp.css">
+<style>
+  .start { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px; display: grid; gap: 28px; }
+  .apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .app { display: grid; gap: 10px; align-content: start; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+  .app:hover { border-color: var(--water); }
+  .app h2 { font-size: 1.35rem; }
+  .app .go { color: var(--water); font-weight: 700; }
+  .how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .how h3 { margin-bottom: 6px; }
+  @media (prefers-reduced-motion: no-preference) { .app:hover { transform: translateY(-2px); } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Gymnasium · Lernziele üben</div>
+      <h1>Lern-<span>Apps</span></h1>
+    </div>
+    <p class="sub">Jede App deckt die Lernziele einer Prüfung ab: mit Tagestraining, Erklär-Aufgaben und Probeprüfung.</p>
+  </div>
+</header>
+
+<main class="start">
+  <section class="apps" aria-label="Alle Lern-Apps">
+    <!-- Neue App: Karte hier ergänzen (siehe CLAUDE.md) -->
+    <a class="panel app" href="themen/geografie-naturphaenomene/">
+      <span class="eyebrow">Geografie · 2. Gymnasium</span>
+      <h2>Landschaft im Wandel</h2>
+      <p>Naturkräfte, Wasser formt die Landschaft, Hochwasser in Uri, Gletscher. 18 Lernziele mit gezeichneten Fluss- und Gletscherlandschaften.</p>
+      <span class="go">App öffnen →</span>
+    </a>
+  </section>
+
+  <section class="how panel">
+    <div><h3>Heute üben</h3><p>Jeden Tag etwa 15 Minuten. Die App wählt, was du gerade am meisten brauchst, auch Lernziele, die du länger nicht geübt hast.</p></div>
+    <div><h3>Selbst erklären</h3><p>Wie in der Prüfung schreibst du Antworten in eigenen Worten und prüfst sie mit einer Checkliste.</p></div>
+    <div><h3>Probeprüfung</h3><p>Zu allen Lernzielen, mit Zeit, Korrektur und Ergebnis pro Thema. Fehler kommen ins Fehlerheft.</p></div>
+  </section>
+
+  <p class="note">Ohne Gewähr. Die Inhalte sind nach den Lernzielen einer Klasse erstellt. Bitte immer mit den Unterlagen aus dem eigenen Unterricht abgleichen. Name und Fortschritt bleiben im eigenen Browser und werden nirgends hin übertragen.</p>
+</main>
+
+</body>
+</html>

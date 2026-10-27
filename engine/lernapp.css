@@ -275,6 +275,14 @@ kbd { font-family: var(--f-mono); font-size: .8em; border: 1px solid var(--line)
 .settings { display: grid; gap: 10px; }
 .settings label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
 .settings input { width: 100%; max-width: 420px; font-weight: 400; }
+.love { background: var(--head); border-top: 1px solid var(--line); }
+.love .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; }
+.love p { font-family: var(--f-display); font-size: 1.1rem; font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; }
+.heart { fill: var(--bad); flex: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .heart { animation: beat 2.4s ease-in-out infinite; transform-origin: center; }
+  @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
+}
 .love .hinweis { margin-top: 6px; font-family: var(--f-body); font-size: .85rem; font-weight: 400; color: var(--muted); display: block; }
 .love a { color: var(--water); }
 

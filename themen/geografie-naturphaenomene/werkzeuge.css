@@ -85,13 +85,3 @@ ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .stations li div { min-width: 0; }
 .num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--trail); color: var(--on-trail); font-family: var(--f-mono); font-size: .8rem; font-weight: 700; display: grid; place-items: center; }
 .src { font-size: .82rem; color: var(--muted); }
-
-.love { background: var(--head); border-top: 1px solid var(--line); }
-.love .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; }
-.love p { font-family: var(--f-display); font-size: 1.1rem; font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; }
-.heart { fill: var(--bad); flex: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .heart { animation: beat 2.4s ease-in-out infinite; transform-origin: center; }
-  @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
-}
-
