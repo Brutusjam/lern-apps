@@ -286,3 +286,14 @@ kbd { font-family: var(--f-mono); font-size: .8em; border: 1px solid var(--line)
 .love .hinweis { margin-top: 6px; font-family: var(--f-body); font-size: .85rem; font-weight: 400; color: var(--muted); display: block; }
 .love a { color: var(--water); }
 
+
+/* Zeitstrahl */
+.ztrack { list-style: none; margin: 0; padding: 0 0 0 18px; display: grid; gap: 8px; border-left: 3px solid var(--water); }
+.ztrack:empty { display: none; }
+.ztrack li { position: relative; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.ztrack li::before { content: ""; position: absolute; left: -26px; top: .45em; width: 13px; height: 13px; border-radius: 50%; background: var(--sheet); border: 3px solid var(--water); }
+.zj { font-family: var(--f-mono); font-weight: 500; color: var(--water); min-width: 4.5em; font-variant-numeric: tabular-nums; }
+
+/* Bild-Quiz: jede Szene füllt die Breite */
+.mapwrap > svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
+#zBody { display: grid; gap: 16px; }

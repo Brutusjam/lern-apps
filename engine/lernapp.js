@@ -1,6 +1,6 @@
 /* Lern-App Grundgerüst
    Gemeinsame Logik für alle Themen: Navigation, Tagestraining, Erklär-Aufgaben, Probeprüfung,
-   Fortschritt mit Ampel, Karteikarten, Sortieren, Bild-Quiz.
+   Fortschritt mit Ampel, Karteikarten, Sortieren, Bild-Quiz, Zeitstrahl.
    Ein Thema liefert nur Daten (inhalt.js) und optional eigene Werkzeuge (werkzeuge.js).
    Aufbau und Datenformat: siehe CLAUDE.md im Hauptordner. */
 (() => {
@@ -54,6 +54,7 @@ const CGROUPS = Object.assign({ alle: 'Alle' }, C.kartenGruppen || {});
 const SORTS = C.sortieren || {};
 const EXPL = C.erklaeren || [];
 const SCENES = (C.bildquiz && C.bildquiz.szenen) || {};
+const TL = C.zeitstrahl || {};
 
 /* ---------- Seite aufbauen ---------- */
 const tools = $$('#vorlagen section[data-werkzeug]').map(s => ({ id: s.dataset.werkzeug, name: s.dataset.name, el: s }));
@@ -61,6 +62,7 @@ const MODS = {};
 if (Object.keys(SCENES).length) MODS.bild = 'Bild-Quiz';
 if (CARDS.length) MODS.karten = 'Karteikarten';
 if (Object.keys(SORTS).length) MODS.sortieren = 'Sortieren';
+if (Object.keys(TL).length) MODS.zeitstrahl = 'Zeitstrahl';
 tools.forEach(t => MODS[t.id] = t.name);
 buildPage();
 function buildPage() {
@@ -170,6 +172,18 @@ function buildPage() {
       <div class="bins" id="sBins"></div>
     </div>
   </section>
+
+  ${MODS.zeitstrahl ? `<section class="view" id="v-zeitstrahl" role="tabpanel" aria-labelledby="t-zeitstrahl" hidden>
+    <h2>Zeitstrahl</h2>
+    <p class="lead">Was kam zuerst? Bring Ereignisse in die richtige Reihenfolge oder ordne ihnen die Jahreszahl zu.</p>
+    <div class="row" id="zSets"></div>
+    <div class="row" id="zModes"><button class="chip" data-zmode="reihe">Reihenfolge</button><button class="chip" data-zmode="jahr">Jahreszahl</button></div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="row" style="justify-content:space-between"><p class="task" id="zTask"></p><span class="score" id="zScore"></span></div>
+      <div id="zBody"></div>
+      <div id="zFb" aria-live="polite"></div>
+    </div>
+  </section>` : ''}
 </main>
 </div>
 <footer class="love"><div class="wrap" id="footBox"></div></footer>`);
@@ -246,9 +260,8 @@ function renderOverview() {
   // Themen
   $('#areas').innerHTML = AREAS.map(a => {
     const green = a.lz.filter(l => status(l[0]) === 2).length;
-    return `<section class="panel area ${a.active ? '' : 'locked'}">
+    return `<section class="panel area">
       <div class="area-head"><h2>${esc(a.name)}</h2><span class="count">${green} / ${a.lz.length} sicher</span></div>
-      ${a.active ? '' : '<p class="note">Im Prototyp noch ohne Übungen. Tippe auf einen Punkt, um dich selbst einzuschätzen.</p>'}
       <ol class="lzlist">${a.lz.map(([id, text, mods]) => {
         const dot = dotHtml(id);
         const links = (mods || []).map(modLink).join('');
@@ -352,6 +365,9 @@ $('#cFilter').addEventListener('click', e => {
 function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; }
 const quiz = { scene: 'fluss', key: null, type: 'tap', done: false, score: 0, total: 0 };
 const SC = () => SCENES[quiz.scene];
+// Wortlaut pro Szene anpassbar (szene.tippe, szene.frage), Standard passt zu Landkarten
+const TIPPE = sc => sc.tippe || 'Tippe auf der Karte auf:';
+const FRAGE = sc => sc.frage || 'Wie heisst die markierte Form?';
 function svgPoint(svg, x, y) { const p = new DOMPoint(x, y).matrixTransform(svg.getScreenCTM().inverse()); return p; }
 function highlight(key, cls) {
   const sc = SC(), hl = $(sc.hl); const nodes = $$(`${sc.hs} [data-spot="${key}"]`);
@@ -378,9 +394,9 @@ function nextQuiz() {
   $(SC().hl).innerHTML = '';
   $('#bAnswer').innerHTML = '';
   if (quiz.type === 'tap') {
-    $('#bTask').innerHTML = `Tippe auf der Karte auf: <em>${esc(sp[quiz.key].n)}</em>`;
+    $('#bTask').innerHTML = `${esc(TIPPE(SC()))} <em>${esc(sp[quiz.key].n)}</em>`;
   } else {
-    $('#bTask').innerHTML = `Wie heisst die <em>markierte</em> Form?`;
+    $('#bTask').textContent = FRAGE(SC());
     highlight(quiz.key);
     const opts = shuffle([quiz.key, ...shuffle(Object.keys(sp).filter(k => k !== quiz.key)).slice(0, 3)]);
     $('#bAnswer').innerHTML = `<div class="opts">${opts.map(k => `<button class="opt" data-k="${k}">${esc(sp[k].n)}</button>`).join('')}</div>`;
@@ -413,7 +429,7 @@ Object.keys(SCENES).forEach(key => $(SCENES[key].svg).addEventListener('click', 
   $$('.tapmark', svg).forEach(n => n.remove());
   if (!hits.length) {
     el('circle', { cx: p.x, cy: p.y, r: 9, class: 'tapmark' }, $(sc.hl));
-    $('#bAnswer').innerHTML = `<p class="note" style="margin-top:4px">Hier ist keine der gesuchten Formen. Versuch es an einer anderen Stelle.</p>`;
+    $('#bAnswer').innerHTML = `<p class="note" style="margin-top:4px">Hier ist nichts von dem, was gesucht ist. Versuch es an einer anderen Stelle.</p>`;
     return;
   }
   const ok = hits.includes(quiz.key);
@@ -461,11 +477,89 @@ $('#sBins').addEventListener('click', e => {
   renderSort();
 });
 
+/* ---------- Zeitstrahl ---------- */
+// Daten: zeitstrahl: { setId: { label, lz, items: [ { j: '1798', t: 'Ereignis', lz?, e?, s? } ] } }
+// j ist die angezeigte Zeitangabe, s (optional) eine Zahl für die Reihenfolge, sonst die erste Jahreszahl in j.
+const tkey = it => it.s != null ? it.s : +(String(it.j).match(/\d{3,4}/) || [0])[0];
+const tlz = (S, it) => it.lz || S.lz;
+function yearOpts(S, it) {
+  const others = [...new Set(S.items.map(x => x.j))].filter(j => j !== it.j);
+  const k = tkey(it), near = others.map(j => ({ j, d: Math.abs(tkey(S.items.find(x => x.j === j)) - k) })).sort((a, b) => a.d - b.d);
+  return [it.j, ...near.slice(0, 3).map(x => x.j)];
+}
+const tl = { set: null, mode: 'reihe', round: [], order: [], placed: 0, miss: 0, cur: null, done: false, score: 0, total: 0 };
+function startTl(set, mode) {
+  tl.set = set; if (mode) tl.mode = mode;
+  const S = TL[set];
+  $('#zSets').innerHTML = Object.entries(TL).map(([k, v]) => `<button class="chip" data-zset="${k}" aria-pressed="${k === set}">${esc(v.label)}</button>`).join('');
+  $$('#zModes [data-zmode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.zmode === tl.mode));
+  $('#zFb').innerHTML = '';
+  if (tl.mode === 'reihe') {
+    const seen = new Set(); tl.round = shuffle(S.items).filter(it => !seen.has(tkey(it)) && seen.add(tkey(it))).slice(0, 6);
+    tl.order = [...tl.round].sort((a, b) => tkey(a) - tkey(b)); tl.placed = 0; tl.miss = 0;
+  } else { tl.score = 0; tl.total = 0; tl.queue = shuffle(S.items); nextYear(); return; }
+  renderTl();
+}
+function nextYear() {
+  const S = TL[tl.set];
+  if (!tl.queue.length) tl.queue = shuffle(S.items);
+  tl.cur = tl.queue.shift(); tl.done = false; tl.opts = shuffle(yearOpts(S, tl.cur));
+  $('#zFb').innerHTML = ''; renderTl();
+}
+function renderTl() {
+  const S = TL[tl.set];
+  if (tl.mode === 'reihe') {
+    const fertig = tl.placed === tl.order.length;
+    $('#zTask').textContent = fertig ? 'Geschafft!' : 'Tippe die Ereignisse der Reihe nach an. Das früheste zuerst.';
+    $('#zScore').textContent = `${tl.placed} / ${tl.order.length} · ${tl.miss} Fehler`;
+    $('#zBody').innerHTML = `<ol class="ztrack">${tl.order.slice(0, tl.placed).map(it => `<li><span class="zj">${esc(it.j)}</span><span>${esc(it.t)}</span></li>`).join('')}</ol>
+      ${fertig ? `<div class="row"><button class="btn primary" id="zAgain">Neue Runde</button></div>` : `<div class="opts">${tl.round.filter(it => tl.order.indexOf(it) >= tl.placed).map(it => `<button class="opt" data-zi="${S.items.indexOf(it)}">${esc(it.t)}</button>`).join('')}</div>`}`;
+  } else {
+    $('#zTask').textContent = 'Wann war das?';
+    $('#zScore').textContent = tl.total ? `${tl.score} von ${tl.total} richtig` : '';
+    $('#zBody').innerHTML = `<div class="sortcard">${esc(tl.cur.t)}</div><div class="opts">${tl.opts.map(j => `<button class="opt" data-zj="${esc(j)}" ${tl.done ? 'disabled' : ''}>${esc(j)}</button>`).join('')}</div>`;
+  }
+}
+if (MODS.zeitstrahl) {
+  $('#zSets').addEventListener('click', e => { const b = e.target.closest('[data-zset]'); if (b) startTl(b.dataset.zset); });
+  $('#zModes').addEventListener('click', e => { const b = e.target.closest('[data-zmode]'); if (b) startTl(tl.set, b.dataset.zmode); });
+  $('#zBody').addEventListener('click', e => {
+    const S = TL[tl.set];
+    if (e.target.id === 'zAgain') { startTl(tl.set); return; }
+    const r = e.target.closest('[data-zi]');
+    if (r) {
+      const it = S.items[+r.dataset.zi], want = tl.order[tl.placed];
+      if (it === want) {
+        record(tlz(S, it), true); tl.placed++; renderTl();
+        $('#zFb').innerHTML = tl.placed === tl.order.length
+          ? `<div class="fb ${tl.miss ? 'bad' : 'good'}"><p><b class="k">${tl.miss ? `Fertig, mit ${tl.miss} ${tl.miss === 1 ? 'Fehler' : 'Fehlern'}.` : 'Alles in der richtigen Reihenfolge!'}</b> Lies die Reihe von oben nach unten nochmals durch.</p></div>`
+          : `<p class="note"><b style="color:var(--ok)">Richtig.</b> ${esc(it.j)}: ${esc(it.e || it.t)}</p>`;
+      } else {
+        record(tlz(S, it), false); tl.miss++; r.classList.add('wrong');
+        $('#zFb').innerHTML = `<p class="note"><b style="color:var(--bad)">Noch nicht.</b> «${esc(it.t)}» war ${esc(it.j)}. Vorher kommt noch etwas anderes.</p>`;
+        $('#zScore').textContent = `${tl.placed} / ${tl.order.length} · ${tl.miss} Fehler`;
+      }
+      return;
+    }
+    const y = e.target.closest('[data-zj]');
+    if (y && !tl.done) {
+      const ok = y.dataset.zj === tl.cur.j;
+      tl.done = true; tl.total++; if (ok) tl.score++;
+      record(tlz(S, tl.cur), ok); renderTl();
+      $$('#zBody [data-zj]').forEach(b => { if (b.dataset.zj === tl.cur.j) b.classList.add('right'); else if (b.dataset.zj === y.dataset.zj) b.classList.add('wrong'); });
+      $('#zFb').innerHTML = `<div class="fb ${ok ? 'good' : 'bad'}"><p><b class="k">${ok ? 'Richtig.' : 'Nicht ganz.'}</b> ${esc(tl.cur.j)}: ${esc(tl.cur.e || tl.cur.t)}</p></div><div class="row" style="margin-top:12px"><button class="btn primary" id="zNext">Nächste Frage</button></div>`;
+      $('#zNext').focus({ preventScroll: true });
+    }
+  });
+  $('#zFb').addEventListener('click', e => { if (e.target.id === 'zNext') nextYear(); });
+}
+
 /* ---------- Aufgabenpool ---------- */
 const POOL = [];
 Object.entries(MCQ).forEach(([k, arr]) => arr.forEach((q, i) => POOL.push({ id: `mc:${k}:${i}`, lz: q.lz, kind: 'mc', q: q.q, o: q.o, e: q.e })));
 Object.entries(SORTS).forEach(([k, S]) => S.items.forEach(([t, b, lz], i) => POOL.push({ id: `so:${k}:${i}`, lz: lz || S.lz, kind: 'mc', q: S.title, sub: t, o: [S.bins[b], ...S.bins.filter((_, j) => j !== b)], e: `«${t}» gehört zu: ${S.bins[b]}.` })));
 Object.entries(SCENES).forEach(([sc, S]) => Object.entries(S.spots).forEach(([key, v]) => POOL.push({ id: `img:${sc}:${key}`, lz: v.lz[0], lz2: [...v.lz, ...(S.extraLz || [])], kind: 'img', scene: sc, key })));
+Object.entries(TL).forEach(([k, S]) => S.items.forEach((it, i) => POOL.push({ id: `tl:${k}:${i}`, lz: tlz(S, it), kind: 'mc', q: 'Wann war das?', sub: it.t, o: yearOpts(S, it), e: `${it.j}: ${it.e || it.t}` })));
 CARDS.forEach(c => POOL.push({ id: `card:${c.id}`, cid: c.id, lz: c.lz, kind: 'recall', q: c.q, a: c.a }));
 EXPL.forEach((x, i) => POOL.push({ id: `ex:${i}`, lz: x.lz, kind: 'explain', q: x.q, pts: x.pts, a: x.a, min: x.min || .6 }));
 const AREA_SHORT = Object.fromEntries(AREAS.map(a => [a.id, a.kurz || a.name]));
@@ -554,7 +648,7 @@ function renderTask() {
   if (t.kind === 'mc' || t.kind === 'img') {
     let q, opts;
     if (t.kind === 'mc') { q = `<p class="tq">${esc(t.q)}</p>${t.sub ? `<p class="tsub">«${esc(t.sub)}»</p>` : ''}`; opts = shuffle(t.o.map((txt, j) => ({ txt, j }))); }
-    else { const sp = SCENES[t.scene].spots; q = `<p class="tq">Wie heisst die markierte Form?</p><div class="sessmap" id="sMap"></div>`; opts = shuffle([t.key, ...shuffle(Object.keys(sp).filter(k => k !== t.key)).slice(0, 3)]).map(k => ({ txt: sp[k].n, j: k === t.key ? 0 : 1 })); }
+    else { const sp = SCENES[t.scene].spots; q = `<p class="tq">${esc(FRAGE(SCENES[t.scene]))}</p><div class="sessmap" id="sMap"></div>`; opts = shuffle([t.key, ...shuffle(Object.keys(sp).filter(k => k !== t.key)).slice(0, 3)]).map(k => ({ txt: sp[k].n, j: k === t.key ? 0 : 1 })); }
     body = q + `<div class="opts">${opts.map((o, n) => `<button class="opt" data-act="opt" data-j="${o.j}"><span class="key">${n + 1}</span>${esc(o.txt)}</button>`).join('')}</div><div id="tFb"></div><div class="row">${next(true)}</div>`;
   } else if (t.kind === 'recall') {
     body = `<p class="tq">${esc(t.q)}</p><textarea class="answer" id="tText" rows="3" placeholder="Notiere kurz, was du weisst (freiwillig)."></textarea><div id="tFb"></div><div class="row" id="tFoot"><button class="btn primary" data-act="reveal" data-primary>Antwort zeigen</button></div>`;
@@ -680,7 +774,7 @@ function renderExamResult() {
     <p class="note">${pts.toFixed(1)} von ${max} Punkten. Die Note ist nur ein Richtwert, die echte Prüfung kann anders gewichten.</p>
     <h3>Nach Thema</h3>
     <div class="areabars">${AREAS.filter(a => per[a.id]).map(a => { const [p, m] = per[a.id], q = p / m; return `<div><span>${esc(a.name)}</span><div class="bar"><i style="width:${(q * 100).toFixed(0)}%;background:${q >= .8 ? 'var(--ok)' : q >= .5 ? 'var(--warn)' : 'var(--bad)'}"></i></div><span>${Math.round(q * 100)} %</span></div>`; }).join('')}</div>
-    ${wrong.length ? `<h3>Das solltest du nochmals anschauen (${wrong.length})</h3><div class="revlist">${wrong.map(w => `<div class="rev"><span class="meta">Aufgabe ${w.i + 1} · ${KIND[w.t.kind]}</span><span>${esc(w.t.kind === 'img' ? 'Markierte Form im Bild' : w.t.q)}${w.t.sub ? ` <b>«${esc(w.t.sub)}»</b>` : ''}</span><span>${esc(w.info)}</span></div>`).join('')}</div>` : '<p>Alles richtig. Super!</p>'}
+    ${wrong.length ? `<h3>Das solltest du nochmals anschauen (${wrong.length})</h3><div class="revlist">${wrong.map(w => `<div class="rev"><span class="meta">Aufgabe ${w.i + 1} · ${KIND[w.t.kind]}</span><span>${esc(w.t.kind === 'img' ? FRAGE(SCENES[w.t.scene]) : w.t.q)}${w.t.sub ? ` <b>«${esc(w.t.sub)}»</b>` : ''}</span><span>${esc(w.info)}</span></div>`).join('')}</div>` : '<p>Alles richtig. Super!</p>'}
     <div class="row">${wrong.length ? '<button class="btn primary" data-act2="mist">Fehler jetzt üben</button>' : ''}<button class="btn" data-go="heute">Zu «Heute üben»</button></div></div>`;
   window.scrollTo({ top: 0 });
 }
@@ -786,6 +880,7 @@ const hooks = registered.map(w => (w.init && w.init(api)) || {});
 if (MODS.bild) setScene(Object.keys(SCENES)[0]);
 if (MODS.karten) { renderFilter(); buildDeck(); renderCard(); }
 if (MODS.sortieren) startSort(Object.keys(SORTS)[0]);
+if (MODS.zeitstrahl) startTl(Object.keys(TL)[0]);
 Object.keys(MCQ).forEach(renderMC);
 show('heute');
 }

@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Napoleon und die Schweiz</title>
+<meta name="description" content="Lern-App Geschichte: Napoleon, Wiener Kongress und die Schweiz von der Alten Eidgenossenschaft zum Bundesstaat 1848.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../engine/lernapp.css">
+<link rel="stylesheet" href="werkzeuge.css">
+</head>
+<body>
+
+<!-- Themen-eigene Bausteine. Das Grundgerüst holt sie beim Start an die richtige Stelle:
+     .mapwrap[data-szene="ID"] → Bild-Quiz (Szene in inhalt.js unter bildquiz.szenen.ID beschreiben).
+     Die Zeichnungen sind selbst erstellt und stark vereinfacht. -->
+<div id="vorlagen" hidden>
+<div class="mapwrap" id="wrapKroenung" data-szene="kroenung">
+<svg id="kmap" viewBox="0 0 800 520" role="img" aria-label="Vereinfachte Zeichnung der Kaiserkrönung 1804: Napoleon krönt Joséphine, der Papst sitzt dahinter">
+<rect width="800" height="520" class="k-wall"/>
+<rect x="0" y="0" width="800" height="70" class="k-shade"/>
+<path class="k-arch" d="M20,70 V30 A32,32 0 0 1 84,30 V70 Z"/>
+<path class="k-arch" d="M115,70 V30 A32,32 0 0 1 179,30 V70 Z"/>
+<path class="k-arch" d="M210,70 V30 A32,32 0 0 1 274,30 V70 Z"/>
+<path class="k-arch" d="M305,70 V30 A32,32 0 0 1 369,30 V70 Z"/>
+<path class="k-arch" d="M400,70 V30 A32,32 0 0 1 464,30 V70 Z"/>
+<path class="k-arch" d="M495,70 V30 A32,32 0 0 1 559,30 V70 Z"/>
+<path class="k-arch" d="M590,70 V30 A32,32 0 0 1 654,30 V70 Z"/>
+<path class="k-arch" d="M685,70 V30 A32,32 0 0 1 749,30 V70 Z"/>
+<path class="k-arch" d="M780,70 V30 A32,32 0 0 1 844,30 V70 Z"/>
+<rect class="k-col" x="250" y="70" width="26" height="300"/>
+<rect class="k-col" x="340" y="70" width="26" height="300"/>
+<rect class="k-col" x="680" y="70" width="26" height="300"/>
+<rect class="k-floor" x="0" y="370" width="800" height="150"/>
+<path class="k-step" d="M430,330 H800 V372 H410 Z"/>
+<rect class="k-col" x="20" y="96" width="210" height="14"/>
+<path class="k-blue" d="M26.9,117.0 C26.9,97.4 29.7,90.4 36.0,90.4 C42.3,90.4 45.1,97.4 45.1,117.0 Z"/><circle class="k-skin" cx="36.0" cy="82.0" r="6.3"/>
+<path class="k-grey" d="M52.9,117.0 C52.9,97.4 55.7,90.4 62.0,90.4 C68.3,90.4 71.1,97.4 71.1,117.0 Z"/><circle class="k-skin" cx="62.0" cy="82.0" r="6.3"/>
+<path class="k-sand" d="M78.9,117.0 C78.9,97.4 81.7,90.4 88.0,90.4 C94.3,90.4 97.1,97.4 97.1,117.0 Z"/><circle class="k-skin" cx="88.0" cy="82.0" r="6.3"/>
+<path class="k-blue" d="M104.9,117.0 C104.9,97.4 107.7,90.4 114.0,90.4 C120.3,90.4 123.1,97.4 123.1,117.0 Z"/><circle class="k-skin" cx="114.0" cy="82.0" r="6.3"/>
+<path class="k-grey" d="M130.9,117.0 C130.9,97.4 133.7,90.4 140.0,90.4 C146.3,90.4 149.1,97.4 149.1,117.0 Z"/><circle class="k-skin" cx="140.0" cy="82.0" r="6.3"/>
+<path class="k-sand" d="M156.9,117.0 C156.9,97.4 159.7,90.4 166.0,90.4 C172.3,90.4 175.1,97.4 175.1,117.0 Z"/><circle class="k-skin" cx="166.0" cy="82.0" r="6.3"/>
+<path class="k-blue" d="M182.9,117.0 C182.9,97.4 185.7,90.4 192.0,90.4 C198.3,90.4 201.1,97.4 201.1,117.0 Z"/><circle class="k-skin" cx="192.0" cy="82.0" r="6.3"/>
+<path class="k-grey" d="M208.9,117.0 C208.9,97.4 211.7,90.4 218.0,90.4 C224.3,90.4 227.1,97.4 227.1,117.0 Z"/><circle class="k-skin" cx="218.0" cy="82.0" r="6.3"/>
+<path class="k-blue" d="M35.6,272.5 C35.6,245.9 39.5,236.4 48.0,236.4 C56.5,236.4 60.4,245.9 60.4,272.5 Z"/><circle class="k-skin" cx="48.0" cy="225.0" r="8.5"/>
+<path class="k-grey" d="M69.7,272.5 C69.7,245.9 73.5,236.4 82.0,236.4 C90.5,236.4 94.3,245.9 94.3,272.5 Z"/><circle class="k-skin" cx="82.0" cy="225.0" r="8.5"/>
+<path class="k-red" d="M103.7,272.5 C103.7,245.9 107.5,236.4 116.0,236.4 C124.5,236.4 128.3,245.9 128.3,272.5 Z"/><circle class="k-skin" cx="116.0" cy="225.0" r="8.5"/>
+<path class="k-sand" d="M137.7,272.5 C137.7,245.9 141.4,236.4 150.0,236.4 C158.6,236.4 162.3,245.9 162.3,272.5 Z"/><circle class="k-skin" cx="150.0" cy="225.0" r="8.5"/>
+<path class="k-dark" d="M171.7,272.5 C171.7,245.9 175.4,236.4 184.0,236.4 C192.6,236.4 196.3,245.9 196.3,272.5 Z"/><circle class="k-skin" cx="184.0" cy="225.0" r="8.5"/>
+<path class="k-blue" d="M205.7,272.5 C205.7,245.9 209.4,236.4 218.0,236.4 C226.6,236.4 230.3,245.9 230.3,272.5 Z"/><circle class="k-skin" cx="218.0" cy="225.0" r="8.5"/>
+<path class="k-grey" d="M44.4,314.5 C44.4,285.1 48.5,274.6 58.0,274.6 C67.5,274.6 71.7,285.1 71.7,314.5 Z"/><circle class="k-skin" cx="58.0" cy="262.0" r="9.5"/>
+<path class="k-red" d="M78.3,314.5 C78.3,285.1 82.5,274.6 92.0,274.6 C101.5,274.6 105.7,285.1 105.7,314.5 Z"/><circle class="k-skin" cx="92.0" cy="262.0" r="9.5"/>
+<path class="k-sand" d="M112.3,314.5 C112.3,285.1 116.5,274.6 126.0,274.6 C135.4,274.6 139.7,285.1 139.7,314.5 Z"/><circle class="k-skin" cx="126.0" cy="262.0" r="9.5"/>
+<path class="k-dark" d="M146.3,314.5 C146.3,285.1 150.6,274.6 160.0,274.6 C169.4,274.6 173.7,285.1 173.7,314.5 Z"/><circle class="k-skin" cx="160.0" cy="262.0" r="9.5"/>
+<path class="k-blue" d="M180.3,314.5 C180.3,285.1 184.6,274.6 194.0,274.6 C203.4,274.6 207.7,285.1 207.7,314.5 Z"/><circle class="k-skin" cx="194.0" cy="262.0" r="9.5"/>
+<path class="k-red" d="M53.0,357.5 C53.0,325.3 57.6,313.8 68.0,313.8 C78.3,313.8 83.0,325.3 83.0,357.5 Z"/><circle class="k-skin" cx="68.0" cy="300.0" r="10.3"/>
+<path class="k-sand" d="M87.0,357.5 C87.0,325.3 91.7,313.8 102.0,313.8 C112.3,313.8 117.0,325.3 117.0,357.5 Z"/><circle class="k-skin" cx="102.0" cy="300.0" r="10.3"/>
+<path class="k-dark" d="M121.0,357.5 C121.0,325.3 125.7,313.8 136.0,313.8 C146.3,313.8 150.9,325.3 150.9,357.5 Z"/><circle class="k-skin" cx="136.0" cy="300.0" r="10.3"/>
+<path class="k-blue" d="M155.1,357.5 C155.1,325.3 159.7,313.8 170.0,313.8 C180.3,313.8 184.9,325.3 184.9,357.5 Z"/><circle class="k-skin" cx="170.0" cy="300.0" r="10.3"/>
+<path class="k-grey" d="M189.1,357.5 C189.1,325.3 193.7,313.8 204.0,313.8 C214.3,313.8 218.9,325.3 218.9,357.5 Z"/><circle class="k-skin" cx="204.0" cy="300.0" r="10.3"/>
+<rect class="k-white" x="700" y="250" width="80" height="80"/>
+<rect class="k-gold" x="700" y="246" width="80" height="8"/>
+<path class="k-gold" d="M735,160 h10 v25 h22 v10 h-22 v55 h-10 v-55 h-22 v-10 h22 Z"/>
+<path class="k-red" d="M582,215 C582,195 648,195 648,215 V330 H582 Z"/>
+<path class="k-white" d="M596,258 C596,240 634,240 634,258 L640,330 H590 Z"/>
+<circle class="k-skin" cx="615" cy="236" r="13"/>
+<path class="k-white" d="M604,228 C606,214 624,214 626,228 Z"/>
+<path class="k-line" d="M630,262 C642,255 646,245 646,236"/>
+<path class="k-red" d="M410,300 C380,330 300,360 232,382 C280,392 360,388 418,378 Z"/>
+<path class="k-ermine" d="M232,382 C280,392 360,388 418,378" />
+<path class="k-white" d="M392,300 C388,320 380,350 378,378 H430 C430,352 424,320 414,300 Z"/>
+<circle class="k-skin" cx="404" cy="288" r="12"/>
+<path class="k-line" d="M412,318 C420,312 424,306 426,300"/>
+<path class="k-red" d="M486,214 C470,240 456,290 446,332 H562 C552,290 534,240 516,214 Z"/>
+<path class="k-ermine" d="M446,332 H562"/>
+<path class="k-white" d="M490,214 H512 L516,300 H486 Z"/>
+<circle class="k-skin" cx="501" cy="198" r="13"/>
+<path class="k-gold" d="M489,192 C492,184 510,184 513,192" />
+<path class="k-sleeve" d="M488,220 C466,206 462,170 474,136"/>
+<path class="k-sleeve" d="M514,220 C536,206 540,170 528,136"/>
+<circle class="k-skin" cx="476" cy="134" r="6"/><circle class="k-skin" cx="526" cy="134" r="6"/>
+<path class="k-gold" d="M480,140 L482,112 L491,126 L501,106 L511,126 L520,112 L522,140 Z"/>
+<text class="m-caption" x="12" y="508">Vereinfachte Zeichnung nach dem Gemälde von Jacques-Louis David</text>
+<g id="khs"><rect class="hs hs-fill" data-spot="hof" x="22" y="64" width="212" height="300"/><path class="hs hs-fill" data-spot="josephine" d="M226,384 C300,360 370,320 392,276 H432 V392 H226 Z"/><path class="hs hs-fill" data-spot="napoleon" d="M462,150 H540 L568,338 H440 Z"/><rect class="hs hs-fill" data-spot="papst" x="574" y="196" width="82" height="138"/><rect class="hs hs-fill" data-spot="kreuz" x="694" y="150" width="92" height="186"/><circle class="hs hs-fill" data-spot="krone" cx="501" cy="124" r="26"/></g><g id="khl"></g>
+</svg>
+</div>
+<div class="mapwrap" id="wrapFahne" data-szene="fahne" hidden>
+<svg id="fmap" viewBox="0 0 800 520" role="img" aria-label="Vereinfachte Zeichnung der Fahne der Helvetischen Republik: grün, rot, gelb, mit Wilhelm Tell, Sohn und den Worten Freiheit und Gleichheit">
+<rect width="800" height="520" class="f-bg"/>
+<line class="f-pole" x1="40" y1="14" x2="40" y2="512"/>
+<circle class="k-gold" cx="40" cy="14" r="10"/>
+<rect class="f-green" x="48" y="40" width="712" height="142"/>
+<rect class="f-red" x="48" y="182" width="712" height="142"/>
+<rect class="f-yellow" x="48" y="324" width="712" height="142"/>
+<rect class="f-edge" x="48" y="40" width="712" height="426"/>
+<text class="f-word" x="200" y="300" text-anchor="middle">Freiheit</text>
+<text class="f-word" x="625" y="300" text-anchor="middle">Gleichheit</text>
+<path class="f-ground" d="M300,372 C360,360 480,360 540,372 Z"/>
+<circle class="f-bush" cx="315" cy="352" r="16"/><circle class="f-bush" cx="528" cy="350" r="18"/>
+<path class="f-leg" d="M418,300 L412,366 M438,300 L444,366"/>
+<path class="f-coat" d="M410,226 C404,250 402,280 404,306 H452 C454,280 452,250 446,226 Z"/>
+<circle class="k-skin" cx="428" cy="210" r="14"/>
+<path class="f-beard" d="M418,214 C420,232 436,232 438,214 Z"/>
+<path class="f-hat" d="M410,200 C412,186 444,186 446,200 Z"/>
+<path class="f-feather" d="M440,190 C452,172 462,168 470,166 C462,176 454,186 444,194 Z"/>
+<path class="k-arm" d="M412,236 C398,250 388,262 380,272"/>
+<path class="f-bow" d="M444,236 L500,190"/>
+<path class="f-bow" d="M488,176 Q512,180 511,204"/><path class="f-string" d="M488,176 L511,204"/>
+<path class="f-leg" d="M356,330 L352,368 M368,330 L372,368"/>
+<path class="f-son" d="M350,290 C346,306 346,320 348,334 H376 C378,320 378,306 374,290 Z"/>
+<circle class="k-skin" cx="362" cy="278" r="11"/>
+<path class="k-arm" d="M372,296 C376,286 378,280 380,272"/>
+<text class="m-caption" x="12" y="508" style="fill:var(--ink)">Vereinfachte Zeichnung nach der Fahne der Helvetischen Republik (Nidwaldner Exemplar, 1798/99)</text>
+<g id="fhs"><rect class="hs hs-fill" data-spot="farben" x="48" y="40" width="712" height="142"/><rect class="hs hs-fill" data-spot="farben" x="48" y="380" width="712" height="86"/><rect class="hs hs-fill" data-spot="freiheit" x="100" y="252" width="200" height="64"/><rect class="hs hs-fill" data-spot="gleichheit" x="512" y="252" width="228" height="64"/><path class="hs hs-fill" data-spot="tell" d="M396,180 H452 L462,250 L458,370 H398 L392,250 Z"/><rect class="hs hs-fill" data-spot="sohn" x="336" y="262" width="52" height="110"/><circle class="hs hs-fill" data-spot="armbrust" cx="492" cy="196" r="26"/></g><g id="fhl"></g>
+</svg>
+</div>
+<div class="mapwrap" id="wrapBund" data-szene="bund" hidden>
+<svg id="bmap" viewBox="0 0 800 520" role="img" aria-label="Schema des Bundesstaats von 1848: Volk, Nationalrat, Ständerat, Bundesrat, Bundesgericht und wer wen wählt">
+<rect width="800" height="520" class="f-bg"/>
+<text class="b-head-t" x="205" y="38" text-anchor="middle">LEGISLATIVE</text>
+<text class="b-head-t" x="525" y="38" text-anchor="middle">EXEKUTIVE</text>
+<text class="b-head-t" x="702" y="38" text-anchor="middle">JUDIKATIVE</text>
+<rect class="b-bv" x="30" y="56" width="350" height="208" rx="14"/>
+<text class="b-small" x="205" y="252" text-anchor="middle">beide Kammern zusammen</text>
+<rect class="b-box" x="48" y="76" width="152" height="150" rx="10"/>
+<circle class="b-seat" cx="66" cy="98" r="6"/>
+<circle class="b-seat" cx="83" cy="98" r="6"/>
+<circle class="b-seat" cx="100" cy="98" r="6"/>
+<circle class="b-seat" cx="117" cy="98" r="6"/>
+<circle class="b-seat" cx="134" cy="98" r="6"/>
+<circle class="b-seat" cx="151" cy="98" r="6"/>
+<circle class="b-seat" cx="168" cy="98" r="6"/>
+<circle class="b-seat" cx="185" cy="98" r="6"/>
+<circle class="b-seat" cx="66" cy="115" r="6"/>
+<circle class="b-seat" cx="83" cy="115" r="6"/>
+<circle class="b-seat" cx="100" cy="115" r="6"/>
+<circle class="b-seat" cx="117" cy="115" r="6"/>
+<circle class="b-seat" cx="134" cy="115" r="6"/>
+<circle class="b-seat" cx="151" cy="115" r="6"/>
+<circle class="b-seat" cx="168" cy="115" r="6"/>
+<circle class="b-seat" cx="185" cy="115" r="6"/>
+<circle class="b-seat" cx="66" cy="132" r="6"/>
+<circle class="b-seat" cx="83" cy="132" r="6"/>
+<circle class="b-seat" cx="100" cy="132" r="6"/>
+<circle class="b-seat" cx="117" cy="132" r="6"/>
+<circle class="b-seat" cx="134" cy="132" r="6"/>
+<circle class="b-seat" cx="151" cy="132" r="6"/>
+<circle class="b-seat" cx="168" cy="132" r="6"/>
+<circle class="b-seat" cx="185" cy="132" r="6"/>
+<circle class="b-seat" cx="66" cy="149" r="6"/>
+<circle class="b-seat" cx="83" cy="149" r="6"/>
+<circle class="b-seat" cx="100" cy="149" r="6"/>
+<circle class="b-seat" cx="117" cy="149" r="6"/>
+<circle class="b-seat" cx="134" cy="149" r="6"/>
+<circle class="b-seat" cx="151" cy="149" r="6"/>
+<circle class="b-seat" cx="168" cy="149" r="6"/>
+<circle class="b-seat" cx="185" cy="149" r="6"/>
+<circle class="b-seat" cx="66" cy="166" r="6"/>
+<circle class="b-seat" cx="83" cy="166" r="6"/>
+<circle class="b-seat" cx="100" cy="166" r="6"/>
+<circle class="b-seat" cx="117" cy="166" r="6"/>
+<circle class="b-seat" cx="134" cy="166" r="6"/>
+<circle class="b-seat" cx="151" cy="166" r="6"/>
+<circle class="b-seat" cx="168" cy="166" r="6"/>
+<circle class="b-seat" cx="185" cy="166" r="6"/>
+<text class="b-small" x="124" y="208" text-anchor="middle">Sitze nach Bevölkerung</text>
+<rect class="b-box" x="212" y="76" width="152" height="150" rx="10"/>
+<circle class="b-seat2" cx="232" cy="100" r="6"/><circle class="b-seat2" cx="247" cy="100" r="6"/>
+<circle class="b-seat2" cx="276" cy="100" r="6"/><circle class="b-seat2" cx="291" cy="100" r="6"/>
+<circle class="b-seat2" cx="320" cy="100" r="6"/><circle class="b-seat2" cx="335" cy="100" r="6"/>
+<circle class="b-seat2" cx="232" cy="121" r="6"/><circle class="b-seat2" cx="247" cy="121" r="6"/>
+<circle class="b-seat2" cx="276" cy="121" r="6"/><circle class="b-seat2" cx="291" cy="121" r="6"/>
+<circle class="b-seat2" cx="320" cy="121" r="6"/><circle class="b-seat2" cx="335" cy="121" r="6"/>
+<circle class="b-seat2" cx="232" cy="142" r="6"/><circle class="b-seat2" cx="247" cy="142" r="6"/>
+<circle class="b-seat2" cx="276" cy="142" r="6"/><circle class="b-seat2" cx="291" cy="142" r="6"/>
+<circle class="b-seat2" cx="320" cy="142" r="6"/><circle class="b-seat2" cx="335" cy="142" r="6"/>
+<circle class="b-seat2" cx="232" cy="163" r="6"/><circle class="b-seat2" cx="247" cy="163" r="6"/>
+<circle class="b-seat2" cx="276" cy="163" r="6"/><circle class="b-seat2" cx="291" cy="163" r="6"/>
+<circle class="b-seat2" cx="320" cy="163" r="6"/><circle class="b-seat2" cx="335" cy="163" r="6"/>
+<text class="b-small" x="288" y="208" text-anchor="middle">2 Sitze pro Kanton</text>
+<rect class="b-box b-exe" x="448" y="86" width="154" height="130" rx="10"/>
+<path class="k-red" d="M465.9,135.0 C465.9,117.6 468.4,111.4 474.0,111.4 C479.6,111.4 482.1,117.6 482.1,135.0 Z"/><circle class="k-skin" cx="474.0" cy="104.0" r="5.6"/>
+<path class="k-red" d="M491.9,135.0 C491.9,117.6 494.4,111.4 500.0,111.4 C505.6,111.4 508.1,117.6 508.1,135.0 Z"/><circle class="k-skin" cx="500.0" cy="104.0" r="5.6"/>
+<path class="k-red" d="M517.9,135.0 C517.9,117.6 520.4,111.4 526.0,111.4 C531.6,111.4 534.1,117.6 534.1,135.0 Z"/><circle class="k-skin" cx="526.0" cy="104.0" r="5.6"/>
+<path class="k-red" d="M543.9,135.0 C543.9,117.6 546.4,111.4 552.0,111.4 C557.6,111.4 560.1,117.6 560.1,135.0 Z"/><circle class="k-skin" cx="552.0" cy="104.0" r="5.6"/>
+<path class="k-red" d="M478.9,177.0 C478.9,159.6 481.4,153.4 487.0,153.4 C492.6,153.4 495.1,159.6 495.1,177.0 Z"/><circle class="k-skin" cx="487.0" cy="146.0" r="5.6"/>
+<path class="k-red" d="M504.9,177.0 C504.9,159.6 507.4,153.4 513.0,153.4 C518.6,153.4 521.1,159.6 521.1,177.0 Z"/><circle class="k-skin" cx="513.0" cy="146.0" r="5.6"/>
+<path class="k-red" d="M530.9,177.0 C530.9,159.6 533.4,153.4 539.0,153.4 C544.6,153.4 547.1,159.6 547.1,177.0 Z"/><circle class="k-skin" cx="539.0" cy="146.0" r="5.6"/>
+<text class="b-small" x="525" y="204" text-anchor="middle">7 Mitglieder</text>
+<rect class="b-box b-jud" x="628" y="86" width="148" height="130" rx="10"/>
+<path class="b-scale" d="M702,104 V170 M676,116 H728 M686,184 H718"/>
+<path class="b-scale" d="M676,116 L664,146 M676,116 L688,146 M728,116 L716,146 M728,116 L740,146"/>
+<path class="b-pan" d="M662,146 C664,158 688,158 690,146 Z"/><path class="b-pan" d="M714,146 C716,158 740,158 742,146 Z"/>
+<text class="b-small" x="702" y="204" text-anchor="middle">Richter</text>
+<line class="b-arrow" x1="380" y1="152" x2="440.0" y2="152.0"/><polygon class="b-head" points="446,152 435.2,157.2 435.2,146.8"/>
+<text class="b-label" x="413" y="142" text-anchor="middle">wählt</text>
+<path class="b-arrow" d="M340,264 V296 H702 V226"/>
+<polygon class="b-head" points="702,218 696,230 708,230"/>
+<text class="b-label" x="560" y="288" text-anchor="middle">wählt</text>
+<rect class="b-volk" x="30" y="392" width="420" height="96" rx="12"/>
+<path class="k-blue" d="M44.9,449.0 C44.9,429.4 47.7,422.4 54.0,422.4 C60.3,422.4 63.1,429.4 63.1,449.0 Z"/><circle class="k-skin" cx="54.0" cy="414.0" r="6.3"/>
+<path class="k-grey" d="M74.9,449.0 C74.9,429.4 77.7,422.4 84.0,422.4 C90.3,422.4 93.1,429.4 93.1,449.0 Z"/><circle class="k-skin" cx="84.0" cy="414.0" r="6.3"/>
+<path class="k-sand" d="M104.9,449.0 C104.9,429.4 107.7,422.4 114.0,422.4 C120.3,422.4 123.1,429.4 123.1,449.0 Z"/><circle class="k-skin" cx="114.0" cy="414.0" r="6.3"/>
+<path class="k-dark" d="M134.9,449.0 C134.9,429.4 137.7,422.4 144.0,422.4 C150.3,422.4 153.1,429.4 153.1,449.0 Z"/><circle class="k-skin" cx="144.0" cy="414.0" r="6.3"/>
+<path class="k-blue" d="M164.9,449.0 C164.9,429.4 167.7,422.4 174.0,422.4 C180.3,422.4 183.1,429.4 183.1,449.0 Z"/><circle class="k-skin" cx="174.0" cy="414.0" r="6.3"/>
+<path class="k-grey" d="M194.9,449.0 C194.9,429.4 197.7,422.4 204.0,422.4 C210.3,422.4 213.1,429.4 213.1,449.0 Z"/><circle class="k-skin" cx="204.0" cy="414.0" r="6.3"/>
+<path class="k-sand" d="M224.9,449.0 C224.9,429.4 227.7,422.4 234.0,422.4 C240.3,422.4 243.1,429.4 243.1,449.0 Z"/><circle class="k-skin" cx="234.0" cy="414.0" r="6.3"/>
+<path class="k-dark" d="M254.9,449.0 C254.9,429.4 257.7,422.4 264.0,422.4 C270.3,422.4 273.1,429.4 273.1,449.0 Z"/><circle class="k-skin" cx="264.0" cy="414.0" r="6.3"/>
+<path class="k-blue" d="M284.9,449.0 C284.9,429.4 287.7,422.4 294.0,422.4 C300.3,422.4 303.1,429.4 303.1,449.0 Z"/><circle class="k-skin" cx="294.0" cy="414.0" r="6.3"/>
+<path class="k-grey" d="M314.9,449.0 C314.9,429.4 317.7,422.4 324.0,422.4 C330.3,422.4 333.1,429.4 333.1,449.0 Z"/><circle class="k-skin" cx="324.0" cy="414.0" r="6.3"/>
+<path class="k-sand" d="M344.9,449.0 C344.9,429.4 347.7,422.4 354.0,422.4 C360.3,422.4 363.1,429.4 363.1,449.0 Z"/><circle class="k-skin" cx="354.0" cy="414.0" r="6.3"/>
+<path class="k-dark" d="M374.9,449.0 C374.9,429.4 377.7,422.4 384.0,422.4 C390.3,422.4 393.1,429.4 393.1,449.0 Z"/><circle class="k-skin" cx="384.0" cy="414.0" r="6.3"/>
+<path class="k-blue" d="M404.9,449.0 C404.9,429.4 407.7,422.4 414.0,422.4 C420.3,422.4 423.1,429.4 423.1,449.0 Z"/><circle class="k-skin" cx="414.0" cy="414.0" r="6.3"/>
+<text class="b-small" x="240" y="482" text-anchor="middle">stimmberechtigte Männer</text>
+<line class="b-arrow" x1="124" y1="390" x2="124.0" y2="236.0"/><polygon class="b-head" points="124,230 129.2,240.8 118.8,240.8"/>
+<text class="b-label" x="134" y="320">wählt</text>
+<line class="b-arrow b-dash" x1="288" y1="390" x2="288.0" y2="236.0"/><polygon class="b-head" points="288,230 293.2,240.8 282.8,240.8"/>
+<text class="b-label" x="298" y="320">wählt</text>
+<text class="b-small" x="298" y="338">(früher auch die</text><text class="b-small" x="298" y="354">Kantonsparlamente)</text>
+<text class="m-caption" x="470" y="508">Vereinfachtes Schema, Stand 1848</text>
+<g id="bhs"><rect class="hs hs-fill" data-spot="bundesversammlung" x="30" y="56" width="350" height="208" rx="14"/><rect class="hs hs-fill" data-spot="nationalrat" x="48" y="76" width="152" height="150"/><rect class="hs hs-fill" data-spot="staenderat" x="212" y="76" width="152" height="150"/><rect class="hs hs-fill" data-spot="bundesrat" x="448" y="86" width="154" height="130"/><rect class="hs hs-fill" data-spot="bundesgericht" x="628" y="86" width="148" height="130"/><rect class="hs hs-fill" data-spot="volk" x="30" y="392" width="420" height="96"/></g><g id="bhl"></g>
+</svg>
+</div>
+</div>
+
+<script src="../../engine/lernapp.js"></script>
+<script src="inhalt.js"></script>
+<script>LernApp.start(LERNAPP_INHALT);</script>
+</body>
+</html>

@@ -82,6 +82,22 @@ for (const t of themen) {
   // Karteikarten und Sortieren kurz bedienen
   if (await p.$('#t-karten')) { await p.click('#t-karten'); await p.click('#cFlip'); await p.click('#cYes'); }
   if (await p.$('#t-sortieren')) { await p.click('#t-sortieren'); await p.click('[data-bin="0"]'); }
+  // Zeitstrahl: jedes Set eine Runde in der richtigen Reihenfolge, dann eine Jahreszahl-Frage
+  if (await p.$('#t-zeitstrahl')) {
+    await p.click('#t-zeitstrahl');
+    const sets = await p.$$eval('[data-zset]', bs => bs.map(b => b.dataset.zset));
+    for (const s of sets) {
+      await p.click(`[data-zset="${s}"]`); await p.click('[data-zmode="reihe"]');
+      for (let k = 0; k < 8 && (await p.$('#zBody [data-zi]')); k++) {
+        // ein falscher Klick (wenn möglich), dann alle in der richtigen Reihenfolge
+        const btns = await p.$$('#zBody [data-zi]:not(.wrong)');
+        for (const b of btns) { await b.click(); if (!(await p.$('#zBody .wrong'))) break; }
+      }
+      if (!(await p.$('#zAgain'))) errors.push(`Zeitstrahl ${s}: Reihenfolge lässt sich nicht abschliessen`);
+    }
+    await p.screenshot({ path: `${out}/${t}-zeitstrahl.png` });
+    await p.click('[data-zmode="jahr"]'); await p.click('#zBody [data-zj] >> nth=0'); await p.click('#zNext');
+  }
 
   // Tagestraining komplett
   await p.click('#t-heute');

@@ -8,7 +8,7 @@ Für ein neues Thema den Skill `/neue-lernapp` verwenden.
 
 ```
 engine/lernapp.js     Grundgerüst: Navigation, Tagestraining, Erklär-Aufgaben, Probeprüfung,
-                      Fortschritt/Ampel, Karteikarten, Sortieren, Bild-Quiz, Profil
+                      Fortschritt/Ampel, Karteikarten, Sortieren, Bild-Quiz, Zeitstrahl, Profil
 engine/lernapp.css    Design für alle Apps (nur helles Thema, Farben als Tokens in :root)
 themen/<id>/          eine App pro Ordner
   index.html          Kopf, Schriften, #vorlagen (Bild-Quiz-Szenen, eigene Werkzeuge), Skripte
@@ -43,8 +43,9 @@ window.LERNAPP_INHALT = {
   karten: [ { id, lz, g: 'gruppe', q, a } ],
   kartenGruppen: { gruppe: 'Anzeigename' },
   sortieren: { setId: { label, title, lz, bins: ['A', 'B'], items: [ ['Begriff', binIndex, optional lzId] ] } },
+  zeitstrahl: { setId: { label, lz, items: [ { j: '1798–1803', t: 'Ereignis', s: 1798, lz, e: 'Erklärung' } ] } },
   erklaeren: [ { lz, q, pts: [ { t: 'Punkt der Checkliste', k: ['stichwort', …] } ], a: 'Musterantwort', min: .6 } ],
-  bildquiz: { titel, text, szenen: { id: { label, svg: '#svgId', hs: '#hotspotGruppe', hl: '#markierGruppe', wrap: '#rahmenId', extraLz: [], prio: [spotIds], spots: { spotId: { n: 'Name', lz: [lzIds], t: 'Erklärung' } } } } }
+  bildquiz: { titel, text, szenen: { id: { label, svg: '#svgId', hs: '#hotspotGruppe', hl: '#markierGruppe', wrap: '#rahmenId', tippe: 'Tippe im Bild auf:', frage: 'Was ist markiert?', extraLz: [], prio: [spotIds], spots: { spotId: { n: 'Name', lz: [lzIds], t: 'Erklärung' } } } } }
 };
 ```
 
@@ -52,7 +53,8 @@ window.LERNAPP_INHALT = {
 - Lernziel-Texte beginnen mit «…», weil die App «Ich kann» davorsetzt.
 - Stichworte `k` werden ohne Gross-/Kleinschreibung und mit ä→ae, ö→oe, ü→ue verglichen. Wortstämme verwenden (`'abgelager'`, `'kohlensaeure'`), damit Varianten erkannt werden. Die Erkennung ist nur eine Hilfe, die Schülerin hakt selbst ab.
 - Ein Auswahl-Set erscheint zusätzlich überall, wo im HTML `<div class="mcs" id="setName"></div>` steht (mit Knopf `data-remix="setName"` zum Neumischen).
-- Bild-Quiz-Szenen sind SVGs in `#vorlagen` (`.mapwrap[data-szene]`). Klickflächen: Elemente mit `class="hs hs-fill"` oder `class="hs hs-stroke"` und `data-spot="spotId"`.
+- Bild-Quiz-Szenen sind SVGs in `#vorlagen` (`.mapwrap[data-szene]`). Klickflächen: Elemente mit `class="hs hs-fill"` oder `class="hs hs-stroke"` und `data-spot="spotId"`. `tippe` und `frage` passen den Wortlaut an (Standard: «Tippe auf der Karte auf:», «Wie heisst die markierte Form?»). Keine `<marker>`- oder `<pattern>`-Verweise in Szenen: In der Probeprüfung wird die Szene ohne IDs kopiert.
+- Zeitstrahl: `j` ist die angezeigte Zeitangabe, `s` (optional) eine Zahl für die Reihenfolge, sonst gilt die erste Jahreszahl in `j`. Jedes Ereignis wird zusätzlich eine Auswahlfrage «Wann war das?». In einer Runde «Reihenfolge» kommen nur Ereignisse mit verschiedenem `s` vor.
 
 ## Eigene Werkzeuge (`werkzeuge.js`)
 

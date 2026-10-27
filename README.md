@@ -5,11 +5,12 @@ Lern-Apps für Prüfungen am Gymnasium (Schweiz). Jede App deckt die Lernziele e
 - **Heute üben:** tägliches Training von etwa 15 Minuten. Die App wählt neue, unsichere und länger nicht geübte Lernziele.
 - **Erklär-Aufgaben:** Antworten in eigenen Worten schreiben und mit einer Checkliste prüfen.
 - **Probeprüfung:** zu allen Lernzielen, mit Zeitmessung, Selbstkorrektur, Ergebnis pro Thema und Fehlerheft.
-- **Werkzeuge:** Karteikarten, Sortierspiele, Bild-Quiz und themeneigene Übungen.
+- **Werkzeuge:** Karteikarten, Sortierspiele, Bild-Quiz, Zeitstrahl und themeneigene Übungen.
 
 | App | Fach | Ordner |
 |---|---|---|
 | Landschaft im Wandel | Geografie, 2. Gymnasium | [`themen/geografie-naturphaenomene`](themen/geografie-naturphaenomene) |
+| Napoleon und die Schweiz | Geschichte, Neuzeit | [`themen/geschichte-napoleon`](themen/geschichte-napoleon) |
 
 ## Benutzen
 
