@@ -1,0 +1,97 @@
+/* Stile der Geografie-Werkzeuge: Mäander, Gefälle-Labor, Gezeiten, Hochwasser Uri */
+/* Mäander */
+.stage svg { width: 100%; height: auto; display: block; }
+.stage-land { fill: var(--land); }
+.stage-label { fill: var(--ink); font-family: var(--f-body); font-size: 13px; font-weight: 700; }
+.stage-label.dim { fill: var(--muted); font-weight: 400; }
+input[type="range"] { width: 100%; accent-color: var(--water); }
+.ticks { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: .72rem; color: var(--muted); }
+.caption { min-height: 3em; }
+.order { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: o; }
+.order li { display: flex; gap: 10px; align-items: center; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--sheet); }
+.order li::before { counter-increment: o; content: counter(o); font-family: var(--f-mono); color: var(--muted); width: 1.4em; flex: none; }
+.order li span { flex: 1; min-width: 0; }
+.order li.right { border-color: var(--ok); }
+.order li.wrong { border-color: var(--bad); }
+.mv { display: flex; gap: 4px; flex: none; }
+.mv button { width: 34px; height: 34px; border: 1px solid var(--line); background: var(--paper); border-radius: 6px; cursor: pointer; }
+
+/* Gefälle */
+.simbox { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--sheet); }
+#sim { display: block; width: 100%; height: 230px; }
+.readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.readout div { background: var(--paper); border-radius: 8px; padding: 10px 12px; }
+.readout b { display: block; font-family: var(--f-display); font-size: 1.15rem; }
+.grains { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.grains li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.pill { font-size: .8rem; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.pill.move { background: var(--water-soft); color: var(--ink); }
+.pill.stay { background: var(--relief-soft); color: var(--ink); }
+.sw { display: inline-block; border-radius: 50%; vertical-align: middle; margin-right: 8px; }
+
+/* Gezeiten */
+#tide { width: 100%; height: auto; display: block; }
+.t-orbit { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.t-ocean { fill: var(--water); opacity: .55; }
+.t-earth { fill: var(--earth); }
+.t-shade { fill: var(--shade); }
+.t-sun { fill: var(--sun); }
+.t-ray { stroke: var(--sun); stroke-width: 1.5; stroke-dasharray: 2 6; opacity: .8; }
+.t-moonlit { fill: var(--moon-lit); }
+.t-moondark { fill: var(--moon-dark); }
+.t-label { fill: var(--ink); font-family: var(--f-body); font-size: 12.5px; font-weight: 700; }
+.t-small { fill: var(--muted); font-family: var(--f-body); font-size: 11px; }
+.gauge { height: 12px; border-radius: 6px; background: var(--paper); border: 1px solid var(--line); position: relative; overflow: hidden; }
+.gauge i { position: absolute; inset: 0 auto 0 0; background: var(--water); border-radius: 6px; }
+.gauge-l { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); }
+.tidetype { font-family: var(--f-display); font-size: 1.5rem; font-weight: 800; }
+#level { width: 100%; height: auto; display: block; }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-axis { fill: var(--muted); font-family: var(--f-mono); font-size: 10.5px; }
+.c-area { fill: var(--water-soft); }
+.c-line { fill: none; stroke: var(--water); stroke-width: 2.2; }
+.c-dot { fill: var(--water); stroke: var(--sheet); stroke-width: 2; }
+.c-lab { fill: var(--ink); font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+
+/* Hochwasser Uri */
+.events { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.event { background: var(--sheet); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.event .yr { font-family: var(--f-display); font-size: 2rem; font-weight: 800; color: var(--water); line-height: 1; }
+.event .where { font-weight: 700; font-size: .9rem; }
+.event p { font-size: .93rem; }
+.event .dmg { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); }
+#uMap { display: block; width: 100%; height: auto; }
+.u-bg { fill: var(--land); }
+.u-lake { fill: var(--water-soft); stroke: var(--water); stroke-width: 1.5; }
+.u-riv { fill: none; stroke: var(--water); stroke-width: 6; stroke-linecap: round; }
+.u-riv.thin { stroke-width: 3.5; }
+.u-road { fill: none; stroke: var(--ink); stroke-width: 3; opacity: .45; stroke-linecap: round; }
+.u-trail { fill: none; stroke: var(--trail); stroke-width: 4; opacity: .75; stroke-linecap: round; stroke-linejoin: round; }
+.u-rlab { fill: var(--water); font-family: var(--f-body); font-style: italic; font-size: 12px; font-weight: 700; }
+.u-place rect { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.2; }
+.u-place text { fill: var(--ink); font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; }
+.u-st { cursor: pointer; }
+.u-st .ring { fill: none; stroke: transparent; stroke-width: 4; }
+.u-st circle.c { fill: var(--trail); stroke: var(--sheet); stroke-width: 2.5; }
+.u-st text { fill: var(--on-trail); font-family: var(--f-mono); font-size: 12px; font-weight: 700; pointer-events: none; }
+.u-st:hover circle.c, .u-st:focus-visible circle.c { stroke: var(--ink); }
+.u-st:focus { outline: none; }
+.u-st.sel .ring { stroke: var(--mark); }
+.u-st.good .ring { stroke: var(--ok); }
+.u-st.bad .ring { stroke: var(--bad); }
+.stations { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 24px; }
+.stations li { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+.stations li div { min-width: 0; }
+.num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--trail); color: var(--on-trail); font-family: var(--f-mono); font-size: .8rem; font-weight: 700; display: grid; place-items: center; }
+.src { font-size: .82rem; color: var(--muted); }
+
+.love { background: var(--head); border-top: 1px solid var(--line); }
+.love .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; }
+.love p { font-family: var(--f-display); font-size: 1.1rem; font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; }
+.heart { fill: var(--bad); flex: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .heart { animation: beat 2.4s ease-in-out infinite; transform-origin: center; }
+  @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
+}
+

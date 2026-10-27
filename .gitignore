@@ -1,0 +1,10 @@
+# Abhängigkeiten und Testausgaben
+node_modules/
+tests/ausgabe/
+
+# Private Unterlagen (Notizbücher, Lehrmittel-Scans, Fotos aus dem Unterricht)
+# gehören NICHT ins Repository. Lege sie lokal in unterlagen/ ab.
+unterlagen/
+*.pdf
+
+.DS_Store
