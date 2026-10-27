@@ -8,6 +8,7 @@ window.LERNAPP_INHALT = {
   untertitel: 'Von der Alten Eidgenossenschaft über Napoleon und den Wiener Kongress bis zum Bundesstaat von 1848.',
   pruefung: '2026-11-02',
   pruefungsAufgaben: 22,
+  farbe: 'apricot',
 
   // Themengebiete mit Lernzielen: [id, Text, [Werkzeuge]]. «bild:kroenung» öffnet das Bild-Quiz mit dieser Szene.
   themen: [

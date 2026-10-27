@@ -6,6 +6,7 @@ window.LERNAPP_INHALT = {
   titel: 'Titel <span>der App</span>',   // <span> wird blau
   untertitel: 'Ein Satz, worum es geht.',
   pruefung: '2026-12-31',                // Prüfungsdatum JJJJ-MM-TT
+  farbe: 'salbei',                       // Farbschema: blau, apricot, salbei, lavendel, rose, tuerkis
 
   themen: [
     { id: 'a', name: 'BEISPIEL Themengebiet', kurz: 'Themengebiet', lz: [

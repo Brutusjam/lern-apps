@@ -37,6 +37,7 @@ window.LERNAPP_INHALT = {
   pruefungsAufgaben: 20,          // optional, Länge der Probeprüfung
   auffrischenNachTagen: 2,        // optional
   hinweis: '…',                   // optional, ersetzt «Ohne Gewähr …» in der Fusszeile
+  farbe: 'apricot',               // optional: blau (Standard), apricot, salbei, lavendel, rose, tuerkis
 
   themen: [ { id, name, kurz, lz: [ [lzId, '…Text ab «Ich kann»', ['karten', 'sortieren', 'bild:szene', 'werkzeugId']] ] } ],
   fragen: { setName: [ { lz, q, o: [richtig, falsch, falsch], e: 'Erklärung' } ] },
@@ -89,6 +90,7 @@ LernApp.werkzeug({
 ## Design
 
 - Nur helles Thema (ausdrücklicher Wunsch). Farben nur über die Tokens in `engine/lernapp.css`.
+- Jede App hat ein eigenes, helles Pastell-Farbschema (`farbe` in `inhalt.js`). Eine neue App wählt eines, das noch keine andere App hat. Die Karte auf der Startseite bekommt dasselbe `data-farbe`. Neue Schemas in `engine/lernapp.css` ergänzen: nur `--paper`, `--head`, `--line`, `--water`, `--water-soft`, `--mark`; die Akzentfarbe `--water` braucht mit weisser Schrift einen Kontrast von mind. 4.5:1.
 - Ausgelegt auf PC (Seitenleiste ab 860 px); auf schmalen Bildschirmen muss es trotzdem ohne seitliches Scrollen funktionieren.
 - Neue Werkzeuge im bestehenden Stil: `.panel`, `.btn`, `.chip`, `.opt`, `.fb`, Tokens `--water`, `--ok`, `--bad` usw.
 

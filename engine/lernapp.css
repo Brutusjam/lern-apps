@@ -297,3 +297,12 @@ kbd { font-family: var(--f-mono); font-size: .8em; border: 1px solid var(--line)
 /* Bild-Quiz: jede Szene füllt die Breite */
 .mapwrap > svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
 #zBody { display: grid; gap: 16px; }
+
+/* Farbschemas: jede App wählt in inhalt.js «farbe». Ohne Angabe gilt das Blau aus :root.
+   Alle hell und pastellig; die Akzentfarbe trägt weisse Schrift (Kontrast mind. 4.5:1).
+   Als Attribut auf <html> (App) oder auf einer Karte der Startseite. */
+[data-farbe="apricot"] { --paper: #fdf8f3; --head: #fbe8d8; --line: #f0e0d2; --water: #b9542a; --water-soft: #fce2d0; --mark: #8b5cf6; --mark-soft: rgba(139, 92, 246, .2); }
+[data-farbe="salbei"] { --paper: #f5faf6; --head: #e0f0e5; --line: #d5e6da; --water: #2f7a5c; --water-soft: #d6ede0; --mark: #b9542a; --mark-soft: rgba(185, 84, 42, .2); }
+[data-farbe="lavendel"] { --paper: #f8f6fd; --head: #ebe5fb; --line: #e2dbf3; --water: #6a4fc2; --water-soft: #e5ddfa; --mark: #d0457e; --mark-soft: rgba(208, 69, 126, .2); }
+[data-farbe="rose"] { --paper: #fdf6f8; --head: #fbe3eb; --line: #f1dce4; --water: #b53f6c; --water-soft: #f9dae6; --mark: #6a4fc2; --mark-soft: rgba(106, 79, 194, .2); }
+[data-farbe="tuerkis"] { --paper: #f3fbfb; --head: #daf1f1; --line: #d2e7e9; --water: #1d7684; --water-soft: #d1edf0; --mark: #8b5cf6; --mark-soft: rgba(139, 92, 246, .2); }
