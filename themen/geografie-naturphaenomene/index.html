@@ -1,0 +1,2038 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Landschaft im Wandel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Kartenblatt – Kopfzeile, Registerleiste, eine Arbeitsspalte mit Übungsflächen */
+:root {
+  /* Eine helle, freundliche Gestaltung (bewusst ohne Dunkelmodus) */
+  --paper: #f5f9fd;
+  --head: #e3f0fb;
+  --sheet: #ffffff;
+  --ink: #26354d;
+  --muted: #637390;
+  --line: #dce5f0;
+  --water: #2d7fd3;
+  --water-soft: #dbebfb;
+  --on-water: #ffffff;
+  --land: #e8f4d8;
+  --relief: #b08f63;
+  --relief-soft: #f1e6d4;
+  --sand: #f3d47e;
+  --earth: #86c063;
+  --shade: rgba(20, 40, 80, .16);
+  --sun: #f7b733;
+  --moon-lit: #fbf8ec;
+  --moon-dark: #8a95a3;
+  --mark: #8b5cf6;
+  --mark-soft: rgba(139, 92, 246, .2);
+  --trail: #f28a2e;
+  --on-trail: #ffffff;
+  --ice: #e2f1fa;
+  --ice-edge: #8cbad6;
+  --snow: #ffffff;
+  --crev: #5d93b8;
+  --rock: #b3aca2;
+  --ok: #2ea56c;
+  --warn: #f2a614;
+  --bad: #ee7468;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h2 { font-size: 1.45rem; font-weight: 700; }
+h3 { font-size: 1.1rem; font-weight: 700; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--water); outline-offset: 2px; }
+
+/* Kopf */
+.top { background: var(--head); }
+.top .wrap { padding-block: 26px 18px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px; }
+.top h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; }
+.top h1 span { color: var(--water); }
+.eyebrow { font-family: var(--f-mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.top .sub { color: var(--muted); max-width: 46ch; }
+
+/* Navigation: Seitenleiste am PC */
+.shell { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 32px; max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding-block: 24px; display: grid; gap: 18px; }
+.side .group { display: grid; gap: 2px; }
+.side h4 { margin: 0 0 4px 12px; font-family: var(--f-mono); font-size: .72rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.nav-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: none; padding: 9px 12px; border-radius: 10px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.nav-item:hover { background: var(--water-soft); color: var(--ink); }
+.nav-item[aria-current="page"] { background: var(--water); color: var(--on-water); }
+.nav-item.big { font-size: 1.02rem; color: var(--ink); }
+.nav-item.big[aria-current="page"] { color: var(--on-water); }
+.nav-item .mini { margin-left: auto; font-family: var(--f-mono); font-size: .74rem; font-weight: 500; opacity: .85; font-variant-numeric: tabular-nums; }
+main.content { padding-block: 24px 64px; min-width: 0; }
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; gap: 0; }
+  .side { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding-block: 8px; border-bottom: 1px solid var(--line); }
+  .side h4 { display: none; }
+  .side .group { display: flex; gap: 4px; }
+  .nav-item { white-space: nowrap; width: auto; }
+}
+/* Register (alt) */
+.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--sheet); border-bottom: 1px solid var(--line); }
+.tabrow { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.tabrow::-webkit-scrollbar { display: none; }
+.tab { flex: none; border: 0; background: none; padding: 12px 12px 10px; font-weight: 700; color: var(--muted); border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--water); }
+.tab:hover { color: var(--ink); }
+
+main.wrap { padding-block: 24px 64px; }
+.view { display: grid; gap: 20px; }
+.view[hidden] { display: none; }
+.lead { color: var(--muted); max-width: 65ch; }
+.panel { background: var(--sheet); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 1px 2px rgba(38, 53, 77, .05); padding: 18px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: start; }
+.grid2 > * { min-width: 0; }
+
+.btn { border: 1px solid var(--line); background: var(--sheet); border-radius: 999px; padding: 9px 14px; font-weight: 700; cursor: pointer; }
+.btn:hover { border-color: var(--water); }
+.btn.primary { background: var(--water); border-color: var(--water); color: var(--on-water); }
+.btn.small { padding: 5px 10px; font-size: .85rem; }
+.btn.ghost { background: none; }
+.chip { border: 1px solid var(--line); background: var(--sheet); border-radius: 999px; padding: 6px 12px; font-size: .9rem; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--water); color: var(--on-water); border-color: var(--water); }
+
+/* Ampel */
+.dot { flex: none; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; border: 0; padding: 0; margin-top: 2px; background: var(--bad); color: #fff; font-size: 11px; font-weight: 800; line-height: 1; font-style: normal; }
+.dot::after { content: "–"; }
+.dot.s1 { background: var(--warn); }
+.dot.s1::after { content: "~"; }
+.dot.s2 { background: var(--ok); }
+.dot.s2::after { content: "✓"; }
+.dot.s3 { background: var(--warn); }
+.dot.s3::after { content: "↻"; }
+button.dot { cursor: pointer; box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--line); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .dot { margin: 0; width: 16px; height: 16px; font-size: 9px; }
+
+/* Übersicht */
+.today { display: grid; gap: 14px; }
+.today-list { display: grid; gap: 10px; }
+.today-item { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; }
+.today-item p { flex: 1 1 260px; min-width: 0; }
+.exam { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.exam input { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
+.exam strong { font-family: var(--f-display); font-size: 1.2rem; }
+.area { display: grid; gap: 12px; }
+.area-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.count { font-family: var(--f-mono); font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.area.locked .area-head h2 { color: var(--muted); }
+.note { font-size: .88rem; color: var(--muted); }
+.lzlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.lzlist li { display: flex; gap: 12px; align-items: flex-start; }
+.lzlist .txt { flex: 1; min-width: 0; }
+.lzlist .mods { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.modlink { border: 0; background: var(--water-soft); color: var(--ink); border-radius: 6px; padding: 3px 9px; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.modlink:hover { background: var(--water); color: var(--on-water); }
+.confirm { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* Karteikarten */
+.flash { min-height: 230px; display: grid; align-content: space-between; gap: 18px; }
+.flash .q { font-family: var(--f-display); font-size: clamp(1.3rem, 3.5vw, 1.7rem); font-weight: 700; text-wrap: balance; }
+.flash .a { border-top: 2px dashed var(--line); padding-top: 14px; font-size: 1.08rem; max-width: 60ch; }
+.meta { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); letter-spacing: .03em; font-variant-numeric: tabular-nums; }
+.boxes { display: flex; gap: 8px; }
+.boxes span { flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); font-size: .8rem; color: var(--muted); }
+.boxes b { display: block; font-family: var(--f-display); font-size: 1.3rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* Karte */
+.mapwrap { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: var(--land); }
+#map { display: block; width: 100%; height: auto; touch-action: manipulation; }
+.m-land { fill: var(--land); }
+.m-mtn { fill: var(--relief-soft); }
+.m-glyph { fill: var(--relief-soft); stroke: var(--relief); stroke-width: 1.3; stroke-linejoin: round; }
+.m-glyph-shade { fill: var(--relief); opacity: .35; }
+.m-hach { stroke: var(--relief); stroke-width: 1.2; stroke-linecap: round; }
+.m-water { fill: var(--water-soft); stroke: var(--water); stroke-width: 1.5; }
+.m-river { fill: none; stroke: var(--water); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.m-river.thin { stroke-width: 3.2; }
+.m-river.hair { stroke-width: 2; }
+.m-sand { fill: var(--sand); }
+.m-sandline { fill: none; stroke: var(--sand); stroke-width: 9; stroke-linecap: round; }
+.m-steep { fill: none; stroke: var(--relief); stroke-width: 5; stroke-dasharray: 1.5 3; }
+.m-dots { fill: var(--relief); opacity: .6; }
+.m-fall { stroke: var(--sheet); stroke-width: 2; stroke-linecap: round; }
+.m-fallbar { stroke: var(--relief); stroke-width: 4; stroke-linecap: round; }
+.m-caption { fill: var(--muted); font-family: var(--f-mono); font-size: 11px; }
+.g-ice { fill: var(--ice); stroke: var(--ice-edge); stroke-width: 1.5; }
+.g-snow { fill: var(--snow); }
+.g-crev { fill: none; stroke: var(--crev); stroke-width: 2; stroke-linecap: round; }
+.g-mor { fill: none; stroke: var(--relief); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 2 4; }
+.g-endmor { fill: none; stroke: var(--relief); stroke-width: 9; stroke-linecap: round; stroke-dasharray: 3 3; }
+.g-rock { fill: var(--rock); stroke: var(--ink); stroke-width: 1.2; }
+.g-rock-hi { fill: none; stroke: var(--sheet); stroke-width: 1.2; opacity: .7; stroke-linecap: round; }
+.g-tor { fill: var(--ink); opacity: .8; }
+.hs { fill: transparent; stroke: transparent; cursor: pointer; }
+.hs-fill { pointer-events: all; }
+.hs-stroke { fill: none; stroke-width: 22; pointer-events: stroke; }
+.hl { pointer-events: none; }
+.hl.fill { fill: var(--mark-soft); stroke: var(--mark); stroke-width: 2.5; stroke-dasharray: 6 4; }
+.hl.stroke { fill: none; stroke: var(--mark-soft); stroke-width: 22; stroke-linecap: round; }
+.hl.good.fill { fill: color-mix(in srgb, var(--ok) 22%, transparent); stroke: var(--ok); }
+.hl.good.stroke { stroke: color-mix(in srgb, var(--ok) 35%, transparent); }
+.tapmark { fill: none; stroke: var(--ink); stroke-width: 2.5; pointer-events: none; }
+.tapmark.bad { stroke: var(--bad); }
+.tapmark.good { stroke: var(--ok); }
+@media (prefers-reduced-motion: no-preference) {
+  .hl.fill, .hl.stroke { animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .55; } }
+}
+.task { font-family: var(--f-display); font-size: 1.35rem; font-weight: 700; }
+.task em { font-style: normal; color: var(--mark); }
+.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.opt { text-align: left; border: 1.5px solid var(--line); background: var(--sheet); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-weight: 700; }
+.opt:hover:not(:disabled) { border-color: var(--water); }
+.opt:disabled { cursor: default; }
+.opt.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--sheet)); }
+.opt.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--sheet)); }
+.fb { border-radius: 12px; padding: 12px 14px; background: var(--paper); border: 1px solid var(--line); }
+.fb.good { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--sheet)); }
+.fb.bad { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--sheet)); }
+.fb b.k { color: var(--ok); }
+.fb.bad b.k { color: var(--bad); }
+.score { font-family: var(--f-mono); font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Sortieren */
+.sortcard { font-family: var(--f-display); font-size: clamp(1.25rem, 3.4vw, 1.6rem); font-weight: 700; padding: 18px; border-radius: 14px; border: 2px dashed var(--water); background: var(--water-soft); text-align: center; text-wrap: balance; }
+.bins { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.bin { display: grid; align-content: start; gap: 8px; text-align: left; border: 1.5px solid var(--line); background: var(--sheet); border-radius: 14px; padding: 12px; cursor: pointer; min-height: 120px; }
+.bin:hover:not(:disabled) { border-color: var(--water); }
+.bin:disabled { cursor: default; }
+.bin h3 { font-size: 1rem; }
+.bin ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: .86rem; }
+.bin li { padding: 3px 8px; border-radius: 5px; background: var(--paper); border-left: 3px solid var(--ok); }
+.bin li.miss { border-left-color: var(--bad); }
+
+/* Mäander */
+.stage svg { width: 100%; height: auto; display: block; }
+.stage-land { fill: var(--land); }
+.stage-label { fill: var(--ink); font-family: var(--f-body); font-size: 13px; font-weight: 700; }
+.stage-label.dim { fill: var(--muted); font-weight: 400; }
+input[type="range"] { width: 100%; accent-color: var(--water); }
+.ticks { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: .72rem; color: var(--muted); }
+.caption { min-height: 3em; }
+.order { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: o; }
+.order li { display: flex; gap: 10px; align-items: center; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--sheet); }
+.order li::before { counter-increment: o; content: counter(o); font-family: var(--f-mono); color: var(--muted); width: 1.4em; flex: none; }
+.order li span { flex: 1; min-width: 0; }
+.order li.right { border-color: var(--ok); }
+.order li.wrong { border-color: var(--bad); }
+.mv { display: flex; gap: 4px; flex: none; }
+.mv button { width: 34px; height: 34px; border: 1px solid var(--line); background: var(--paper); border-radius: 6px; cursor: pointer; }
+
+/* Gefälle */
+.simbox { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--sheet); }
+#sim { display: block; width: 100%; height: 230px; }
+.readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.readout div { background: var(--paper); border-radius: 8px; padding: 10px 12px; }
+.readout b { display: block; font-family: var(--f-display); font-size: 1.15rem; }
+.grains { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.grains li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.pill { font-size: .8rem; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.pill.move { background: var(--water-soft); color: var(--ink); }
+.pill.stay { background: var(--relief-soft); color: var(--ink); }
+.sw { display: inline-block; border-radius: 50%; vertical-align: middle; margin-right: 8px; }
+
+/* MC */
+.mc { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+.mc legend { font-weight: 700; margin-bottom: 8px; padding: 0; }
+.mcs { display: grid; gap: 22px; }
+.mc-fb { font-size: .92rem; color: var(--muted); }
+
+/* Gezeiten */
+#tide { width: 100%; height: auto; display: block; }
+.t-orbit { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.t-ocean { fill: var(--water); opacity: .55; }
+.t-earth { fill: var(--earth); }
+.t-shade { fill: var(--shade); }
+.t-sun { fill: var(--sun); }
+.t-ray { stroke: var(--sun); stroke-width: 1.5; stroke-dasharray: 2 6; opacity: .8; }
+.t-moonlit { fill: var(--moon-lit); }
+.t-moondark { fill: var(--moon-dark); }
+.t-label { fill: var(--ink); font-family: var(--f-body); font-size: 12.5px; font-weight: 700; }
+.t-small { fill: var(--muted); font-family: var(--f-body); font-size: 11px; }
+.gauge { height: 12px; border-radius: 6px; background: var(--paper); border: 1px solid var(--line); position: relative; overflow: hidden; }
+.gauge i { position: absolute; inset: 0 auto 0 0; background: var(--water); border-radius: 6px; }
+.gauge-l { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); }
+.tidetype { font-family: var(--f-display); font-size: 1.5rem; font-weight: 800; }
+#level { width: 100%; height: auto; display: block; }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-axis { fill: var(--muted); font-family: var(--f-mono); font-size: 10.5px; }
+.c-area { fill: var(--water-soft); }
+.c-line { fill: none; stroke: var(--water); stroke-width: 2.2; }
+.c-dot { fill: var(--water); stroke: var(--sheet); stroke-width: 2; }
+.c-lab { fill: var(--ink); font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+
+/* Hochwasser Uri */
+.events { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.event { background: var(--sheet); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.event .yr { font-family: var(--f-display); font-size: 2rem; font-weight: 800; color: var(--water); line-height: 1; }
+.event .where { font-weight: 700; font-size: .9rem; }
+.event p { font-size: .93rem; }
+.event .dmg { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); }
+#uMap { display: block; width: 100%; height: auto; }
+.u-bg { fill: var(--land); }
+.u-lake { fill: var(--water-soft); stroke: var(--water); stroke-width: 1.5; }
+.u-riv { fill: none; stroke: var(--water); stroke-width: 6; stroke-linecap: round; }
+.u-riv.thin { stroke-width: 3.5; }
+.u-road { fill: none; stroke: var(--ink); stroke-width: 3; opacity: .45; stroke-linecap: round; }
+.u-trail { fill: none; stroke: var(--trail); stroke-width: 4; opacity: .75; stroke-linecap: round; stroke-linejoin: round; }
+.u-rlab { fill: var(--water); font-family: var(--f-body); font-style: italic; font-size: 12px; font-weight: 700; }
+.u-place rect { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.2; }
+.u-place text { fill: var(--ink); font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; }
+.u-st { cursor: pointer; }
+.u-st .ring { fill: none; stroke: transparent; stroke-width: 4; }
+.u-st circle.c { fill: var(--trail); stroke: var(--sheet); stroke-width: 2.5; }
+.u-st text { fill: var(--on-trail); font-family: var(--f-mono); font-size: 12px; font-weight: 700; pointer-events: none; }
+.u-st:hover circle.c, .u-st:focus-visible circle.c { stroke: var(--ink); }
+.u-st:focus { outline: none; }
+.u-st.sel .ring { stroke: var(--mark); }
+.u-st.good .ring { stroke: var(--ok); }
+.u-st.bad .ring { stroke: var(--bad); }
+.stations { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 24px; }
+.stations li { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+.stations li div { min-width: 0; }
+.num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--trail); color: var(--on-trail); font-family: var(--f-mono); font-size: .8rem; font-weight: 700; display: grid; place-items: center; }
+.src { font-size: .82rem; color: var(--muted); }
+
+.love { background: var(--head); border-top: 1px solid var(--line); }
+.love .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; }
+.love p { font-family: var(--f-display); font-size: 1.1rem; font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; }
+.heart { fill: var(--bad); flex: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .heart { animation: beat 2.4s ease-in-out infinite; transform-origin: center; }
+  @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
+}
+
+/* Heute, Session, Prüfung */
+.btn.big { padding: 12px 22px; font-size: 1.05rem; }
+.hello h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); }
+.hero-card { background: var(--water-soft); border-color: transparent; display: grid; gap: 12px; align-content: start; }
+.hero-card h3 { font-size: 1.35rem; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.grid3 > * { min-width: 0; }
+.stat { display: grid; gap: 8px; align-content: start; justify-items: start; }
+.stat b { font-family: var(--f-display); font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; width: 100%; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--ok); border-radius: 999px; transition: width .4s; }
+.plan { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.plan li { display: grid; grid-template-columns: 78px 1fr 22px; gap: 10px; padding: 8px 10px; border-radius: 10px; align-items: center; }
+.plan li.today { background: var(--water-soft); font-weight: 700; }
+.plan li.exam { color: var(--water); font-weight: 700; }
+.plan .pd { font-family: var(--f-mono); font-size: .82rem; color: var(--muted); }
+.plan .pc { color: var(--ok); font-weight: 800; text-align: center; }
+.sess { max-width: 860px; display: grid; gap: 16px; }
+.sess-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.sess-head .bar i { background: var(--water); }
+.timer { font-family: var(--f-mono); font-size: .9rem; color: var(--muted); }
+.timer b { color: var(--ink); font-size: 1.1rem; }
+.taskcard { display: grid; gap: 14px; padding: 24px; }
+.tq { font-family: var(--f-display); font-size: 1.3rem; font-weight: 700; text-wrap: balance; }
+.tsub { font-family: var(--f-display); font-size: 1.25rem; font-weight: 700; color: var(--water); }
+textarea.answer { width: 100%; font: inherit; font-size: 1.02rem; line-height: 1.5; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); resize: vertical; }
+textarea.answer:focus { border-color: var(--water); outline: none; box-shadow: 0 0 0 3px var(--water-soft); }
+.opt .key { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--paper); border: 1px solid var(--line); font-family: var(--f-mono); font-size: .75rem; margin-right: 10px; color: var(--muted); vertical-align: 1px; }
+.opt.picked { border-color: var(--water); background: var(--water-soft); }
+.checklist { display: grid; gap: 8px; }
+.ck { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border-radius: 10px; background: var(--paper); cursor: pointer; }
+.ck input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--ok); flex: none; }
+.ck span { flex: 1; min-width: 0; }
+.ck em { font-style: normal; font-size: .75rem; color: var(--ok); font-weight: 700; white-space: nowrap; }
+.ck.miss { background: color-mix(in srgb, var(--bad) 10%, var(--sheet)); }
+details summary { cursor: pointer; font-weight: 700; color: var(--water); }
+details p { margin-top: 8px; }
+.sessmap svg { width: 100%; height: auto; max-height: 50vh; display: block; border-radius: 12px; border: 1px solid var(--line); background: var(--land); }
+.sessmap .hs { pointer-events: none; }
+.result-big { font-family: var(--f-display); font-size: 3rem; font-weight: 800; color: var(--water); line-height: 1; font-variant-numeric: tabular-nums; }
+.areabars { display: grid; gap: 10px; }
+.areabars > div { display: grid; grid-template-columns: minmax(140px, 240px) 1fr 52px; gap: 12px; align-items: center; }
+.areabars span:last-child { font-family: var(--f-mono); font-size: .85rem; text-align: right; font-variant-numeric: tabular-nums; }
+.revlist { display: grid; gap: 10px; }
+.rev { padding: 10px 14px; background: var(--paper); border-radius: 10px; border: 1px solid var(--line); display: grid; gap: 4px; }
+.rev b { color: var(--bad); }
+.hist { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.hist td, .hist th { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.modlink.strong { background: var(--water); color: var(--on-water); }
+kbd { font-family: var(--f-mono); font-size: .8em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: var(--sheet); }
+
+.foot { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="patFan" width="9" height="9" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" class="m-dots"/><circle cx="6.5" cy="6.5" r="1" class="m-dots"/>
+    </pattern>
+    <pattern id="patSnow" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1" fill="var(--ice-edge)" opacity=".5"/></pattern>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Geografie · 2. Gymnasium · Naturphänomene</div>
+      <h1>Landschaft <span>im Wandel</span></h1>
+    </div>
+    <p class="sub">Alle vier Themen der Prüfung «Naturphänomene», abgestimmt auf das Geografie-Notizbuch.</p>
+  </div>
+</header>
+
+<div class="shell">
+<aside class="side" aria-label="Navigation">
+  <div class="group">
+    <h4>Lernen</h4>
+    <button class="nav-item big" data-tab="heute" id="t-heute">Heute üben</button>
+    <button class="nav-item big" data-tab="pruefung" id="t-pruefung">Probeprüfung</button>
+    <button class="nav-item big" data-tab="uebersicht" id="t-uebersicht">Fortschritt</button>
+  </div>
+  <div class="group">
+    <h4>Themen</h4>
+    <button class="nav-item" data-tab="thema" data-area="nat">Naturkräfte <span class="mini" data-cnt="nat"></span></button>
+    <button class="nav-item" data-tab="thema" data-area="was">Wasser formt die Landschaft <span class="mini" data-cnt="was"></span></button>
+    <button class="nav-item" data-tab="thema" data-area="gew">Naturgewalt Wasser <span class="mini" data-cnt="gew"></span></button>
+    <button class="nav-item" data-tab="thema" data-area="eis">Eis formt die Landschaft <span class="mini" data-cnt="eis"></span></button>
+  </div>
+  <div class="group">
+    <h4>Werkzeuge</h4>
+    <button class="nav-item" data-tab="bild" id="t-bild">Bild-Quiz</button>
+    <button class="nav-item" data-tab="karten" id="t-karten">Karteikarten</button>
+    <button class="nav-item" data-tab="sortieren" id="t-sortieren">Sortieren</button>
+    <button class="nav-item" data-tab="maeander" id="t-maeander">Mäander</button>
+    <button class="nav-item" data-tab="gefaelle" id="t-gefaelle">Gefälle-Labor</button>
+    <button class="nav-item" data-tab="gezeiten" id="t-gezeiten">Gezeiten</button>
+    <button class="nav-item" data-tab="uri" id="t-uri">Hochwasser Uri</button>
+  </div>
+</aside>
+
+<main class="content">
+
+  <section class="view" id="v-heute" role="tabpanel" aria-labelledby="t-heute" hidden><div class="view" id="heuteBox"></div></section>
+  <section class="view" id="v-pruefung" role="tabpanel" aria-labelledby="t-pruefung" hidden><div class="view" id="pruefBox"></div></section>
+  <section class="view" id="v-thema" role="tabpanel" aria-label="Thema" hidden><div class="view" id="themaBox"></div></section>
+  <section class="view" id="v-session" role="tabpanel" aria-label="Übungsrunde" hidden><div class="sess" id="sessBox"></div></section>
+
+
+  <!-- ÜBERSICHT -->
+  <section class="view" id="v-uebersicht" role="tabpanel" aria-labelledby="t-uebersicht" hidden>
+    <div class="grid2">
+      <div class="panel today" id="today"></div>
+      <div class="panel" style="display:grid;gap:14px">
+        <h3>Prüfung</h3>
+        <div class="exam">
+          <label for="examDate">Datum der Prüfung</label>
+          <input type="date" id="examDate">
+          <strong id="examLeft"></strong>
+        </div>
+        <div class="legend">
+          <span><i class="dot"></i>noch offen</span>
+          <span><i class="dot s1"></i>in Arbeit</span>
+          <span><i class="dot s2"></i>sicher (mind. 4 Versuche, 80 % richtig)</span>
+          <span><i class="dot s3"></i>auffrischen (seit 2 Tagen nicht geübt)</span>
+        </div>
+      </div>
+    </div>
+    <div id="areas" class="view"></div>
+    <div class="foot">
+      <div class="confirm" id="resetBox">
+        <span>Der Fortschritt wird nur in diesem Browser gespeichert.</span>
+        <button class="btn small ghost" id="resetBtn">Fortschritt zurücksetzen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILD-QUIZ -->
+  <section class="view" id="v-bild" role="tabpanel" aria-labelledby="t-bild" hidden>
+    <div class="row" style="justify-content:space-between">
+      <h2>Formen erkennen, benennen, erklären</h2>
+      <span class="score" id="bScore"></span>
+    </div>
+    <p class="lead">Zwei gezeichnete Landschaften: ein Fluss von der Quelle bis zum See und ein Gletscher vom Firngebiet bis zum Vorfeld. Wähle, was du üben willst.</p>
+    <div class="row" id="bScenes"></div>
+    <div class="panel" style="display:grid;gap:14px">
+      <p class="task" id="bTask" aria-live="polite"></p>
+      <div class="mapwrap" id="wrapFluss">
+        <svg id="map" viewBox="0 0 800 520" role="img" aria-label="Schematische Flusslandschaft vom Gebirge bis zum See">
+          <rect width="800" height="520" class="m-land"/>
+          <path id="mtn" class="m-mtn" d="M0,0 H800 V178 C730,196 640,192 575,182 C560,175 540,168 515,165 C490,168 470,176 455,186 C400,210 330,212 270,226 C200,244 100,256 0,266 Z"/>
+          <g id="glyphs"></g>
+          <g id="hach"></g>
+          <path class="m-water" d="M560,520 C610,478 700,458 800,452 V520 Z"/>
+          <path class="m-sand" d="M655,456 C648,496 738,502 748,457 C726,446 680,444 655,456 Z"/>
+          <path class="m-sand" d="M515,165 C482,188 462,212 462,238 C490,247 540,247 568,236 C566,212 550,188 515,165 Z"/>
+          <path fill="url(#patFan)" d="M515,165 C482,188 462,212 462,238 C490,247 540,247 568,236 C566,212 550,188 515,165 Z"/>
+          <g id="banks"></g>
+          <path class="m-river thin" d="M520,0 C515,50 525,110 515,165 C512,195 512,225 510,248"/>
+          <path class="m-river hair" d="M515,170 C500,195 488,215 482,238"/>
+          <path class="m-river hair" d="M515,170 C530,195 545,215 552,234"/>
+          <path id="vtalLine" fill="none" d="M60,40 C80,70 130,110 170,140"/>
+          <path id="river" class="m-river" d="M60,40 C80,70 130,110 170,140 C185,152 195,165 200,175 C215,200 250,212 290,230 C330,248 360,262 360,300 A50,50 0 0 0 460,300 A50,50 0 0 1 560,300 A50,50 0 0 0 660,300 A50,50 0 0 1 760,300 C760,350 725,405 692,440"/>
+          <path class="m-river" d="M477,398 A35,35 0 1 0 543,398"/>
+          <path class="m-river thin" d="M692,440 C688,460 672,475 662,490"/>
+          <path class="m-river thin" d="M692,440 C694,465 696,480 700,496"/>
+          <path class="m-river thin" d="M692,440 C705,455 722,466 736,476"/>
+          <line class="m-fallbar" x1="188" y1="184" x2="212" y2="166"/>
+          <line class="m-fall" x1="196" y1="180" x2="200" y2="186"/>
+          <line class="m-fall" x1="203" y1="175" x2="207" y2="181"/>
+          <circle cx="60" cy="40" r="7" fill="var(--water)"/>
+          <circle cx="60" cy="40" r="12" fill="none" stroke="var(--water)" stroke-width="1.5"/>
+          <text class="m-caption" x="12" y="508">Schematische Karte, nicht massstäblich</text>
+          <g id="hotspots">
+            <circle class="hs hs-fill" data-spot="quelle" cx="60" cy="40" r="22"/>
+            <polygon class="hs hs-fill" data-spot="vtal" points="66,79 95,46 193,132 164,165"/>
+            <circle class="hs hs-fill" data-spot="wasserfall" cx="200" cy="175" r="20"/>
+            <path class="hs hs-fill" data-spot="schwemmkegel" d="M515,165 C482,188 462,212 462,238 C490,247 540,247 568,236 C566,212 550,188 515,165 Z"/>
+            <rect class="hs hs-fill" data-spot="maeander" x="350" y="244" width="420" height="114"/>
+            <ellipse class="hs hs-fill" data-spot="altwasser" cx="510" cy="414" rx="50" ry="38"/>
+            <path class="hs hs-fill" data-spot="see" d="M560,520 C610,478 700,458 800,452 V520 Z"/>
+            <ellipse class="hs hs-fill" data-spot="delta" cx="698" cy="468" rx="60" ry="36"/>
+            <g id="bankSpots"></g>
+          </g>
+          <g id="hl"></g>
+        </svg>
+      </div>
+      <div class="mapwrap" id="wrapEis" hidden>
+        <svg id="gmap" viewBox="0 0 800 520" role="img" aria-label="Schematische Gletscherlandschaft vom Firngebiet bis zum Fjord">
+          <rect width="800" height="520" class="m-mtn"/>
+          <path id="gLow" class="m-land" d="M0,425 C120,428 210,438 240,440 L470,440 C500,446 540,452 580,460 L580,520 L0,520 Z"/>
+          <path id="gValley" class="m-land" d="M288,296 L442,296 L472,442 L238,442 Z"/>
+          <path id="gSea" class="m-water" d="M600,520 C640,500 660,488 668,468 L660,300 C664,288 690,288 696,300 L706,468 C720,488 770,470 800,452 L800,520 Z"/>
+          <g id="gGlyphs"></g>
+          <g id="gHach"></g>
+          <path id="gGlacier" class="g-ice" d="M110,40 C150,18 280,18 310,58 C320,88 330,118 340,140 C350,118 370,88 392,58 C422,18 540,18 572,50 C560,100 472,142 432,192 C422,230 426,268 420,300 C410,334 318,334 304,300 C300,262 300,232 290,202 C262,152 160,110 110,40 Z"/>
+          <path class="g-snow" d="M110,40 C150,18 280,18 310,58 C300,84 250,96 200,92 C160,88 130,70 110,40 Z"/>
+          <path class="g-snow" d="M392,58 C422,18 540,18 572,50 C542,84 470,92 422,86 C406,80 396,70 392,58 Z"/>
+          <path fill="url(#patSnow)" d="M110,40 C150,18 280,18 310,58 C300,84 250,96 200,92 C160,88 130,70 110,40 Z"/>
+          <path fill="url(#patSnow)" d="M392,58 C422,18 540,18 572,50 C542,84 470,92 422,86 C406,80 396,70 392,58 Z"/>
+          <path class="g-mor" d="M340,142 C345,200 352,262 362,318"/>
+          <path class="g-mor" d="M150,96 C218,140 278,178 292,220 C298,250 301,280 306,300"/>
+          <path class="g-mor" d="M544,82 C500,122 452,160 433,196 C425,232 425,266 419,300"/>
+          <g id="gCrev"></g>
+          <path class="g-tor" d="M352,326 C352,314 372,314 372,326 Z"/>
+          <path class="m-river thin" d="M362,326 C360,340 356,352 352,360"/>
+          <ellipse class="m-water" cx="350" cy="374" rx="46" ry="19"/>
+          <path class="g-endmor" d="M296,366 C302,414 398,416 408,364"/>
+          <path class="m-river thin" d="M352,393 C350,412 340,428 322,446 C290,476 262,498 240,520"/>
+          <g id="gRund">
+            <ellipse class="g-rock" cx="440" cy="404" rx="17" ry="10"/><path class="g-rock-hi" d="M428,402 L452,400 M430,407 L450,405"/>
+            <ellipse class="g-rock" cx="452" cy="378" rx="12" ry="8"/><path class="g-rock-hi" d="M444,377 L460,376"/>
+          </g>
+          <path class="g-rock" d="M112,478 L118,458 L136,452 L152,460 L156,476 L140,486 L120,486 Z"/>
+          <path class="m-glyph-shade" d="M136,452 L152,460 L156,476 L140,486 Z"/>
+          <text class="m-caption" x="12" y="508">Schematische Karte, nicht massstäblich</text>
+          <g id="ghotspots">
+            <path class="hs hs-fill" data-spot="firn" d="M110,40 C150,18 280,18 310,58 C300,84 250,96 200,92 C160,88 130,70 110,40 Z"/>
+            <path class="hs hs-fill" data-spot="firn" d="M392,58 C422,18 540,18 572,50 C542,84 470,92 422,86 C406,80 396,70 392,58 Z"/>
+            <path class="hs hs-fill" data-spot="utal" d="M288,296 L442,296 L472,442 L238,442 Z"/>
+            <path class="hs hs-fill" data-spot="fjord" d="M660,300 C664,288 690,288 696,300 L706,470 L668,470 Z"/>
+            <ellipse class="hs hs-fill" data-spot="zunge" cx="362" cy="298" rx="62" ry="28"/>
+            <path class="hs hs-fill" data-spot="quer" d="M298,206 L426,206 L424,250 L300,250 Z"/>
+            <rect class="hs hs-fill" data-spot="laengs" x="309" y="264" width="36" height="34"/>
+            <rect class="hs hs-fill" data-spot="laengs" x="383" y="264" width="36" height="34"/>
+            <path class="hs hs-stroke" data-spot="mittel" d="M340,142 C345,200 352,262 362,318"/>
+            <path class="hs hs-stroke" data-spot="seiten" d="M150,96 C218,140 278,178 292,220 C298,250 301,280 306,300"/>
+            <path class="hs hs-stroke" data-spot="seiten" d="M544,82 C500,122 452,160 433,196 C425,232 425,266 419,300"/>
+            <path class="hs hs-stroke" data-spot="end" d="M296,366 C302,414 398,416 408,364"/>
+            <ellipse class="hs hs-fill" data-spot="see" cx="350" cy="374" rx="46" ry="19"/>
+            <circle class="hs hs-fill" data-spot="tor" cx="362" cy="322" r="13"/>
+            <path class="hs hs-fill" data-spot="rund" d="M418,366 L470,366 L462,418 L420,418 Z"/>
+            <circle class="hs hs-fill" data-spot="findling" cx="134" cy="470" r="26"/>
+          </g>
+          <g id="ghl"></g>
+        </svg>
+      </div>
+      <div id="bAnswer"></div>
+    </div>
+  </section>
+
+  <!-- KARTEIKARTEN -->
+  <section class="view" id="v-karten" role="tabpanel" aria-labelledby="t-karten" hidden>
+    <h2>Karteikarten</h2>
+    <p class="lead">Erst selbst überlegen, dann umdrehen. Was du nicht wusstest, kommt gleich nochmals. Was sitzt, wandert eine Box weiter und kommt seltener.</p>
+    <div class="row" id="cFilter"></div>
+    <div class="grid2">
+      <div class="panel flash" id="flash"></div>
+      <div class="panel" style="display:grid;gap:12px">
+        <h3>Deine Boxen</h3>
+        <div class="boxes" id="boxes"></div>
+        <p class="note">Box 1 = neu oder unsicher, Box 3 = sitzt. Die Karten aus Box 1 kommen zuerst.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SORTIEREN -->
+  <section class="view" id="v-sortieren" role="tabpanel" aria-labelledby="t-sortieren" hidden>
+    <h2>Sortieren</h2>
+    <p class="lead">Wohin gehört der Begriff? Tippe auf das richtige Feld.</p>
+    <div class="row" id="sSets"></div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="row" style="justify-content:space-between"><h3 id="sTitle"></h3><span class="score" id="sScore"></span></div>
+      <div id="sCard"></div>
+      <p id="sFb" aria-live="polite" class="note"></p>
+      <div class="bins" id="sBins"></div>
+    </div>
+  </section>
+
+  <!-- MÄANDER -->
+  <section class="view" id="v-maeander" role="tabpanel" aria-labelledby="t-maeander" hidden>
+    <h2>Vom Mäander zum Altwasser</h2>
+    <div class="panel stage" style="display:grid;gap:12px">
+      <svg id="stageSvg" viewBox="0 0 580 270" role="img" aria-label="Entwicklung eines Mäanders in fünf Schritten"></svg>
+      <label for="stageR" class="meta">Entwicklung über Jahrzehnte bis Jahrhunderte</label>
+      <input type="range" id="stageR" min="0" max="4" step="1" value="0">
+      <div class="ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <p class="caption" id="stageCap" aria-live="polite"></p>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <h3>Bring die Schritte in die richtige Reihenfolge</h3>
+      <ol class="order" id="order"></ol>
+      <div class="row"><button class="btn primary" id="orderCheck">Reihenfolge prüfen</button><button class="btn" id="orderNew">Neu mischen</button><span id="orderFb" aria-live="polite"></span></div>
+    </div>
+  </section>
+
+  <!-- GEFÄLLE -->
+  <section class="view" id="v-gefaelle" role="tabpanel" aria-labelledby="t-gefaelle" hidden>
+    <h2>Gefälle-Labor</h2>
+    <p class="lead">Verändere das Gefälle und beobachte, welches Material der Fluss noch mitnimmt und was liegen bleibt.</p>
+    <div class="grid2">
+      <div style="display:grid;gap:12px;min-width:0">
+        <div class="simbox"><canvas id="sim" aria-label="Querschnitt eines Flussbetts mit transportiertem Material"></canvas></div>
+        <label for="slope" class="meta">Gefälle</label>
+        <input type="range" id="slope" min="1" max="10" step="1" value="8">
+        <div class="ticks"><span>flach</span><span>steil</span></div>
+      </div>
+      <div class="panel" style="display:grid;gap:14px">
+        <div class="readout">
+          <div><span class="meta">Fliessgeschwindigkeit</span><b id="rSpeed"></b></div>
+          <div><span class="meta">Typisch für</span><b id="rPart"></b></div>
+        </div>
+        <p id="rProc"></p>
+        <ul class="grains" id="rGrains"></ul>
+      </div>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="row" style="justify-content:space-between"><h3>Kurz geprüft</h3><button class="btn small" data-remix="mcG">Neu mischen</button></div>
+      <div class="mcs" id="mcG"></div>
+    </div>
+  </section>
+
+  <!-- GEZEITEN -->
+  <section class="view" id="v-gezeiten" role="tabpanel" aria-labelledby="t-gezeiten" hidden>
+    <h2>Gezeiten: Ebbe, Flut, Spring- und Nipptide</h2>
+    <div class="grid2">
+      <div class="panel" style="display:grid;gap:10px">
+        <svg id="tide" viewBox="0 0 600 360" role="img" aria-label="Erde mit Flutbergen, Mond und Sonne von oben gesehen"></svg>
+        <label for="moonR" class="meta">Mond auf seiner Bahn verschieben</label>
+        <input type="range" id="moonR" min="0" max="359" step="1" value="0">
+        <p class="note">Die Flutberge sind stark übertrieben dargestellt. Blick von oben auf den Nordpol.</p>
+      </div>
+      <div class="panel" style="display:grid;gap:14px">
+        <div><span class="meta">Mondphase</span><div class="tidetype" id="tPhase"></div></div>
+        <div><span class="meta">Gezeitentyp</span><div class="tidetype" id="tType"></div></div>
+        <div style="display:grid;gap:4px">
+          <span class="meta">Tidenhub (Unterschied Flut – Ebbe)</span>
+          <div class="gauge"><i id="tGauge"></i></div>
+          <div class="gauge-l"><span>Nipptide</span><span>Springtide</span></div>
+        </div>
+        <p id="tExplain"></p>
+      </div>
+    </div>
+    <div class="panel" style="display:grid;gap:10px">
+      <h3>Wasserstand an einer Nordseeküste über 2 Tage</h3>
+      <svg id="level" viewBox="0 0 600 170" role="img" aria-label="Wasserstand über 48 Stunden"></svg>
+      <ul class="plain">
+        <li>Die Erde dreht sich unter den zwei Flutbergen hindurch. Deshalb gibt es an einem Ort <b>zweimal Flut und zweimal Ebbe</b> pro Tag.</li>
+        <li>Weil der Mond auf seiner Bahn weiterwandert, kommt die nächste Flut nicht nach 12 h, sondern nach <b>etwa 12 h 25 min</b>. Von Flut zu Ebbe vergehen rund 6 h 12 min.</li>
+        <li>Springtide und Nipptide wechseln sich ab: Von einer Springtide zur nächsten dauert es <b>etwa 14 bis 15 Tage</b>.</li>
+      </ul>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="row" style="justify-content:space-between"><h3>Kurz geprüft</h3><button class="btn small" data-remix="mcT">Neu mischen</button></div>
+      <div class="mcs" id="mcT"></div>
+    </div>
+  </section>
+
+  <!-- HOCHWASSER URI -->
+  <section class="view" id="v-uri" role="tabpanel" aria-labelledby="t-uri" hidden>
+    <h2>Naturgewalt Wasser: Hochwasser in Uri</h2>
+    <p class="lead">Die grossen Hochwasser in der Urner Reussebene und die 12 Stationen des Themenwegs Hochwasserschutz zwischen Flüelen, Schattdorf und Bürglen.</p>
+    <div class="events" id="uEvents"></div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="row" style="justify-content:space-between">
+        <h3>Themenweg Hochwasserschutz</h3>
+        <div class="row"><span class="score" id="uScore"></span><span class="row" id="uModes"></span></div>
+      </div>
+      <p class="task" id="uTask" aria-live="polite"></p>
+      <div class="mapwrap"><svg id="uMap" viewBox="0 0 700 380" role="img" aria-label="Schematische Karte der Urner Reussebene mit den 12 Stationen des Themenwegs"></svg></div>
+      <div id="uInfo"></div>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <h3>Alle Stationen zum Nachlesen</h3>
+      <ol class="stations" id="uList"></ol>
+      <p class="src">Quelle: Notizbuch, Folien «Hochwasserschutz Uri» und Kanton Uri, Themenweg Hochwasserschutz. Die Karte ist schematisch.</p>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="row" style="justify-content:space-between"><h3>Kurz geprüft</h3><button class="btn small" data-remix="mcU">Neu mischen</button></div>
+      <div class="mcs" id="mcU"></div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<footer class="love">
+  <div class="wrap">
+    <p>To Lily, with love from Dad <svg class="heart" viewBox="0 0 24 24" width="20" height="20" role="img" aria-label="Herz"><path d="M12 21s-7.2-4.6-9.6-9.1C.8 8.8 2.4 4.8 6.2 4.2c2.2-.4 4.3.7 5.8 2.6 1.5-1.9 3.6-3 5.8-2.6 3.8.6 5.4 4.6 3.8 7.7C19.2 16.4 12 21 12 21z"/></svg></p>
+  </div>
+</footer>
+
+<script>
+(() => {
+const KEY = 'landschaft-im-wandel-v1';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const NS = 'http://www.w3.org/2000/svg';
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Lernziele ---------- */
+const AREAS = [
+  { id: 'nat', name: 'Naturkräfte verändern Landschaften', active: true, lz: [
+    ['n1', '…erklären, welche Naturkräfte auf die Landschaft wirken und wie sie die Landschaft verändern.', ['karten', 'sortieren']],
+    ['n2', '…auf Bildern Auswirkungen verschiedener Naturkräfte markieren und benennen.', ['bild', 'sortieren']],
+    ['n3', '…zwischen exogenen und endogenen Prozessen unterscheiden.', ['sortieren', 'karten']],
+    ['n4', '…definieren, was mit Verwitterung, Erosion, Transport und Sedimentation gemeint ist.', ['karten', 'sortieren']],
+    ['n5', '…verschiedene Verwitterungsarten kurz erklären und in Bildern erkennen.', ['sortieren', 'karten']],
+    ['n6', '…verschiedene Landschaftsformen benennen und erklären, welche Naturkräfte und Prozesse diese Landschaften gebildet haben.', ['karten', 'sortieren']] ] },
+  { id: 'was', name: 'Wasser formt die Landschaft', active: true, lz: [
+    ['w1', '…die verschiedenen Landschaftsformen, die durch fliessende Gewässer geschaffen wurden, auf Bildern erkennen sowie benennen und erklären.', ['bild', 'karten']],
+    ['w2', '…Zusammenhänge zwischen Gefälle, Fliessgeschwindigkeit, Erosion und Sedimentation erklären.', ['gefaelle', 'sortieren', 'karten']],
+    ['w3', '…beschreiben, wie sich das Gesteinsmaterial von der Quelle zur Mündung verändert.', ['gefaelle', 'sortieren']],
+    ['w4', '…erklären, wie Mäander entstehen und in Altwassern resultieren können.', ['maeander', 'bild', 'sortieren']],
+    ['w5', '…wichtige Karstphänomene beschreiben.', ['karten', 'sortieren']],
+    ['w6', '…aufzeigen, wie die Gezeiten entstehen und in welchen Zeitabständen sie auftreten.', ['gezeiten', 'karten']],
+    ['w7', '…erklären, was mit Spring- und Nipptide gemeint ist.', ['gezeiten', 'sortieren']] ] },
+  { id: 'gew', name: 'Naturgewalt Wasser', active: true, lz: [
+    ['g1', '…zwei Hochwasserereignisse in Uri aufzählen und die am stärksten betroffenen Gebiete kennen (Jahreszahl, Gemeinde).', ['uri', 'karten']],
+    ['g2', '…verschiedene Hochwasserschutzmassnahmen (mind. 5) in Uri verorten und beschreiben.', ['uri']] ] },
+  { id: 'eis', name: 'Eis formt die Landschaft', active: true, lz: [
+    ['e1', '…die verschiedenen Landschaftsformen, die durch Gletscher geschaffen wurden, auf Bildern erkennen sowie benennen und erklären.', ['bild', 'karten', 'sortieren']],
+    ['e2', '…grob erklären, wie Gletscher entstehen.', ['karten', 'bild']],
+    ['e3', '…beschreiben, weshalb die Gletscher weltweit schmelzen und welchen Nutzen für die Menschen dabei verloren gehen können.', ['karten']] ] }
+];
+const LZ = {};
+AREAS.forEach(a => a.lz.forEach(([id, text, mods]) => LZ[id] = { id, text, mods: mods || [], area: a.id }));
+const MODS = { bild: 'Bild-Quiz', karten: 'Karteikarten', sortieren: 'Sortieren', maeander: 'Mäander', gefaelle: 'Gefälle-Labor', gezeiten: 'Gezeiten', uri: 'Hochwasser Uri' };
+const STATUS = ['noch offen', 'in Arbeit', 'sicher', 'auffrischen'];
+const EXAM_DATE = '2026-10-29';
+const STALE_DAYS = 2;
+
+/* ---------- Speicher ---------- */
+const blank = () => ({ res: {}, self: {}, cards: {}, exam: EXAM_DATE, tab: 'heute', last: {}, seen: {}, mistakes: [], done: {}, exams: [] });
+let state = blank();
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === 'object') state = Object.assign(blank(), s); } catch (e) {}
+if (!state.exam) state.exam = EXAM_DATE;
+['last', 'seen', 'done'].forEach(k => { if (!state[k] || typeof state[k] !== 'object') state[k] = {}; });
+['mistakes', 'exams'].forEach(k => { if (!Array.isArray(state[k])) state[k] = []; });
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+function record(id, ok) {
+  const r = state.res[id] || (state.res[id] = []);
+  r.push(ok ? 1 : 0); if (r.length > 12) r.shift(); state.last[id] = Date.now(); save();
+}
+function rate(id) { const r = (state.res[id] || []).slice(-8); return r.length ? r.reduce((a, b) => a + b, 0) / r.length : 0; }
+function status(id) {
+  const r = state.res[id];
+  if (r && r.length) {
+    if (r.length >= 4 && rate(id) >= .8) return (Date.now() - (state.last[id] || 0)) > STALE_DAYS * 864e5 ? 3 : 2;
+    return 1;
+  }
+  return state.self[id] || 0;
+}
+
+/* ---------- Tabs ---------- */
+const TABS = [...new Set($$('.nav-item').map(b => b.dataset.tab)), 'session'];
+function show(tab, area) {
+  if (!TABS.includes(tab)) tab = 'heute';
+  if (tab === 'thema') { area = area || state.area || 'nat'; state.area = area; }
+  $$('.nav-item').forEach(b => { if (b.dataset.tab === tab && (tab !== 'thema' || b.dataset.area === area)) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  $$('.view[role=tabpanel]').forEach(v => v.hidden = v.id !== 'v-' + tab);
+  if (tab !== 'session') { state.tab = tab; save(); }
+  renderNavCounts();
+  if (tab === 'uebersicht') renderOverview();
+  if (tab === 'heute') renderHeute();
+  if (tab === 'pruefung') renderPruefung();
+  if (tab === 'thema') renderThema(area);
+  if (tab === 'gefaelle') sim.start(); else sim.stop();
+  if (tab === 'gezeiten') drawTide();
+  if (tab === 'bild' && quiz.scene === 'eis' && !$('#gGlyphs').childElementCount) drawGlacierDetails();
+  window.scrollTo({ top: 0 });
+}
+$$('.nav-item').forEach(b => b.addEventListener('click', () => show(b.dataset.tab, b.dataset.area)));
+document.addEventListener('click', e => { const m = e.target.closest('[data-go]'); if (!m) return; if (m.dataset.scene) setScene(m.dataset.scene); show(m.dataset.go, m.dataset.area); });
+function renderNavCounts() { AREAS.forEach(a => { const el = $(`[data-cnt="${a.id}"]`); if (el) el.textContent = `${a.lz.filter(l => status(l[0]) === 2).length}/${a.lz.length}`; }); }
+const dotHtml = id => { const s = status(id); return `<span class="dot s${s}" role="img" aria-label="${STATUS[s]}" title="${STATUS[s]}"></span>`; };
+
+/* ---------- Übersicht ---------- */
+function renderOverview() {
+  const nOk = Object.keys(LZ).filter(id => status(id) === 2).length;
+  $('#today').innerHTML = `<h3>Dein Stand</h3><p><b>${nOk} von ${Object.keys(LZ).length}</b> Lernzielen sind sicher.</p><div class="bar"><i style="width:${(nOk / Object.keys(LZ).length * 100).toFixed(0)}%"></i></div><div class="row"><button class="btn primary" data-go="heute">Zum Tagestraining</button><button class="btn" data-go="pruefung">Probeprüfung</button></div>`;
+  // Prüfung
+  $('#examDate').value = state.exam || '';
+  let left = '';
+  if (state.exam) {
+    const d = new Date(state.exam + 'T00:00'); const t = new Date(); t.setHours(0, 0, 0, 0);
+    const n = Math.round((d - t) / 864e5);
+    left = n > 1 ? `Noch ${n} Tage` : n === 1 ? 'Morgen ist Prüfung' : n === 0 ? 'Heute ist Prüfung. Viel Glück!' : '';
+  }
+  $('#examLeft').textContent = left;
+  // Themen
+  $('#areas').innerHTML = AREAS.map(a => {
+    const green = a.lz.filter(l => status(l[0]) === 2).length;
+    return `<section class="panel area ${a.active ? '' : 'locked'}">
+      <div class="area-head"><h2>${esc(a.name)}</h2><span class="count">${green} / ${a.lz.length} sicher</span></div>
+      ${a.active ? '' : '<p class="note">Im Prototyp noch ohne Übungen. Tippe auf einen Punkt, um dich selbst einzuschätzen.</p>'}
+      <ol class="lzlist">${a.lz.map(([id, text, mods]) => {
+        const dot = dotHtml(id);
+        const links = (mods || []).map(m => `<button class="modlink" data-go="${m}" ${m === 'bild' ? `data-scene="${a.id === 'eis' ? 'eis' : 'fluss'}"` : ''}>${MODS[m]}</button>`).join('');
+        return `<li>${dot}<div class="txt">Ich kann ${esc(text)}<div class="mods"><button class="modlink strong" data-act2="lz" data-lz="${id}">Lernziel üben</button>${links}</div></div></li>`;
+      }).join('')}</ol></section>`;
+  }).join('');
+}
+$('#areas').addEventListener('click', e => {
+  const b = e.target.closest('[data-self]'); if (!b) return;
+  const id = b.dataset.self; state.self[id] = ((state.self[id] || 0) + 1) % 3; save(); renderOverview();
+});
+$('#examDate').addEventListener('change', e => { state.exam = e.target.value; save(); renderOverview(); });
+function resetUI(confirming) {
+  $('#resetBox').innerHTML = confirming
+    ? `<span>Alle Ergebnisse und Boxen löschen?</span><button class="btn small" id="resetYes">Ja, zurücksetzen</button><button class="btn small ghost" id="resetNo">Abbrechen</button>`
+    : `<span>Der Fortschritt wird nur in diesem Browser gespeichert.</span><button class="btn small ghost" id="resetBtn">Fortschritt zurücksetzen</button>`;
+}
+$('#resetBox').addEventListener('click', e => {
+  if (e.target.id === 'resetBtn') resetUI(true);
+  if (e.target.id === 'resetNo') resetUI(false);
+  if (e.target.id === 'resetYes') { state = blank(); state.tab = 'uebersicht'; sess = null; save(); resetUI(false); renderOverview(); buildDeck(); renderCard(); }
+});
+
+/* ---------- Multiple Choice ---------- */
+const MCQ = {
+  mcG: [
+    { lz: 'w2', q: 'Ein Bach fliesst aus dem steilen Gebirge in eine flache Talebene. Was passiert?', o: ['Er wird langsamer und lagert Material ab.', 'Er wird schneller und erodiert mehr.', 'Nichts. Die Geschwindigkeit hängt nur von der Wassermenge ab.'], e: 'Weniger Gefälle bedeutet weniger Fliessgeschwindigkeit. Das Wasser kann weniger tragen und lagert ab (z.B. als Schwemmkegel).' },
+    { lz: 'w2', q: 'Welches Material bleibt als Erstes liegen, wenn ein Fluss langsamer wird?', o: ['Grosse Blöcke', 'Sand', 'Schlamm und Ton'], e: 'Je schwerer das Material, desto mehr Fliessgeschwindigkeit braucht es für den Transport. Blöcke bleiben zuerst liegen, Schlamm erst ganz am Schluss.' },
+    { lz: 'w3', q: 'Wie verändert sich das Gesteinsmaterial von der Quelle zur Mündung?', o: ['Es wird kleiner und runder.', 'Es wird grösser und kantiger.', 'Es bleibt gleich, nur die Menge nimmt zu.'], e: 'Beim Transport schlagen die Steine aneinander und werden abgeschliffen: von kantigen Blöcken über gerundeten Kies zu Sand und Schlamm.' },
+    { lz: 'w2', q: 'Wo überwiegt die Tiefenerosion?', o: ['Im Oberlauf mit starkem Gefälle', 'Im Unterlauf mit geringem Gefälle', 'Im See bei der Mündung'], e: 'Im steilen Oberlauf fliesst das Wasser schnell und gräbt sich nach unten ein. So entstehen V-Täler.' }
+  ],
+  mcU: [
+    { lz: 'g1', q: 'In welchem Jahr entstand der «Schattdorfer See»?', o: ['2005', '1987', '1977'], e: 'Am 22./23. August 2005 trat der Schächen über die Ufer und überflutete das Industriegelände in Schattdorf.' },
+    { lz: 'g1', q: 'Was löste das Hochwasser von 1987 aus?', o: ['Ein schweres Unwetter über dem Gotthardmassiv in der Nacht vom 24./25. August', 'Ein Sturm über dem Urnersee', 'Die Schneeschmelze im Frühling'], e: 'Danach war die Gotthardroute wochenlang gesperrt. Überflutet war das Gebiet von Flüelen bis Attinghausen.' },
+    { lz: 'g1', q: 'Welcher Bach trat 1977 und 2005 über die Ufer?', o: ['Der Schächen', 'Der Palanggenbach', 'Der Giessen'], e: 'Der Schächen kommt aus dem Schächental und mündet bei Schattdorf/Attinghausen in die Reuss.' },
+    { lz: 'g1', q: 'Wo floss 1977 der Kummetbach noch Tage später durchs Dorf?', o: ['In Attinghausen', 'In Flüelen', 'In Bürglen'], e: 'So steht es in den Folien zum Hochwasser 1977.' },
+    { lz: 'g1', q: 'Was zeigte das Hochwasser 2020?', o: ['Die Schutzmassnahmen wirken: Die Reuss wurde kontrolliert in den Urnersee geleitet.', 'Die Schäden waren grösser als 1987.', 'Der Schächen überflutete erneut Schattdorf.'], e: 'Statt grosser Schäden wie 1987 gab es nur Aufräumarbeiten.' },
+    { lz: 'g2', q: 'Was passiert bei der «Entlastung Autobahn»?', o: ['Wasser fliesst kontrolliert über den Reussdamm auf die A2 und Richtung Urnersee.', 'Die Autobahn wird mit einer Mauer erhöht, damit sie trocken bleibt.', 'Das Wasser wird in einen Tunnel unter der Autobahn gepumpt.'], e: 'Eine Hochwasserschutzmauer auf der anderen Seite der A2 hält das Wasser zurück.' },
+    { lz: 'g2', q: 'Wozu dient der Stiglissammler in Bürglen?', o: ['Er hält Geschiebe (Steine und Sand) des Schächens zurück.', 'Er sammelt Regenwasser als Trinkwasser.', 'Er misst den Wasserstand der Reuss.'], e: 'Er bietet Platz für mindestens 10 000 Lastwagenladungen Geschiebe.' },
+    { lz: 'g2', q: 'Was zeigt die rote Markierung bei der Station Swissli?', o: ['Ab diesem Wasserstand fliesst Wasser auf die Autobahn.', 'Ab diesem Wasserstand wird die Autobahn gesperrt.', 'Den normalen Wasserstand der Reuss.'], e: 'Grün: Die Autobahn wird gesperrt. Rot: Das Wasser beginnt auf die Autobahn zu fliessen.' }
+  ],
+  mcT: [
+    { lz: 'w6', q: 'Wie lange dauert es ungefähr von einer Flut bis zur nächsten?', o: ['12 Stunden 25 Minuten', '24 Stunden', '6 Stunden', '28 Tage'], e: 'Zwei Flutberge, und der Mond wandert weiter: Deshalb etwa 12 h 25 min. Von Flut zu Ebbe sind es rund 6 h.' },
+    { lz: 'w6', q: 'Warum gibt es auf der Erde zwei Flutberge?', o: ['Auf der Mondseite zieht der Mond das Wasser an, auf der Gegenseite überwiegt die Fliehkraft.', 'Weil Sonne und Mond immer auf gegenüberliegenden Seiten stehen.', 'Weil die Ozeane auf beiden Seiten der Erde gleich tief sind.'], e: 'Anziehungskraft des Mondes auf der zugewandten Seite, Fliehkraft auf der abgewandten Seite.' },
+    { lz: 'w7', q: 'Bei welcher Mondphase gibt es eine Springtide?', o: ['Bei Vollmond und bei Neumond', 'Nur bei Vollmond', 'Bei Halbmond'], e: 'Bei Voll- und Neumond stehen Sonne, Erde und Mond in einer Linie. Ihre Kräfte addieren sich.' },
+    { lz: 'w7', q: 'Was ist eine Nipptide?', o: ['Eine Tide mit besonders kleinem Tidenhub, wenn Sonne und Mond im rechten Winkel zur Erde stehen', 'Eine besonders hohe Flut bei Sturm', 'Die Ebbe direkt nach einer Springtide'], e: 'Bei Halbmond wirken Sonne und Mond in verschiedene Richtungen. Sie schwächen sich teilweise ab, der Tidenhub ist klein.' }
+  ]
+};
+function renderMC(id) {
+  const box = $('#' + id);
+  box.innerHTML = MCQ[id].map((q, i) => `<fieldset class="mc" data-i="${i}"><legend>${esc(q.q)}</legend>
+    <div class="opts">${shuffle(q.o.map((t, j) => ({ t, j }))).map(o => `<button class="opt" data-j="${o.j}">${esc(o.t)}</button>`).join('')}</div>
+    <p class="mc-fb" aria-live="polite"></p></fieldset>`).join('');
+}
+document.addEventListener('click', e => {
+  const r = e.target.closest('[data-remix]'); if (r) { renderMC(r.dataset.remix); return; }
+  const o = e.target.closest('.mcs .opt'); if (!o) return;
+  const fs = o.closest('.mc'); const q = MCQ[o.closest('.mcs').id][+fs.dataset.i];
+  const ok = o.dataset.j === '0';
+  $$('.opt', fs).forEach(b => { b.disabled = true; if (b.dataset.j === '0') b.classList.add('right'); });
+  if (!ok) o.classList.add('wrong');
+  $('.mc-fb', fs).innerHTML = `<b>${ok ? 'Richtig.' : 'Nicht ganz.'}</b> ${esc(q.e)}`;
+  record(q.lz, ok);
+});
+
+/* ---------- Karteikarten ---------- */
+const CARDS = [
+  { id: 'c1', lz: 'w2', g: 'fluss', q: 'Was bedeutet Erosion?', a: 'Abtragung von Gestein und Boden durch Wasser, Eis oder Wind. Beim Fluss: Je schneller das Wasser, desto stärker die Erosion.' },
+  { id: 'c2', lz: 'w2', g: 'fluss', q: 'Was bedeutet Sedimentation?', a: 'Ablagerung von Material. Sie geschieht, wenn das Wasser langsamer wird und die Fracht nicht mehr tragen kann.' },
+  { id: 'c3', lz: 'w2', g: 'fluss', q: 'Wie hängen Gefälle und Fliessgeschwindigkeit zusammen?', a: 'Je steiler das Gefälle, desto schneller fliesst das Wasser und desto mehr und gröberes Material kann es erodieren und transportieren.' },
+  { id: 'c4b', lz: 'w1', g: 'fluss', q: 'Klamm oder Kerbtal: Was ist der Unterschied?', a: 'Beide entstehen durch Tiefenerosion. Die Klamm ist sehr eng mit fast senkrechten Wänden (hartes Gestein). Das Kerbtal (V-Tal) hat schräge Hänge, weil Material nachrutscht.' },
+  { id: 'c4', lz: 'w1', g: 'fluss', q: 'Wie entsteht ein V-Tal (Kerbtal)?', a: 'Im steilen Oberlauf überwiegt die Tiefenerosion. Der Fluss schneidet sich ein, die Hänge rutschen nach. Querschnitt wie ein V.' },
+  { id: 'c5', lz: 'w4', g: 'fluss', q: 'Was ist ein Prallhang?', a: 'Die Aussenseite einer Flusskurve. Das Wasser fliesst schnell und erodiert, das Ufer wird steil.' },
+  { id: 'c6', lz: 'w4', g: 'fluss', q: 'Was ist ein Gleithang?', a: 'Die Innenseite einer Flusskurve. Das Wasser fliesst langsam und lagert Sand und Kies ab, das Ufer ist flach (Kiesbank).' },
+  { id: 'c7', lz: 'w4', g: 'fluss', q: 'Wie entsteht ein Altwasser (Altarm)?', a: 'Die Mäanderschlinge wird immer enger, bis der Fluss den schmalen Mäanderhals durchbricht (oft bei Hochwasser). Die abgetrennte Schlinge bleibt als stehendes Gewässer zurück.' },
+  { id: 'c8', lz: 'w1', g: 'fluss', q: 'Was ist ein Delta?', a: 'Ablagerungsfläche an der Mündung in einen See oder ins Meer. Der Fluss wird fast still, lagert seine Fracht ab und teilt sich in mehrere Arme. Beispiel: Reussdelta im Urnersee.' },
+  { id: 'c9', lz: 'w1', g: 'fluss', q: 'Was ist ein Schwemmkegel?', a: 'Ein steiler Seitenbach tritt ins flache Haupttal, wird plötzlich langsamer und lagert sein Geröll fächerförmig ab.' },
+  { id: 'c10', lz: 'w3', g: 'fluss', q: 'Wie verändert sich das Gestein von der Quelle zur Mündung?', a: 'Es wird kleiner und runder: kantige Blöcke → gerundeter Kies → Sand → Schlamm. Grund: Abrieb beim Transport.' },
+  { id: 'c11', lz: 'w5', g: 'karst', q: 'Was braucht es, damit Karst entsteht?', a: 'Kalkgestein und Wasser. Regenwasser mit Kohlensäure löst den Kalk auf (Lösungsverwitterung).' },
+  { id: 'c12', lz: 'w5', g: 'karst', q: 'Was sind Karren (Schratten)?', a: 'Rinnen und scharfe Grate im nackten Kalkfels, vom Regenwasser herausgelöst.' },
+  { id: 'c13', lz: 'w5', g: 'karst', q: 'Was ist eine Doline?', a: 'Ein trichterförmiges Einsturzloch an der Erdoberfläche, als Mulde zu erkennen. Entsteht, wenn der Kalk darunter gelöst wird oder eine Höhlendecke einbricht.' },
+  { id: 'c13b', lz: 'w5', g: 'karst', q: 'Was ist eine Polje?', a: 'Eine sehr grosse Senke in der Karstlandschaft mit flachem Boden.' },
+  { id: 'c13c', lz: 'w5', g: 'karst', q: 'Was ist Kalktuff?', a: 'Löchriges Kalkgestein, das an Bächen oder kleineren Wasserfällen entsteht. Dort scheidet das Wasser gelösten Kalk wieder aus.' },
+  { id: 'c13d', lz: 'w5', g: 'karst', q: 'Wie löst Wasser Kalk? (chemisch)', a: 'Wasser + Kohlendioxid → Kohlensäure (H₂O + CO₂ → H₂CO₃). Kohlensäure + Kalk → gelöstes Kalzium und Hydrogenkarbonat (H₂CO₃ + CaCO₃ → Ca²⁺ + 2 HCO₃⁻).' },
+  { id: 'c13e', lz: 'w5', g: 'karst', q: 'Welche Formen findet man in einer Karsthöhle?', a: 'Stalaktiten, Stalagmiten, Säulen (Stalaktit und Stalagmit zusammengewachsen), Sintervorhänge, Sinterbecken und unterirdische Seen.' },
+  { id: 'c14', lz: 'w5', g: 'karst', q: 'Stalaktit oder Stalagmit: Was hängt, was steht?', a: 'Stalaktit hängt von der Decke (t wie «tropft runter»), Stalagmit wächst vom Boden nach oben (m wie «mag hoch»).' },
+  { id: 'c15', lz: 'w5', g: 'karst', q: 'Was ist ein Trockental?', a: 'Ein Tal, das kein ständig fliessendes Oberflächenwasser mehr führt. Das Wasser versickert im Kalk und fliesst unterirdisch weiter.' },
+  { id: 'c16', lz: 'w6', g: 'gezeiten', q: 'Wie entstehen Ebbe und Flut?', a: 'Die Anziehungskraft des Mondes (und der Sonne) und die Fliehkraft bilden zwei Flutberge. Die Erde dreht sich darunter hindurch.' },
+  { id: 'c17', lz: 'w6', g: 'gezeiten', q: 'In welchen Zeitabständen kommt die Flut?', a: 'Etwa alle 12 h 25 min, also zweimal pro Tag. Von Flut zu Ebbe rund 6 h 12 min.' },
+  { id: 'c18', lz: 'w7', g: 'gezeiten', q: 'Was ist eine Springtide?', a: 'Besonders grosser Tidenhub bei Voll- und Neumond: Sonne, Erde und Mond stehen in einer Linie, die Kräfte addieren sich.' },
+  { id: 'c19', lz: 'w7', g: 'gezeiten', q: 'Was ist eine Nipptide?', a: 'Besonders kleiner Tidenhub bei Halbmond: Sonne und Mond stehen im rechten Winkel zur Erde und schwächen sich ab.' },
+  { id: 'c20', lz: 'w7', g: 'gezeiten', q: 'Was versteht man unter dem Tidenhub?', a: 'Den Höhenunterschied des Wasserstands zwischen Flut (Hochwasser) und Ebbe (Niedrigwasser).' },
+  { id: 'k1', lz: 'n3', g: 'kraefte', q: 'Was ist der Unterschied zwischen exogenen und endogenen Kräften?', a: 'Exogen: Kräfte auf der Erdoberfläche (Wind, Wasser, Eis, Temperaturunterschiede, Sonne). Endogen: Kräfte aus dem Erdinnern (Erdbeben, Vulkanausbruch, Gebirgsbildung, Brechen der Erdkruste).' },
+  { id: 'k2', lz: 'n4', g: 'kraefte', q: 'Wie lautet die Prozesskette?', a: '1) Verwitterung → 2) Erosion (Abtragung) → 3) Transport → 4) Ablagerung (Akkumulation, Sedimentation).' },
+  { id: 'k3', lz: 'n4', g: 'kraefte', q: 'Was bedeutet Verwitterung?', a: 'Gestein wird durch Regen, Frost und/oder Sonneneinstrahlung in kleinere Bestandteile aufgelöst oder zerfällt. Voraussetzung: Das Gestein hat Klüfte oder Risse.' },
+  { id: 'k4', lz: 'n4', g: 'kraefte', q: 'Was bedeuten Transport und Akkumulation?', a: 'Transport: Wasser, Eis oder Wind tragen das abgetragene Material weg. Akkumulation (Sedimentation): Das Material wird wieder abgelagert.' },
+  { id: 'k5', lz: 'n5', g: 'kraefte', q: 'Wie funktioniert Temperaturverwitterung?', a: 'Hohe Temperaturunterschiede (Tag/Nacht) verursachen Spannungen im Gestein, und es platzt auseinander.' },
+  { id: 'k6', lz: 'n5', g: 'kraefte', q: 'Wie funktioniert Frostsprengung?', a: 'Wasser dringt in Risse, gefriert und dehnt sich aus. Dadurch wird das Gestein gesprengt. Beispiel: Schlaglöcher im Asphalt im Winter.' },
+  { id: 'k7', lz: 'n5', g: 'kraefte', q: 'Wie funktioniert Salzsprengung?', a: 'Konzentrierte Salzlösungen dringen ins Gestein ein. Wachsende Salzkristalle sprengen es.' },
+  { id: 'k8', lz: 'n5', g: 'kraefte', q: 'Was ist chemische Verwitterung? Nenne Beispiele.', a: 'Gestein wird durch Wasser und darin gelöste Stoffe aufgelöst: Kohlensäure löst Kalk (Höhlen, Karren, Dolinen, Tropfsteine), Rauchgasverwitterung durch Schwefeldioxid aus Fabriken, Hydratation von Salzgestein.' },
+  { id: 'k9', lz: 'n5', g: 'kraefte', q: 'Was ist biologische Verwitterung?', a: 'Lebewesen zerkleinern Gestein: Wurzeln dringen in Risse und sprengen sie (auch Asphalt). Weitere Ursachen: Pilze, Flechten, Algen, Moose, Mikroorganismen.' },
+  { id: 'k10', lz: 'n5', g: 'kraefte', q: 'Welche Verwitterung verursacht der Mensch?', a: 'Zum Beispiel Rauchgasverwitterung oder Kohlensäureverwitterung.' },
+  { id: 'k11', lz: 'n1', g: 'kraefte', q: 'Welche Kräfte verändern Landschaften?', a: 'Wind, Wasser, Eis und Temperaturunterschiede an der Oberfläche (exogen), Erdbeben, Vulkanausbrüche, Gebirgsbildung und das Brechen der Erdkruste aus dem Innern (endogen) und der Mensch.' },
+  { id: 'k12', lz: 'n6', g: 'kraefte', q: 'Wie entsteht eine Caldera?', a: 'Ein Vulkan bricht ein, weil seine Magmakammer leer ist. Im Kessel bildet sich oft ein Kratersee aus Regenwasser.' },
+  { id: 'k13', lz: 'n6', g: 'kraefte', q: 'Wie entsteht eine Wanderdüne?', a: 'Der Wind transportiert Sand und häuft ihn an. Auf der Luvseite (dem Wind zugewandt) wird Sand hochgeweht, auf der Leeseite rutscht er ab. So wandert die Düne.' },
+  { id: 'k14', lz: 'n6', g: 'kraefte', q: 'Wie entstehen Türme wie im Bryce Canyon?', a: 'Härtere Gesteinsschichten oben schützen die weicheren Schichten darunter vor dem Wegschwemmen durch Regenwasser. So bleiben Türme stehen.' },
+  { id: 'g1', lz: 'g1', g: 'uri', q: 'Hochwasser 1977 in Uri: Was geschah?', a: '31. Juli 1977: Der Schächen verliess sein Bett, die Hallen der damaligen Munitionsfabrik standen meterhoch im Wasser. In Attinghausen floss der Kummetbach noch Tage später durchs Dorf. Schaden: 200 Mio. Franken.' },
+  { id: 'g2', lz: 'g1', g: 'uri', q: 'Hochwasser 1987 in Uri: Was geschah?', a: '24./25. August 1987: Unwetter über dem Gotthardmassiv. Überflutet von Flüelen bis Attinghausen, Gotthardroute wochenlang gesperrt, über 900 Nutztiere ertranken. Schaden: 500 Mio. Franken. Danach: ökologischer Hochwasserschutz.' },
+  { id: 'g3', lz: 'g1', g: 'uri', q: 'Hochwasser 2005 in Uri: Was geschah?', a: '22./23. August 2005: Nach 40 Stunden Regen trat der Schächen über die Ufer und überflutete das Industriegelände in Schattdorf («Schattdorfer See», beim Tellpark bis 2,50 m). Rund 200 Betriebe betroffen. Schaden: 365 Mio. Franken.' },
+  { id: 'g4', lz: 'g1', g: 'uri', q: 'Was zeigte das Hochwasser 2020?', a: 'Die Schutzmassnahmen wirkten: Die Reuss wurde kontrolliert über die Ufer gelenkt und in den Urnersee geführt. Es gab nur Aufräumarbeiten.' },
+  { id: 'g5', lz: 'g2', g: 'uri', q: 'Wie funktioniert die Entlastung über die Autobahn?', a: 'Bei extremem Hochwasser fliesst Wasser kontrolliert über eine Entlastungsanlage im Reussdamm auf die A2. Eine Hochwasserschutzmauer hält es dort zurück, und es fliesst Richtung Urnersee ab.' },
+  { id: 'g6', lz: 'g2', g: 'uri', q: 'Was ist der Stiglissammler?', a: 'Ein Geschiebesammler am Schächen bei Bürglen. Er hält Steine und Sand zurück (Platz für mind. 10 000 Lastwagenladungen). Nach 2005 wurde ein verschliessbares Schütz eingebaut.' },
+  { id: 'g7', lz: 'g2', g: 'uri', q: 'Nenne fünf Hochwasserschutzmassnahmen in Uri.', a: 'Zum Beispiel: Schutzmauer Industriegebiet Schattdorf, Notentlastungskanal, Torverschluss Stille Reuss, Entlastung Autobahn, Kaskaden am Reussdamm, Stiglissammler in Bürglen.' },
+  { id: 'e1', lz: 'e2', g: 'eis', q: 'Wie entsteht ein Gletscher?', a: 'Wo es kalt ist und viel Niederschlag fällt, bleibt Schnee länger als ein Jahr liegen. Unter dem Druck neuer Schichten wird er zu Firn und schliesslich zu Gletschereis umgewandelt.' },
+  { id: 'e2', lz: 'e2', g: 'eis', q: 'Was macht ein Gletscher, wenn er fliesst?', a: 'Das Eis bewegt sich langsam talabwärts. Dabei schürft es den Untergrund ab und transportiert Gesteinsmaterial.' },
+  { id: 'e3', lz: 'e1', g: 'eis', q: 'Was ist eine Moräne?', a: 'Vom Gletscher abgelagerter Schutt: vor dem Gletscher (Endmoräne), am Rand (Seitenmoräne) oder zwischen zwei Gletscherströmen (Mittelmoräne).' },
+  { id: 'e4', lz: 'e1', g: 'eis', q: 'Was ist ein U-Tal (Trogtal)?', a: 'Ein Tal, das der Gletscher U-förmig ausgeschürft hat: flacher Boden, steile Wände. Flüsse formen dagegen V-Täler.' },
+  { id: 'e5', lz: 'e1', g: 'eis', q: 'Was sind Rundhöcker?', a: 'Durch den Gletscher rund geschliffene Felsbuckel.' },
+  { id: 'e6', lz: 'e1', g: 'eis', q: 'Was ist die Gletscherzunge?', a: 'Das untere Ende des Gletschers, wo das Eis aufhört. Hier fliesst das Schmelzwasser ab.' },
+  { id: 'e7', lz: 'e1', g: 'eis', q: 'Was ist ein Findling?', a: 'Ein grosser Felsblock, den ein Gletscher weit transportiert und liegen gelassen hat. Er passt nicht zum Gestein seiner Umgebung.' },
+  { id: 'e8', lz: 'e1', g: 'eis', q: 'Was ist ein Fjord?', a: 'Ein Trogtal, das ins Meer hineinragt und mit Meerwasser gefüllt ist (typisch für Norwegen).' },
+  { id: 'e9', lz: 'e1', g: 'eis', q: 'Wo entstehen Längsspalten im Gletscher?', a: 'Dort, wo der Gletscher seitlich Platz hat und auseinanderfliesst. Die Spalten verlaufen längs zum Gletscher.' },
+  { id: 'e10', lz: 'e1', g: 'eis', q: 'Was ist eine Eiszeit?', a: 'Eine Zeit, in der das Klima kälter war und sich die Eismassen weit ausdehnten. Auch das Schweizer Mittelland war damals vergletschert.' },
+  { id: 'e11', lz: 'e1', g: 'eis', q: 'Wie entsteht ein Gletschersee?', a: 'Das Gletschereis hat eine Mulde ausgeschürft. Wenn sich der Gletscher zurückzieht, füllt sie sich mit Schmelzwasser.' },
+  { id: 'e12', lz: 'e3', g: 'eis', q: 'Warum schmelzen die Gletscher weltweit?', a: 'Wegen des Klimawandels: Die Sommer sind wärmer und im Winter fällt weniger Schnee. Es schmilzt mehr Eis, als neu gebildet wird.' },
+  { id: 'e13', lz: 'e3', g: 'eis', q: 'Welchen Nutzen verlieren wir, wenn Gletscher verschwinden?', a: 'Gletscher sind grosse Süsswasserspeicher. Im Sommer liefern sie Schmelzwasser für Trinkwasser, Landwirtschaft und Stromproduktion. Dazu kommen Tourismus und Kies aus Moränen.' },
+  { id: 'e14', lz: 'e3', g: 'eis', q: 'Welche Gefahren bringt die Gletscherschmelze?', a: 'Zum Beispiel Flutwellen durch plötzlichen Wasseranstieg, wenn sich ein Gletschersee entleert.' }
+];
+const CGROUPS = { alle: 'Alle', kraefte: 'Naturkräfte', fluss: 'Fluss', karst: 'Karst', gezeiten: 'Gezeiten', uri: 'Hochwasser Uri', eis: 'Gletscher' };
+let cFilter = 'alle', deck = [], cur = null, flipped = false, cSess = { yes: 0, no: 0 };
+const box = c => state.cards[c.id] || 1;
+function buildDeck() {
+  deck = shuffle(CARDS.filter(c => cFilter === 'alle' || c.g === cFilter)).sort((a, b) => box(a) - box(b));
+  cur = deck.shift() || null; flipped = false; cSess = { yes: 0, no: 0 };
+}
+function renderFilter() {
+  $('#cFilter').innerHTML = Object.entries(CGROUPS).map(([k, v]) => `<button class="chip" data-cf="${k}" aria-pressed="${k === cFilter}">${v}</button>`).join('');
+}
+function renderBoxes() {
+  const set = CARDS.filter(c => cFilter === 'alle' || c.g === cFilter);
+  $('#boxes').innerHTML = [1, 2, 3].map(n => `<span><b>${set.filter(c => box(c) === n).length}</b>Box ${n}</span>`).join('');
+}
+function renderCard() {
+  renderBoxes();
+  const f = $('#flash');
+  if (!cur) {
+    f.innerHTML = `<div><p class="meta">Runde fertig</p><p class="q">${cSess.yes} gewusst, ${cSess.no}× nochmals geübt.</p></div>
+      <div class="row"><button class="btn primary" id="cAgain">Neue Runde</button></div>`;
+    return;
+  }
+  f.innerHTML = `<div style="display:grid;gap:12px">
+      <p class="meta">Noch ${deck.length + 1} Karten · Box ${box(cur)} · Lernziel ${LZ[cur.lz].text.slice(1, 40)}…</p>
+      <p class="q">${esc(cur.q)}</p>
+      ${flipped ? `<p class="a">${esc(cur.a)}</p>` : ''}
+    </div>
+    <div class="row">${flipped
+      ? `<button class="btn primary" id="cYes">Wusste ich</button><button class="btn" id="cNo">Noch nicht</button>`
+      : `<button class="btn primary" id="cFlip">Antwort zeigen</button>`}</div>`;
+}
+$('#flash').addEventListener('click', e => {
+  const id = e.target.id;
+  if (id === 'cFlip') { flipped = true; renderCard(); $('#cYes')?.focus(); }
+  if (id === 'cYes' || id === 'cNo') {
+    const ok = id === 'cYes';
+    state.cards[cur.id] = ok ? Math.min(3, box(cur) + 1) : 1;
+    record(cur.lz, ok);
+    if (ok) cSess.yes++; else { cSess.no++; deck.splice(Math.min(2, deck.length), 0, cur); }
+    cur = deck.shift() || null; flipped = false; renderCard(); $('#cFlip')?.focus();
+  }
+  if (id === 'cAgain') { buildDeck(); renderCard(); }
+});
+$('#cFilter').addEventListener('click', e => {
+  const b = e.target.closest('[data-cf]'); if (!b) return;
+  cFilter = b.dataset.cf; renderFilter(); buildDeck(); renderCard();
+});
+
+/* ---------- Bild-Quiz ---------- */
+const SPOTS = {
+  quelle: { n: 'Quelle', lz: ['w1'], t: 'Hier entspringt der Fluss. Noch wenig Wasser, aber starkes Gefälle.' },
+  vtal: { n: 'V-Tal (Kerbtal)', lz: ['w1'], t: 'Im steilen Oberlauf überwiegt die Tiefenerosion. Der Fluss schneidet sich ein, die Hänge rutschen nach. Der Querschnitt sieht aus wie ein V.' },
+  wasserfall: { n: 'Wasserfall', lz: ['w1'], t: 'Das Wasser stürzt über eine Geländestufe. Am Fuss erodiert es ein tiefes Becken (Kolk).' },
+  schwemmkegel: { n: 'Schwemmkegel', lz: ['w1', 'w2'], t: 'Ein steiler Seitenbach erreicht das flache Haupttal. Er wird plötzlich langsamer und lagert sein Geröll fächerförmig ab. Viele Alpendörfer liegen auf Schwemmkegeln, weil es dort trockener war als im Talboden.' },
+  maeander: { n: 'Mäander', lz: ['w1', 'w4'], t: 'Flussschlingen im flachen Talboden. Aussen wird erodiert, innen abgelagert. So wandern die Schlingen und werden immer enger.' },
+  prallhang: { n: 'Prallhang', lz: ['w4'], t: 'Aussenseite der Kurve. Das Wasser fliesst schnell und erodiert, das Ufer wird steil.' },
+  gleithang: { n: 'Gleithang', lz: ['w4'], t: 'Innenseite der Kurve. Das Wasser fliesst langsam und lagert Sand und Kies ab, das Ufer ist flach (Kiesbank).' },
+  altwasser: { n: 'Altwasser (Altarm)', lz: ['w4', 'w1'], t: 'Eine abgeschnittene Flussschlinge. Der Fluss hat den Mäanderhals durchbrochen und nimmt den kürzeren Weg. Die alte Schlinge bleibt als stehendes Gewässer zurück.' },
+  delta: { n: 'Delta', lz: ['w1'], t: 'An der Mündung in den See wird der Fluss fast still und lagert seine Fracht ab. Er teilt sich in mehrere Arme. Beispiel: das Reussdelta im Urnersee.' },
+  see: { n: 'See', lz: ['w1'], t: 'Hier mündet der Fluss. Im ruhigen Wasser sinken Sand und Schlamm ab, der See wird langsam aufgefüllt.' }
+};
+const PRIORITY = ['prallhang', 'gleithang', 'altwasser', 'wasserfall', 'quelle', 'schwemmkegel', 'delta', 'vtal', 'see', 'maeander'];
+const LOOPS = [{ cx: 410, d: 1 }, { cx: 510, d: -1 }, { cx: 610, d: 1 }, { cx: 710, d: -1 }];
+function arcPath(cx, cy, r, a0, a1) {
+  const p = a => [(cx + r * Math.cos(a * Math.PI / 180)).toFixed(1), (cy + r * Math.sin(a * Math.PI / 180)).toFixed(1)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1}`;
+}
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; }
+function drawMapDetails() {
+  const banks = $('#banks'), spots = $('#bankSpots');
+  LOOPS.forEach(({ cx, d }) => {
+    const [a0, a1] = d > 0 ? [30, 150] : [210, 330];
+    el('path', { d: arcPath(cx, 300, 42, a0 + 8, a1 - 8), class: 'm-sandline' }, banks);
+    el('path', { d: arcPath(cx, 300, 58, a0 - 10, a1 + 10), class: 'm-steep' }, banks);
+    el('path', { d: arcPath(cx, 300, 64, a0, a1), class: 'hs hs-stroke', 'data-spot': 'prallhang' }, spots);
+    el('path', { d: arcPath(cx, 300, 37, a0, a1), class: 'hs hs-stroke', 'data-spot': 'gleithang' }, spots);
+  });
+  // Hangschraffen im V-Tal
+  const v = $('#vtalLine'), L = v.getTotalLength(), h = $('#hach');
+  for (let s = 14; s < L - 4; s += 7) {
+    const p = v.getPointAtLength(s), q = v.getPointAtLength(s + 1);
+    let nx = -(q.y - p.y), ny = q.x - p.x; const m = Math.hypot(nx, ny); nx /= m; ny /= m;
+    [1, -1].forEach(k => el('line', { x1: p.x + k * nx * 7, y1: p.y + k * ny * 7, x2: p.x + k * nx * 18, y2: p.y + k * ny * 18, class: 'm-hach' }, h));
+  }
+  // Berg-Signaturen
+  const mtn = $('#mtn'), g = $('#glyphs'), riv = $('#river');
+  const avoid = [];
+  const rl = riv.getTotalLength();
+  for (let s = 0; s < rl * 0.32; s += 6) { const p = riv.getPointAtLength(s); avoid.push([p.x, p.y]); }
+  for (let y = 0; y < 165; y += 6) avoid.push([520 + (y > 120 ? -5 : 0), y]);
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let y = 22; y < 260; y += 30) {
+    for (let x = 18 + (y / 30 % 2) * 18; x < 800; x += 38) {
+      const px = x + (rnd() - .5) * 14, py = y + (rnd() - .5) * 10;
+      const pt = new DOMPoint(px, py + 8);
+      let inside = false;
+      try { inside = mtn.isPointInFill(pt) && mtn.isPointInFill(new DOMPoint(px, py + 18)); } catch (e) { inside = py < 160; }
+      if (!inside) continue;
+      if (avoid.some(([ax, ay]) => Math.hypot(ax - px, ay - py) < 30)) continue;
+      const w = 9 + rnd() * 5, hgt = 9 + rnd() * 6;
+      el('path', { d: `M${px - w},${py + 6} L${px},${py - hgt} L${px + w},${py + 6} Z`, class: 'm-glyph' }, g);
+      el('path', { d: `M${px},${py - hgt} L${px + w},${py + 6} L${px + 2},${py + 6} Z`, class: 'm-glyph-shade' }, g);
+    }
+  }
+}
+const GSPOTS = {
+  firn: { n: 'Firngebiet (Nährgebiet)', lz: ['e2'], t: 'Hier oben ist es kalt und es fällt viel Schnee. Er bleibt länger als ein Jahr liegen und wird unter dem Druck neuer Schichten zu Firn und dann zu Gletschereis.' },
+  zunge: { n: 'Gletscherzunge', lz: ['e1'], t: 'Das untere Ende des Gletschers, wo das Eis aufhört. Hier schmilzt mehr Eis, als von oben nachfliesst.' },
+  tor: { n: 'Gletschertor', lz: ['e1'], t: 'Eine Öffnung an der Gletscherzunge. Hier fliesst das Schmelzwasser als Bach aus dem Gletscher.' },
+  mittel: { n: 'Mittelmoräne', lz: ['e1'], t: 'Wo zwei Gletscher zusammenfliessen, vereinigen sich ihre Seitenmoränen zu einem Schuttstreifen in der Mitte des Eises.' },
+  seiten: { n: 'Seitenmoräne', lz: ['e1'], t: 'Schutt am Rand des Gletschers. Er stammt von den Talflanken, von denen verwittertes Gestein auf das Eis fällt.' },
+  end: { n: 'Endmoräne', lz: ['e1'], t: 'Ein Schuttwall vor der Gletscherzunge. Der Gletscher hat das Material vor sich hergeschoben und abgelagert. Er zeigt, wie weit der Gletscher einmal reichte.' },
+  quer: { n: 'Querspalten', lz: ['e1'], t: 'Spalten quer zur Fliessrichtung. Sie entstehen, wo der Gletscher über eine Geländestufe fliesst und das Eis auseinandergezogen wird.' },
+  laengs: { n: 'Längsspalten', lz: ['e1'], t: 'Spalten längs zur Fliessrichtung. Sie entstehen, wo der Gletscher seitlich Platz hat und sich ausbreitet.' },
+  see: { n: 'Gletschersee', lz: ['e1'], t: 'Der Gletscher hat eine Mulde ausgeschürft. Nach seinem Rückzug füllt sie sich mit Schmelzwasser, hier hinter der Endmoräne gestaut.' },
+  rund: { n: 'Rundhöcker', lz: ['e1'], t: 'Felsbuckel, die der Gletscher rund geschliffen hat. Oft sieht man noch Kratzspuren im Fels.' },
+  utal: { n: 'U-Tal (Trogtal)', lz: ['e1'], t: 'Der Gletscher hat das Tal U-förmig ausgeschürft: breiter, flacher Talboden und steile Wände. Ein Fluss formt dagegen ein V-Tal.' },
+  findling: { n: 'Findling', lz: ['e1'], t: 'Ein grosser Felsblock, den ein Gletscher weit transportiert und liegen gelassen hat. Er passt nicht zum Gestein der Umgebung und zeigt, wie weit das Eis in der Eiszeit reichte.' },
+  fjord: { n: 'Fjord', lz: ['e1'], t: 'Ein Trogtal, das ins Meer hineinragt und mit Meerwasser gefüllt ist. Typisch für Norwegen.' }
+};
+const GPRIORITY = ['tor', 'rund', 'findling', 'see', 'end', 'mittel', 'seiten', 'laengs', 'quer', 'firn', 'zunge', 'fjord', 'utal'];
+const SCENES = {
+  fluss: { label: 'Flusslandschaft', svg: '#map', hs: '#hotspots', hl: '#hl', wrap: '#wrapFluss', spots: SPOTS, prio: PRIORITY },
+  eis: { label: 'Gletscherlandschaft', svg: '#gmap', hs: '#ghotspots', hl: '#ghl', wrap: '#wrapEis', spots: GSPOTS, prio: GPRIORITY }
+};
+function hachLine(parent, x1, y1, x2, y2, side) {
+  const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy * side, ny = ux * side;
+  for (let s = 4; s < L; s += 7) {
+    const px = x1 + ux * s, py = y1 + uy * s;
+    el('line', { x1: px + nx * 2, y1: py + ny * 2, x2: px + nx * 13, y2: py + ny * 13, class: 'm-hach' }, parent);
+  }
+}
+function drawGlacierDetails() {
+  const h = $('#gHach');
+  hachLine(h, 288, 300, 238, 438, 1); hachLine(h, 442, 300, 472, 438, -1);
+  hachLine(h, 660, 300, 668, 466, 1); hachLine(h, 696, 300, 706, 466, -1);
+  const c = $('#gCrev');
+  [214, 228, 242].forEach(y => [[306, 332], [366, 392], [398, 420]].forEach(([a, b]) =>
+    el('path', { d: `M${a},${y} Q${(a + b) / 2},${y + 5} ${b},${y}`, class: 'g-crev' }, c)));
+  [[318, 4], [327, 2], [336, 0], [392, 0], [401, -2], [410, -4]].forEach(([x, dx]) =>
+    el('path', { d: `M${x},270 L${x - dx},292`, class: 'g-crev' }, c));
+  const excl = ['#gGlacier', '#gValley', '#gLow', '#gSea'].map(id => $(id));
+  const inside = (x, y) => excl.some(p => { try { return p.isPointInFill(new DOMPoint(x, y)); } catch (e) { return false; } });
+  const g = $('#gGlyphs');
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let y = 24; y < 470; y += 36) {
+    for (let x = 16 + (y / 36 % 2) * 22; x < 800; x += 46) {
+      const px = x + (rnd() - .5) * 12, py = y + (rnd() - .5) * 8;
+      if ([[0, 0], [16, 0], [-16, 0], [0, 16], [0, -16], [12, 12], [-12, 12]].some(([dx, dy]) => inside(px + dx, py + dy))) continue;
+      const w = 9 + rnd() * 5, hgt = 9 + rnd() * 6;
+      el('path', { d: `M${px - w},${py + 6} L${px},${py - hgt} L${px + w},${py + 6} Z`, class: 'm-glyph' }, g);
+      el('path', { d: `M${px},${py - hgt} L${px + w},${py + 6} L${px + 2},${py + 6} Z`, class: 'm-glyph-shade' }, g);
+    }
+  }
+}
+const quiz = { scene: 'fluss', key: null, type: 'tap', done: false, score: 0, total: 0 };
+const SC = () => SCENES[quiz.scene];
+function svgPoint(svg, x, y) { const p = new DOMPoint(x, y).matrixTransform(svg.getScreenCTM().inverse()); return p; }
+function highlight(key, cls) {
+  const sc = SC(), hl = $(sc.hl); const nodes = $$(`${sc.hs} [data-spot="${key}"]`);
+  (quiz.type === 'name' && !quiz.done ? nodes.slice(0, 1) : nodes).forEach(n => {
+    const c = n.cloneNode(); c.removeAttribute('data-spot');
+    c.setAttribute('class', `hl ${n.classList.contains('hs-stroke') ? 'stroke' : 'fill'} ${cls || ''}`);
+    hl.appendChild(c);
+  });
+}
+function setScene(scene) {
+  if (!SCENES[scene]) return;
+  quiz.scene = scene; quiz.key = null; quiz.score = 0; quiz.total = 0;
+  Object.entries(SCENES).forEach(([k, v]) => $(v.wrap).hidden = k !== scene);
+  if (scene === 'eis' && !$('#gGlyphs').childElementCount) requestAnimationFrame(() => { if (!$('#gGlyphs').childElementCount && $('#v-bild').offsetParent) drawGlacierDetails(); });
+  $('#bScenes').innerHTML = Object.entries(SCENES).map(([k, v]) => `<button class="chip" data-scene-pick="${k}" aria-pressed="${k === scene}">${v.label}</button>`).join('');
+  nextQuiz();
+}
+$('#bScenes').addEventListener('click', e => { const b = e.target.closest('[data-scene-pick]'); if (b) setScene(b.dataset.scenePick); });
+function nextQuiz() {
+  const sp = SC().spots;
+  const keys = Object.keys(sp).filter(k => k !== quiz.key);
+  quiz.key = keys[Math.floor(Math.random() * keys.length)];
+  quiz.type = Math.random() < .5 ? 'tap' : 'name';
+  quiz.done = false;
+  $(SC().hl).innerHTML = '';
+  $('#bAnswer').innerHTML = '';
+  if (quiz.type === 'tap') {
+    $('#bTask').innerHTML = `Tippe auf der Karte auf: <em>${esc(sp[quiz.key].n)}</em>`;
+  } else {
+    $('#bTask').innerHTML = `Wie heisst die <em>markierte</em> Form?`;
+    highlight(quiz.key);
+    const opts = shuffle([quiz.key, ...shuffle(Object.keys(sp).filter(k => k !== quiz.key)).slice(0, 3)]);
+    $('#bAnswer').innerHTML = `<div class="opts">${opts.map(k => `<button class="opt" data-k="${k}">${esc(sp[k].n)}</button>`).join('')}</div>`;
+  }
+  renderScore();
+}
+function renderScore() { $('#bScore').textContent = quiz.total ? `${quiz.score} von ${quiz.total} richtig` : ''; }
+function finishQuiz(ok, pickedKey) {
+  const sp = SC().spots;
+  quiz.done = true; quiz.total++; if (ok) quiz.score++;
+  sp[quiz.key].lz.forEach(id => record(id, ok));
+  if (quiz.scene === 'fluss') record('n2', ok);
+  $(SC().hl).innerHTML = '';
+  highlight(quiz.key, ok ? 'good' : '');
+  const s = sp[quiz.key];
+  const fbHtml = `<div class="fb ${ok ? 'good' : 'bad'}" style="margin-top:12px">
+    <p><b class="k">${ok ? 'Richtig!' : 'Leider falsch.'}</b> ${!ok && pickedKey ? `Das war: ${esc(sp[pickedKey].n)}. ` : ''}Markiert ist: <b>${esc(s.n)}</b>.</p>
+    <p style="margin-top:6px">${esc(s.t)}</p></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="bNext">Nächste Aufgabe</button></div>`;
+  if (quiz.type === 'name') $('#bAnswer').insertAdjacentHTML('beforeend', fbHtml); else $('#bAnswer').innerHTML = fbHtml;
+  $('#bTask').innerHTML = esc(s.n);
+  renderScore();
+  $('#bNext').focus({ preventScroll: true });
+}
+Object.keys(SCENES).forEach(key => $(SCENES[key].svg).addEventListener('click', e => {
+  if (quiz.scene !== key || quiz.type !== 'tap' || quiz.done) return;
+  const sc = SC();
+  const hits = document.elementsFromPoint(e.clientX, e.clientY).map(n => n.getAttribute && n.getAttribute('data-spot')).filter(Boolean);
+  const svg = $(sc.svg); const p = svgPoint(svg, e.clientX, e.clientY);
+  $$('.tapmark', svg).forEach(n => n.remove());
+  if (!hits.length) {
+    el('circle', { cx: p.x, cy: p.y, r: 9, class: 'tapmark' }, $(sc.hl));
+    $('#bAnswer').innerHTML = `<p class="note" style="margin-top:4px">Hier ist keine der gesuchten Formen. Versuch es an einer anderen Stelle.</p>`;
+    return;
+  }
+  const ok = hits.includes(quiz.key);
+  const picked = sc.prio.find(k => hits.includes(k));
+  finishQuiz(ok, ok ? null : picked);
+  el('circle', { cx: p.x, cy: p.y, r: 9, class: 'tapmark ' + (ok ? 'good' : 'bad') }, $(sc.hl));
+}));
+$('#bAnswer').addEventListener('click', e => {
+  if (e.target.id === 'bNext') { nextQuiz(); return; }
+  const b = e.target.closest('.opt'); if (!b || quiz.done) return;
+  const ok = b.dataset.k === quiz.key;
+  $$('#bAnswer .opt').forEach(o => { o.disabled = true; if (o.dataset.k === quiz.key) o.classList.add('right'); });
+  if (!ok) b.classList.add('wrong');
+  finishQuiz(ok, ok ? null : b.dataset.k);
+});
+
+/* ---------- Sortieren ---------- */
+const SORTS = {
+  prozess: { label: 'Prozesskette', title: 'Verwitterung, Erosion, Transport oder Ablagerung?', lz: 'n4', bins: ['Verwitterung', 'Erosion', 'Transport', 'Ablagerung'], items: [
+    ['Fels zerfällt an Ort und Stelle in Stücke', 0], ['Frost sprengt einen Stein', 0], ['Wurzeln sprengen Risse im Gestein', 0, 'n5'],
+    ['Der Bach reisst Material vom Ufer weg', 1], ['Abtragung', 1], ['Ein Gletscher schürft den Talboden ab', 1],
+    ['Der Fluss trägt Kies talabwärts', 2], ['Wind weht Sand durch die Wüste', 2],
+    ['Ein Delta wächst in den See', 3], ['Akkumulation', 3], ['Sedimentation', 3], ['Ein Gletscher hinterlässt eine Moräne', 3] ] },
+  exo: { label: 'Exogen / endogen', title: 'Exogen (Oberfläche) oder endogen (Erdinneres)?', lz: 'n3', bins: ['exogen', 'endogen'], items: [
+    ['Wind', 0], ['fliessendes Wasser', 0], ['Gletschereis', 0], ['Temperaturunterschiede', 0], ['Niederschlag', 0], ['Wirbelsturm', 0],
+    ['Erdbeben', 1], ['Vulkanausbruch', 1], ['Gebirgsbildung', 1], ['Magmakammer', 1], ['Brechen der Erdkruste', 1], ['Gesteinsveränderung (Metamorphose)', 1] ] },
+  verw: { label: 'Verwitterungsarten', title: 'Physikalisch, chemisch oder biologisch?', lz: 'n5', bins: ['physikalisch', 'chemisch', 'biologisch'], items: [
+    ['Temperaturverwitterung', 0], ['Frostsprengung', 0], ['Salzsprengung', 0], ['Schlaglöcher im Winter', 0],
+    ['Kohlensäure löst Kalk', 1], ['Rauchgasverwitterung', 1], ['Hydratation von Salzgestein', 1], ['Tropfsteine entstehen', 1],
+    ['Baumwurzeln heben Asphalt an', 2], ['Flechten und Moose', 2], ['Pilze und Algen', 2] ] },
+  lauf: { label: 'Flussabschnitte', title: 'Oberlauf, Mittellauf oder Unterlauf?', lz: 'w2', bins: ['Oberlauf', 'Mittellauf', 'Unterlauf'], items: [
+    ['starkes Gefälle', 0], ['Tiefenerosion überwiegt', 0], ['V-Tal', 0], ['grosse, kantige Blöcke', 0, 'w3'], ['Wasserfälle', 0],
+    ['mittleres Gefälle', 1], ['Seitenerosion an den Kurven', 1], ['gerundeter Kies', 1, 'w3'], ['Erosion und Ablagerung halten sich etwa die Waage', 1],
+    ['geringes Gefälle', 2], ['Sedimentation überwiegt', 2], ['feiner Sand und Schlamm', 2, 'w3'], ['breite Schwemmebene', 2], ['Delta', 2] ] },
+  hang: { label: 'Prall- und Gleithang', title: 'Prallhang oder Gleithang?', lz: 'w4', bins: ['Prallhang', 'Gleithang'], items: [
+    ['Aussenseite der Kurve', 0], ['schnelle Strömung', 0], ['Erosion', 0], ['steiles Ufer', 0],
+    ['Innenseite der Kurve', 1], ['langsame Strömung', 1], ['Ablagerung von Sand und Kies', 1], ['flaches Ufer mit Kiesbank', 1] ] },
+  karst: { label: 'Karst', title: 'Karst: an der Oberfläche oder in der Höhle?', lz: 'w5', bins: ['an der Oberfläche', 'in der Höhle'], items: [
+    ['Karren', 0], ['Doline', 0], ['Polje', 0], ['Trockental', 0], ['Kalktuff', 0],
+    ['Stalaktit', 1], ['Stalagmit', 1], ['Säule', 1], ['Sintervorhang', 1], ['Sinterbecken', 1], ['unterirdischer See', 1] ] },
+  tide: { label: 'Spring- und Nipptide', title: 'Springtide oder Nipptide?', lz: 'w7', bins: ['Springtide', 'Nipptide'], items: [
+    ['Vollmond', 0], ['Neumond', 0], ['Sonne, Erde und Mond in einer Linie', 0], ['besonders grosser Tidenhub', 0],
+    ['Halbmond', 1], ['Sonne und Mond im rechten Winkel zur Erde', 1], ['besonders kleiner Tidenhub', 1] ] },
+  fe: { label: 'Fluss oder Gletscher', title: 'Hat ein Fluss oder ein Gletscher diese Form geschaffen?', lz: 'e1', bins: ['Fluss', 'Gletscher'], items: [
+    ['V-Tal', 0, 'w1'], ['Mäander', 0, 'w1'], ['Delta', 0, 'w1'], ['Schwemmkegel', 0, 'w1'], ['Altwasser', 0, 'w4'], ['Klamm', 0, 'w1'],
+    ['U-Tal (Trogtal)', 1], ['Moräne', 1], ['Rundhöcker', 1], ['Findling', 1], ['Fjord', 1], ['Gletschersee', 1] ] },
+  wo: { label: 'Wer war es?', title: 'Welche Kraft hat diese Landschaft gebildet?', lz: 'n6', bins: ['Wasser', 'Eis', 'Wind', 'Feuer (Vulkan)'], items: [
+    ['Caldera mit Kratersee', 3], ['Vulkankegel', 3], ['Wanderdüne', 2], ['Windschliff an Felsen', 2, 'n1'],
+    ['U-Tal mit Gletschersee', 1], ['Moräne', 1], ['Türme aus weichem Gestein (Bryce Canyon)', 0], ['Flussdelta', 0], ['Wasserfall', 0] ] }
+};
+const sort = { set: 'lauf', queue: [], placed: [], score: 0 };
+function startSort(set) {
+  sort.set = set; sort.queue = shuffle(SORTS[set].items); sort.placed = SORTS[set].bins.map(() => []); sort.score = 0;
+  $('#sSets').innerHTML = Object.entries(SORTS).map(([k, v]) => `<button class="chip" data-set="${k}" aria-pressed="${k === set}">${v.label}</button>`).join('');
+  $('#sFb').textContent = '';
+  renderSort();
+}
+function renderSort() {
+  const S = SORTS[sort.set], n = S.items.length, done = n - sort.queue.length;
+  $('#sTitle').textContent = S.title;
+  $('#sScore').textContent = `${done} / ${n} · ${sort.score} richtig`;
+  const item = sort.queue[0];
+  $('#sCard').innerHTML = item
+    ? `<div class="sortcard">${esc(item[0])}</div>`
+    : `<div class="sortcard">Fertig: ${sort.score} von ${n} richtig</div><div class="row" style="margin-top:12px;justify-content:center"><button class="btn primary" id="sAgain">Nochmals</button></div>`;
+  $('#sBins').innerHTML = S.bins.map((b, i) => `<button class="bin" data-bin="${i}" ${item ? '' : 'disabled'}><h3>${esc(b)}</h3><ul>${sort.placed[i].map(p => `<li class="${p.ok ? '' : 'miss'}">${esc(p.t)}</li>`).join('')}</ul></button>`).join('');
+}
+$('#sSets').addEventListener('click', e => { const b = e.target.closest('[data-set]'); if (b) startSort(b.dataset.set); });
+$('#sCard').addEventListener('click', e => { if (e.target.id === 'sAgain') startSort(sort.set); });
+$('#sBins').addEventListener('click', e => {
+  const b = e.target.closest('[data-bin]'); if (!b || !sort.queue.length) return;
+  const S = SORTS[sort.set]; const [t, right, lz] = sort.queue.shift();
+  const ok = +b.dataset.bin === right;
+  if (ok) sort.score++;
+  sort.placed[right].push({ t, ok });
+  record(lz || S.lz, ok);
+  $('#sFb').innerHTML = ok ? `<b style="color:var(--ok)">Richtig.</b> «${esc(t)}» gehört zu ${esc(S.bins[right])}.` : `<b style="color:var(--bad)">Nicht ganz.</b> «${esc(t)}» gehört zu ${esc(S.bins[right])}.`;
+  renderSort();
+});
+
+/* ---------- Mäander ---------- */
+const STAGES = [
+  { w: .4, cap: '<b>1 · Leicht gewundener Fluss.</b> Schon in einer kleinen Kurve wird das Wasser nach aussen gedrückt.' },
+  { w: 1.1, cap: '<b>2 · Kurven werden stärker.</b> Aussen am <b>Prallhang</b> fliesst das Wasser schneller und erodiert. Innen am <b>Gleithang</b> wird es langsamer und lagert Sand und Kies ab.' },
+  { w: 1.7, cap: '<b>3 · Mäander.</b> Die Schlingen wachsen und wandern seitwärts. Der <b>Mäanderhals</b> wird immer schmaler.' },
+  { w: 1.95, cap: '<b>4 · Kurz vor dem Durchbruch.</b> Nur noch ein schmaler Landstreifen trennt die beiden Flussstücke. Ein Hochwasser genügt.' },
+  { w: 1.95, cut: true, cap: '<b>5 · Durchbruch, Altwasser.</b> Der Fluss nimmt den kürzeren Weg. Die alte Schlinge wird abgetrennt, ihre Enden verlanden. Zurück bleibt ein <b>Altwasser</b>.' }
+];
+function sineCurve(omega) {
+  const n = 600, waves = 1.5, ds = waves / n; let x = 0, y = 0; const pts = [[0, 0]];
+  for (let i = 1; i <= n; i++) { const th = omega * Math.sin(2 * Math.PI * i / n * waves); x += Math.cos(th) * ds; y += Math.sin(th) * ds; pts.push([x, y]); }
+  return pts;
+}
+function drawStage(i) {
+  const st = STAGES[i], svg = $('#stageSvg'); svg.innerHTML = '';
+  el('rect', { width: 580, height: 270, class: 'stage-land' }, svg);
+  let pts = sineCurve(st.w);
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys);
+  const sc = Math.min(460 / (maxx - minx), 190 / (maxy - miny || 1));
+  const ox = 290 - (minx + maxx) / 2 * sc, oy = 140 - (miny + maxy) / 2 * sc;
+  pts = pts.map(([x, y]) => [x * sc + ox, y * sc + oy]);
+  const P = arr => arr.map((p, k) => (k ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('');
+  const first = pts[0], last = pts[pts.length - 1];
+  const lead = (a, b) => el('path', { d: `M${a[0]},${a[1]} L${b[0]},${b[1]}`, class: 'm-river' }, svg);
+  lead([0, first[1]], first); lead(last, [580, last[1]]);
+  const n = pts.length - 1;
+  // Scheitel der mittleren Schlinge (nach oben)
+  let ai = Math.round(n / 3); for (let k = Math.round(n / 3); k < Math.round(2 * n / 3); k++) if (pts[k][1] < pts[ai][1]) ai = k;
+  if (!st.cut) {
+    if (i >= 1) el('path', { d: P(pts.slice(ai - 40, ai + 41).map(([x, y]) => [x, y + 10])), class: 'm-sandline', style: 'stroke-width:8' }, svg);
+    el('path', { d: P(pts), class: 'm-river' }, svg);
+    if (i >= 1) {
+      const [x, y] = pts[ai];
+      el('text', { x, y: y - 14, 'text-anchor': 'middle', class: 'stage-label' }, svg).textContent = 'Prallhang';
+      el('text', { x, y: y + 34, 'text-anchor': 'middle', class: 'stage-label' }, svg).textContent = 'Gleithang';
+    }
+    if (i >= 2) {
+      let bi = 0, bj = 0, bd = 1e9;
+      for (let a = Math.round(n / 6); a < ai - n / 10; a += 3) for (let b = Math.round(ai + n / 10); b < Math.round(5 * n / 6); b += 3) { const d = Math.hypot(pts[a][0] - pts[b][0], pts[a][1] - pts[b][1]); if (d < bd) { bd = d; bi = a; bj = b; } }
+      const mx = (pts[bi][0] + pts[bj][0]) / 2, my = (pts[bi][1] + pts[bj][1]) / 2;
+      el('text', { x: mx, y: my + 40, 'text-anchor': 'middle', class: 'stage-label dim' }, svg).textContent = 'Mäanderhals';
+      el('line', { x1: mx, y1: my + 26, x2: mx, y2: my + 8, stroke: 'var(--muted)', 'stroke-width': 1.2 }, svg);
+    }
+  } else {
+    let bi = 0, bj = 0, bd = 1e9;
+    for (let a = Math.round(n / 6); a < ai - n / 10; a++) for (let b = Math.round(ai + n / 10); b < Math.round(5 * n / 6); b += 2) { const d = Math.hypot(pts[a][0] - pts[b][0], pts[a][1] - pts[b][1]); if (d < bd) { bd = d; bi = a; bj = b; } }
+    const ox2 = pts.slice(bi + 22, bj - 21);
+    el('path', { d: P([ox2[0], ...ox2, ox2[ox2.length - 1]]), class: 'm-sandline', style: 'stroke-width:13;opacity:.7' }, svg);
+    el('path', { d: P(ox2), class: 'm-river', style: 'opacity:.75' }, svg);
+    const k = 14, A = pts[bi - k], B = pts[bj + k], ta = [A[0] - pts[bi - k - 4][0], A[1] - pts[bi - k - 4][1]], tb = [pts[bj + k + 4][0] - B[0], pts[bj + k + 4][1] - B[1]];
+    const na = Math.hypot(...ta), nb = Math.hypot(...tb), L = Math.max(18, bd * 1.2);
+    el('path', { d: P(pts.slice(0, bi - k + 1)) + `C${(A[0] + ta[0] / na * L).toFixed(1)},${(A[1] + ta[1] / na * L).toFixed(1)} ${(B[0] - tb[0] / nb * L).toFixed(1)},${(B[1] - tb[1] / nb * L).toFixed(1)} ${B[0].toFixed(1)},${B[1].toFixed(1)}` + P(pts.slice(bj + k)).replace(/^M/, 'L'), class: 'm-river' }, svg);
+    const [x, y] = pts[ai];
+    el('text', { x, y: y + 34, 'text-anchor': 'middle', class: 'stage-label' }, svg).textContent = 'Altwasser';
+    const mx = (pts[bi][0] + pts[bj][0]) / 2, my = (pts[bi][1] + pts[bj][1]) / 2;
+    el('text', { x: mx + 62, y: my + 20, 'text-anchor': 'start', class: 'stage-label dim' }, svg).textContent = '← Durchbruch';
+  }
+  el('text', { x: 12, y: 258, class: 'm-caption' }, svg).textContent = 'Fliessrichtung →';
+  $('#stageCap').innerHTML = st.cap;
+}
+$('#stageR').addEventListener('input', e => drawStage(+e.target.value));
+
+const STEPS = [
+  'Ein Fluss fliesst in einer leichten Kurve durch eine flache Ebene.',
+  'Aussen am Prallhang fliesst das Wasser schneller und erodiert das Ufer.',
+  'Innen am Gleithang fliesst es langsamer und lagert Sand und Kies ab.',
+  'Die Schlinge wird grösser, der Mäanderhals immer schmaler.',
+  'Bei einem Hochwasser durchbricht der Fluss den Mäanderhals.',
+  'Der Fluss nimmt den kürzeren Weg, die Enden der alten Schlinge verlanden.',
+  'Zurück bleibt ein stehendes Gewässer: ein Altwasser (Altarm).'
+];
+let order = [];
+function newOrder() { do { order = shuffle(STEPS.map((_, i) => i)); } while (order.every((v, i) => v === i)); renderOrder(); $('#orderFb').textContent = ''; }
+function renderOrder(marks) {
+  $('#order').innerHTML = order.map((s, i) => `<li class="${marks ? (s === i ? 'right' : 'wrong') : ''}"><span>${esc(STEPS[s])}</span>
+    <span class="mv"><button data-mv="${i}" data-d="-1" aria-label="Nach oben" ${i ? '' : 'disabled'}>↑</button><button data-mv="${i}" data-d="1" aria-label="Nach unten" ${i < order.length - 1 ? '' : 'disabled'}>↓</button></span></li>`).join('');
+}
+$('#order').addEventListener('click', e => {
+  const b = e.target.closest('[data-mv]'); if (!b) return;
+  const i = +b.dataset.mv, j = i + +b.dataset.d;
+  [order[i], order[j]] = [order[j], order[i]]; renderOrder();
+  $(`#order [data-mv="${j}"][data-d="${b.dataset.d}"]`)?.focus();
+  $('#orderFb').textContent = '';
+});
+$('#orderCheck').addEventListener('click', () => {
+  const right = order.filter((s, i) => s === i).length; const ok = right === STEPS.length;
+  record('w4', ok); renderOrder(true);
+  $('#orderFb').innerHTML = ok ? '<b style="color:var(--ok)">Perfekt, alles in der richtigen Reihenfolge.</b>' : `${right} von ${STEPS.length} an der richtigen Stelle. Verschiebe die rot markierten Schritte.`;
+});
+$('#orderNew').addEventListener('click', newOrder);
+
+/* ---------- Gefälle-Labor ---------- */
+const GRAINS = [
+  { k: 'schlamm', n: 'Schlamm und Ton', r: 1.6, min: 1, fac: 1, col: '--relief' },
+  { k: 'sand', n: 'Sand', r: 2.6, min: 3, fac: .8, col: '--sand' },
+  { k: 'kies', n: 'Kies', r: 4.6, min: 5, fac: .55, col: '--muted' },
+  { k: 'block', n: 'Blöcke', r: 9, min: 8, fac: .35, col: '--relief' }
+];
+const sim = (() => {
+  const cv = $('#sim'), ctx = cv.getContext('2d');
+  let W = 600, H = 230, raf = 0, last = 0, g = 8;
+  const parts = [];
+  GRAINS.forEach((gr, gi) => { const cnt = [40, 26, 14, 6][gi]; for (let i = 0; i < cnt; i++) parts.push({ gi, x: Math.random(), d: Math.random() }); });
+  const streaks = Array.from({ length: 14 }, () => ({ x: Math.random(), d: .2 + Math.random() * .6 }));
+  function size() { const dpr = devicePixelRatio || 1; W = cv.clientWidth || 600; H = cv.clientHeight || 230; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  const bed = x => 70 + (x / W) * g * 13;
+  const depth = () => 40 - g * 1.6;
+  function draw() {
+    const cs = getComputedStyle(document.documentElement), c = n => cs.getPropertyValue(n).trim();
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = c('--sheet'); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = c('--water-soft');
+    ctx.beginPath(); ctx.moveTo(0, bed(0) - depth()); ctx.lineTo(W, bed(W) - depth()); ctx.lineTo(W, bed(W)); ctx.lineTo(0, bed(0)); ctx.fill();
+    ctx.fillStyle = c('--relief-soft');
+    ctx.beginPath(); ctx.moveTo(0, bed(0)); ctx.lineTo(W, bed(W)); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill();
+    ctx.strokeStyle = c('--relief'); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, bed(0)); ctx.lineTo(W, bed(W)); ctx.stroke();
+    ctx.strokeStyle = c('--water'); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, bed(0) - depth()); ctx.lineTo(W, bed(W) - depth()); ctx.stroke();
+    ctx.lineWidth = 1.5; ctx.globalAlpha = .6;
+    streaks.forEach(s => { const x = s.x * W, y = bed(x) - depth() * s.d, len = 6 + g * 2.4, k = g * 13 / W; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len, y + len * k); ctx.stroke(); });
+    ctx.globalAlpha = 1;
+    parts.forEach(p => {
+      const gr = GRAINS[p.gi], x = p.x * W;
+      const y = gr.k === 'schlamm' ? bed(x) - 3 - depth() * .85 * p.d : bed(x) - gr.r - 1;
+      ctx.fillStyle = c(gr.col);
+      if (gr.k === 'block') { ctx.strokeStyle = c('--ink'); ctx.lineWidth = 1; }
+      ctx.beginPath(); ctx.arc(x, y, gr.r, 0, Math.PI * 2); ctx.fill(); if (gr.k === 'block') ctx.stroke();
+    });
+    ctx.fillStyle = c('--muted'); ctx.font = '11px "IBM Plex Mono", monospace';
+    ctx.fillText('Querschnitt längs des Flusses · Fliessrichtung →', 10, H - 10);
+  }
+  function step(t) {
+    const dt = Math.min(.05, (t - last) / 1000 || 0); last = t;
+    const v = (30 + g * 24) / W;
+    parts.forEach(p => { if (g >= GRAINS[p.gi].min) { p.x += v * GRAINS[p.gi].fac * dt; if (p.x > 1.02) { p.x = -.02; p.d = Math.random(); } } });
+    streaks.forEach(s => { s.x += v * 1.3 * dt; if (s.x > 1.05) s.x = -.05; });
+    draw(); raf = requestAnimationFrame(step);
+  }
+  function readout() {
+    const sp = g >= 8 ? 'reissend' : g >= 5 ? 'schnell' : g >= 3 ? 'mässig' : 'langsam';
+    const part = g >= 7 ? 'Oberlauf' : g >= 4 ? 'Mittellauf' : 'Unterlauf';
+    const proc = g >= 8 ? '<b>Tiefenerosion:</b> Das Wasser ist so schnell, dass es sogar Blöcke bewegt. Der Fluss gräbt sich ein, es entsteht ein V-Tal.'
+      : g >= 5 ? '<b>Transport und Seitenerosion:</b> Kies und Sand werden mitgenommen, Blöcke bleiben liegen. In Kurven nagt der Fluss am Ufer.'
+      : g >= 3 ? '<b>Sedimentation beginnt:</b> Kies bleibt liegen, nur noch Sand und Schlamm werden transportiert.'
+      : '<b>Sedimentation überwiegt:</b> Nur noch feiner Schlamm schwebt im Wasser. Alles andere wird abgelagert, z.B. in einem Delta.';
+    $('#rSpeed').textContent = sp; $('#rPart').textContent = part; $('#rProc').innerHTML = proc;
+    $('#rGrains').innerHTML = GRAINS.map(gr => `<li><span><i class="sw" style="width:${Math.max(6, gr.r * 1.6)}px;height:${Math.max(6, gr.r * 1.6)}px;background:var(${gr.col})"></i>${gr.n}</span>${g >= gr.min ? '<span class="pill move">wird transportiert</span>' : '<span class="pill stay">bleibt liegen</span>'}</li>`).join('');
+  }
+  $('#slope').addEventListener('input', e => { g = +e.target.value; readout(); if (reduced || !raf) draw(); });
+  new ResizeObserver(() => { size(); draw(); }).observe(cv);
+  readout();
+  return {
+    start() { size(); readout(); if (reduced) { draw(); return; } if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); } },
+    stop() { cancelAnimationFrame(raf); raf = 0; }
+  };
+})();
+
+/* ---------- Gezeiten ---------- */
+const TCX = 345, TCY = 180, RE = 54, ORB = 140, AM = 16, AS = 7;
+function drawTide() {
+  const phi = +$('#moonR').value * Math.PI / 180;
+  const svg = $('#tide'); svg.innerHTML = '';
+  // Sonne
+  el('circle', { cx: -40, cy: TCY, r: 82, class: 't-sun' }, svg);
+  [-110, -55, 0, 55, 110].forEach(dy => el('line', { x1: 60, y1: TCY + dy, x2: 175, y2: TCY + dy, class: 't-ray' }, svg));
+  el('text', { x: 8, y: 52, class: 't-label' }, svg).textContent = 'Sonne';
+  el('text', { x: 8, y: 68, class: 't-small' }, svg).textContent = '(viel weiter weg)';
+  el('circle', { cx: TCX, cy: TCY, r: ORB, class: 't-orbit' }, svg);
+  // Ozean mit Flutbergen
+  let d = '';
+  for (let k = 0; k <= 180; k++) {
+    const th = k / 180 * Math.PI * 2;
+    const r = RE + 22 + AM * Math.cos(2 * (th - phi)) + AS * Math.cos(2 * (th - Math.PI));
+    d += (k ? 'L' : 'M') + (TCX + r * Math.cos(th)).toFixed(1) + ',' + (TCY + r * Math.sin(th)).toFixed(1);
+  }
+  el('path', { d: d + 'Z', class: 't-ocean' }, svg);
+  el('circle', { cx: TCX, cy: TCY, r: RE, class: 't-earth' }, svg);
+  el('path', { d: `M${TCX},${TCY - RE} A${RE},${RE} 0 0 1 ${TCX},${TCY + RE} Z`, class: 't-shade' }, svg);
+  el('text', { x: TCX, y: TCY + 4, 'text-anchor': 'middle', class: 't-label' }, svg).textContent = 'Erde';
+  // Mond
+  const mx = TCX + ORB * Math.cos(phi), my = TCY + ORB * Math.sin(phi);
+  el('circle', { cx: mx, cy: my, r: 13, class: 't-moondark' }, svg);
+  el('path', { d: `M${mx},${my - 13} A13,13 0 0 0 ${mx},${my + 13} Z`, class: 't-moonlit' }, svg);
+  el('text', { x: mx, y: my + (Math.sin(phi) > -0.2 ? 30 : -20), 'text-anchor': 'middle', class: 't-label' }, svg).textContent = 'Mond';
+  // Beschriftung der Flutberge
+  const lab = (ang, rr, t1, t2) => {
+    const x = TCX + rr * Math.cos(ang), y = TCY + rr * Math.sin(ang), c = Math.cos(ang);
+    const anchor = c > .35 ? 'start' : c < -.35 ? 'end' : 'middle';
+    el('text', { x, y, 'text-anchor': anchor, class: 't-label' }, svg).textContent = t1;
+    if (t2) el('text', { x, y: y + 14, 'text-anchor': anchor, class: 't-small' }, svg).textContent = t2;
+  };
+  lab(phi - .38, 108, 'Flutberg', 'Anziehung des Mondes');
+  lab(phi + Math.PI - .38, 108, 'Flutberg', 'Fliehkraft');
+  lab(phi + Math.PI / 2, 92, 'Ebbe');
+  lab(phi - Math.PI / 2, 92, 'Ebbe');
+  // Werte
+  const deg = ((+$('#moonR').value - 180) % 360 + 360) % 360;
+  const phase = deg < 22.5 || deg >= 337.5 ? 'Neumond' : deg < 67.5 || deg >= 292.5 ? 'Mondsichel' : deg < 112.5 || deg >= 247.5 ? 'Halbmond' : deg < 157.5 || deg >= 202.5 ? 'Dreiviertelmond' : 'Vollmond';
+  const c2 = Math.cos(2 * phi);
+  const type = c2 > .85 ? 'Springtide' : c2 < -.85 ? 'Nipptide' : 'normale Tide';
+  $('#tPhase').textContent = phase;
+  $('#tType').textContent = type;
+  $('#tType').style.color = c2 > .85 ? 'var(--water)' : c2 < -.85 ? 'var(--relief)' : 'var(--ink)';
+  $('#tGauge').style.width = (((c2 + 1) / 2) * 80 + 20).toFixed(0) + '%';
+  $('#tExplain').innerHTML = c2 > .85 ? 'Sonne, Erde und Mond stehen <b>in einer Linie</b>. Die Kräfte von Sonne und Mond addieren sich: sehr hohe Flut, sehr tiefe Ebbe.'
+    : c2 < -.85 ? 'Sonne und Mond stehen <b>im rechten Winkel</b> zur Erde. Ihre Kräfte schwächen sich gegenseitig ab: Flut und Ebbe fallen schwach aus.'
+    : 'Zwischen Spring- und Nipptide. Schiebe den Mond zu Vollmond, Neumond oder Halbmond.';
+  drawLevel((AM + AS * c2) / (AM + AS));
+}
+function drawLevel(amp) {
+  const svg = $('#level'); svg.innerHTML = '';
+  const X0 = 44, X1 = 590, Y0 = 18, Y1 = 132, T = 48, P = 12.42;
+  const sx = t => X0 + (t / T) * (X1 - X0), mid = (Y0 + Y1) / 2, half = (Y1 - Y0) / 2 - 6;
+  const sy = h => mid - h * half;
+  for (let t = 0; t <= 48; t += 6) {
+    el('line', { x1: sx(t), x2: sx(t), y1: Y0, y2: Y1, class: 'c-grid' }, svg);
+    el('text', { x: sx(t), y: Y1 + 16, 'text-anchor': 'middle', class: 'c-axis' }, svg).textContent = t + ' h';
+  }
+  el('line', { x1: X0, x2: X1, y1: mid, y2: mid, class: 'c-grid' }, svg);
+  el('text', { x: X0 - 6, y: sy(1) + 4, 'text-anchor': 'end', class: 'c-axis' }, svg).textContent = 'hoch';
+  el('text', { x: X0 - 6, y: sy(-1) + 4, 'text-anchor': 'end', class: 'c-axis' }, svg).textContent = 'tief';
+  let line = '';
+  for (let k = 0; k <= 240; k++) { const t = k / 240 * T; line += (k ? 'L' : 'M') + sx(t).toFixed(1) + ',' + sy(amp * Math.cos(2 * Math.PI * t / P)).toFixed(1); }
+  el('path', { d: line + `L${X1},${mid}L${X0},${mid}Z`, class: 'c-area' }, svg);
+  el('path', { d: line, class: 'c-line' }, svg);
+  [0, 1, 2, 3].forEach(k => {
+    const t = k * P; const x = sx(t), y = sy(amp);
+    el('circle', { cx: x, cy: y, r: 4.5, class: 'c-dot' }, svg);
+    const hh = Math.floor(t), mm = Math.round((t - hh) * 60);
+    el('text', { x: x + (k ? 0 : 6), y: Math.max(12, y - 9), 'text-anchor': k ? 'middle' : 'start', class: 'c-lab' }, svg).textContent = k ? `Flut ${hh} h ${String(mm).padStart(2, '0')}` : 'Flut';
+  });
+  el('text', { x: X1, y: 166, 'text-anchor': 'end', class: 'c-axis' }, svg).textContent = 'Zeit seit der ersten Flut';
+}
+$('#moonR').addEventListener('input', drawTide);
+
+/* ---------- Hochwasser Uri ---------- */
+const EVENTS = [
+  { y: '1977', d: '31. Juli 1977', w: 'Industriegebiet (damalige Munitionsfabrik), Attinghausen', t: 'Heftige Regenfälle. Der Schächen verliess sein Flussbett, die Hallen standen meterhoch im Wasser. In Attinghausen floss der Kummetbach noch Tage später durchs Dorf.', s: 'Schaden: 200 Mio. Franken' },
+  { y: '1987', d: '24./25. August 1987', w: 'Unteres Reusstal, Flüelen bis Attinghausen', t: 'Schweres Unwetter über dem Gotthardmassiv. Schäden an Häusern, Strassen, Bahnlinien und Kulturland, Gotthardroute wochenlang gesperrt, über 900 Nutztiere ertrunken. Folge: Umdenken zum ökologischen Hochwasserschutz.', s: 'Schaden: 500 Mio. Franken' },
+  { y: '2005', d: '22./23. August 2005', w: 'Schattdorf: Industriegelände («Schattdorfer See»)', t: 'Nach 40 Stunden Regen trat der Schächen oberhalb der SBB-Linie über die Ufer. Beim Tellpark stand das Wasser bis 2,50 m hoch, eine Woche lang. Rund 200 Betriebe betroffen.', s: 'Schaden: 365 Mio. Franken' },
+  { y: '2020', d: 'Oktober 2020', w: 'Urner Reussebene', t: 'Die Schutzmassnahmen wirkten: Die Reuss wurde kontrolliert über die Ufer gelenkt und in den Urnersee geführt.', s: 'Nur Aufräumarbeiten' }
+];
+const STATIONS = [
+  { n: 'Schutz Industriegebiet', p: 'Schattdorf', x: 668, y: 58, t: 'Eine Hochwasserschutzmauer entlang der Stillen Reuss schützt das Industriegebiet. 2005 stand es unter Wasser («Schattdorfer See»).' },
+  { n: 'Notentlastungskanal', p: 'Schattdorf', x: 640, y: 82, t: 'Ein unterirdischer Kanal, der bei Hochwasser zusätzliches Wasser ableiten kann.' },
+  { n: 'Torverschluss Stille Reuss', p: 'Schattdorf', x: 612, y: 100, t: 'Unter der Brücke ist ein Tor eingebaut, das bei Hochwasser geschlossen wird.' },
+  { n: 'Verbreiterung Durchlass Stille Reuss', p: 'Schattdorf', x: 588, y: 120, t: 'Der Durchlass wurde verbreitert und die Stille Reuss renaturiert. So hat das Wasser mehr Platz.' },
+  { n: 'Schächenmündung und Ruag-Sammler', p: 'Schattdorf / Attinghausen', x: 566, y: 150, t: 'Hier mündet der Schächen in die Reuss. Der Schächen trat 1977 und 2005 über die Ufer.' },
+  { n: 'Entlastung Autobahn', p: 'bei Attinghausen', x: 500, y: 196, t: 'Bei extremem Hochwasser fliesst Wasser kontrolliert über eine Entlastungsanlage im Reussdamm auf die A2. Eine Hochwasserschutzmauer hält es zurück, und es fliesst Richtung Urnersee.' },
+  { n: 'Palanggenbach', p: 'Seedorf / Attinghausen', x: 420, y: 214, t: 'Hier mündet der Palanggenbach in die Reuss. Sein Bett ist breit und kiesig, damit Wasser und Geschiebe Platz haben.' },
+  { n: 'Swissli', p: 'Reussdamm', x: 340, y: 242, t: 'Messstation an der Reuss. Grüne Markierung bei der Treppe: Ab hier wird die Autobahn gesperrt. Rote Markierung: Jetzt fliesst Wasser auf die Autobahn.' },
+  { n: 'Kaskadensystem (Treppen)', p: 'Reussdamm', x: 255, y: 270, t: 'Treppenstufen auf der Landseite des Reussdamms. Fliesst Wasser über den Damm, wird es gebremst, damit der Damm nicht weggespült wird.' },
+  { n: 'Revitalisierung Giessen', p: 'Flüelen', x: 112, y: 254, t: 'Der Giessen, ein Bach bei Flüelen, wurde wieder naturnah gestaltet (revitalisiert).' },
+  { n: 'Start Themenpfad', p: 'Flüelen', x: 96, y: 196, t: 'Ausgangspunkt des Themenwegs. Bilder erinnern an die Hochwasser 1977, 1987 und 2005.' },
+  { n: 'Stiglissammler', p: 'Bürglen', x: 455, y: 30, t: 'Geschiebesammler am Schächen. Er hält Steine und Sand zurück (Platz für mind. 10 000 Lastwagenladungen). Beim Hochwasser 2005 füllte er sich. Danach wurde ein verschliessbares Schütz eingebaut.' }
+];
+const uri = { mode: 'erkunden', sel: null, key: null, type: 'tap', done: false, score: 0, total: 0 };
+function drawUriMap() {
+  const svg = $('#uMap'); svg.innerHTML = '';
+  el('rect', { width: 700, height: 380, class: 'u-bg' }, svg);
+  el('path', { d: 'M0,140 C40,140 70,170 78,212 C86,255 104,290 150,322 C170,336 180,360 185,380 L0,380 Z', class: 'u-lake' }, svg);
+  el('path', { d: 'M700,182 C640,178 600,168 566,172 C480,206 340,252 262,282 C236,292 232,330 236,380', class: 'u-road' }, svg);
+  el('path', { d: 'M160,150 C200,200 240,250 262,282', class: 'u-road' }, svg);
+  el('path', { d: 'M700,165 C650,168 600,160 566,150 C540,160 480,190 420,214 C350,242 270,268 200,292 C175,300 160,306 150,318', class: 'u-riv' }, svg);
+  el('path', { d: 'M690,30 C672,62 640,92 604,112 C588,122 572,136 566,150', class: 'u-riv thin' }, svg);
+  el('path', { d: 'M470,0 C500,50 535,100 566,150', class: 'u-riv thin' }, svg);
+  el('path', { d: 'M445,380 C440,320 430,260 420,214', class: 'u-riv thin' }, svg);
+  const tr = STATIONS.slice(0, 11).reverse();
+  el('path', { d: 'M' + tr.map(s => s.x + ',' + (s.y + (s.y > 140 && s.x > 200 ? 10 : 0))).join(' L'), class: 'u-trail' }, svg);
+  el('path', { d: 'M455,30 L500,70', class: 'u-trail', 'stroke-dasharray': '2 6' }, svg);
+  [['Reuss', 630, 192, 0], ['Stille Reuss', 640, 128, -32], ['Schächen', 482, 72, 58], ['Palanggenbach', 452, 330, -84], ['Urnersee', 18, 366, 0]].forEach(([t, x, y, r]) =>
+    el('text', { x, y, class: 'u-rlab', transform: `rotate(${r} ${x} ${y})` }, svg).textContent = t);
+  [['FLÜELEN', 14, 116], ['ALTDORF', 330, 120], ['BÜRGLEN', 350, 22], ['SCHATTDORF', 560, 18], ['SEEDORF', 290, 330], ['ATTINGHAUSEN', 520, 262]].forEach(([t, x, y]) => {
+    const g = el('g', { class: 'u-place' }, svg);
+    el('rect', { x, y, width: t.length * 7.6 + 12, height: 20, rx: 2 }, g);
+    el('text', { x: x + 6, y: y + 14 }, g).textContent = t;
+  });
+  STATIONS.forEach((s, i) => {
+    const g = el('g', { class: 'u-st', 'data-st': i, tabindex: 0, role: 'button', 'aria-label': `Station ${i + 1}` }, svg);
+    el('circle', { cx: s.x, cy: s.y, r: 18, class: 'ring' }, g);
+    el('circle', { cx: s.x, cy: s.y, r: 12, class: 'c' }, g);
+    el('text', { x: s.x, y: s.y + 4, 'text-anchor': 'middle' }, g).textContent = i + 1;
+  });
+}
+function markStations(map) { $$('#uMap .u-st').forEach(g => { g.classList.remove('sel', 'good', 'bad'); const c = map[g.dataset.st]; if (c) g.classList.add(c); }); }
+function stationCard(i) { const s = STATIONS[i]; return `<div class="fb"><p><b>${i + 1} · ${esc(s.n)}</b> <span class="meta">${esc(s.p)}</span></p><p style="margin-top:6px">${esc(s.t)}</p></div>`; }
+function renderUri() {
+  $('#uModes').innerHTML = ['erkunden', 'quiz'].map(m => `<button class="chip" data-umode="${m}" aria-pressed="${uri.mode === m}">${m === 'erkunden' ? 'Erkunden' : 'Quiz'}</button>`).join('');
+  $('#uScore').textContent = uri.mode === 'quiz' && uri.total ? `${uri.score} von ${uri.total} richtig` : '';
+  if (uri.mode === 'erkunden') {
+    $('#uTask').textContent = 'Tippe auf eine Station, um mehr zu erfahren.';
+    markStations(uri.sel == null ? {} : { [uri.sel]: 'sel' });
+    $('#uInfo').innerHTML = uri.sel == null ? '' : stationCard(uri.sel);
+  }
+}
+function nextUri() {
+  const ks = STATIONS.map((_, i) => i).filter(i => i !== uri.key);
+  uri.key = ks[Math.floor(Math.random() * ks.length)]; uri.type = Math.random() < .5 ? 'tap' : 'name'; uri.done = false;
+  markStations({});
+  if (uri.type === 'tap') {
+    $('#uTask').innerHTML = `Wo liegt die Station <em>${esc(STATIONS[uri.key].n)}</em>?`;
+    $('#uInfo').innerHTML = '';
+  } else {
+    $('#uTask').innerHTML = `Welche Massnahme steht bei der <em>markierten Station ${uri.key + 1}</em>?`;
+    markStations({ [uri.key]: 'sel' });
+    const opts = shuffle([uri.key, ...shuffle(ks.filter(i => i !== uri.key)).slice(0, 3)]);
+    $('#uInfo').innerHTML = `<div class="opts">${opts.map(i => `<button class="opt" data-uk="${i}">${esc(STATIONS[i].n)}</button>`).join('')}</div>`;
+  }
+  renderUri();
+}
+function finishUri(ok, picked) {
+  uri.done = true; uri.total++; if (ok) uri.score++; record('g2', ok);
+  markStations(ok ? { [uri.key]: 'good' } : { [uri.key]: 'good', [picked]: 'bad' });
+  const html = `<div class="fb ${ok ? 'good' : 'bad'}" style="margin-top:12px"><p><b class="k">${ok ? 'Richtig!' : 'Leider falsch.'}</b> ${ok ? '' : `Du hast Station ${picked + 1} gewählt (${esc(STATIONS[picked].n)}). `}Gesucht war Station ${uri.key + 1}.</p></div>
+    ${stationCard(uri.key)}<div class="row" style="margin-top:12px"><button class="btn primary" id="uNext">Nächste Aufgabe</button></div>`;
+  if (uri.type === 'name') $('#uInfo').insertAdjacentHTML('beforeend', html); else $('#uInfo').innerHTML = html;
+  renderUri();
+}
+function pickStation(i) {
+  if (uri.mode === 'erkunden') { uri.sel = i; renderUri(); return; }
+  if (uri.type !== 'tap' || uri.done) return;
+  finishUri(i === uri.key, i);
+}
+$('#uMap').addEventListener('click', e => { const g = e.target.closest('[data-st]'); if (g) pickStation(+g.dataset.st); });
+$('#uMap').addEventListener('keydown', e => { const g = e.target.closest('[data-st]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pickStation(+g.dataset.st); } });
+$('#uModes').addEventListener('click', e => { const b = e.target.closest('[data-umode]'); if (!b) return; uri.mode = b.dataset.umode; if (uri.mode === 'quiz') nextUri(); else { uri.sel = null; renderUri(); } });
+$('#uInfo').addEventListener('click', e => {
+  if (e.target.id === 'uNext') { nextUri(); return; }
+  const b = e.target.closest('[data-uk]'); if (!b || uri.done) return;
+  const k = +b.dataset.uk, ok = k === uri.key;
+  $$('#uInfo .opt').forEach(o => { o.disabled = true; if (+o.dataset.uk === uri.key) o.classList.add('right'); });
+  if (!ok) b.classList.add('wrong');
+  finishUri(ok, k);
+});
+$('#uEvents').innerHTML = EVENTS.map(ev => `<article class="event"><span class="yr">${ev.y}</span><span class="meta">${esc(ev.d)}</span><span class="where">${esc(ev.w)}</span><p>${esc(ev.t)}</p><span class="dmg">${esc(ev.s)}</span></article>`).join('');
+$('#uList').innerHTML = STATIONS.map((s, i) => `<li><span class="num">${i + 1}</span><div><b>${esc(s.n)}</b> <span class="meta">${esc(s.p)}</span><p style="font-size:.92rem">${esc(s.t)}</p></div></li>`).join('');
+
+/* ---------- Erklär-Aufgaben ---------- */
+const EXPL = [
+  { lz: 'n1', q: 'Erkläre, welche Naturkräfte auf die Landschaft wirken und wie sie die Landschaft verändern. Nenne Beispiele.', pts: [
+    { t: 'Kräfte von aussen (exogen), z.B. Wind, Wasser, Eis, Temperatur', k: ['wind', 'wasser', 'eis', 'gletscher', 'temperatur', 'frost'] },
+    { t: 'Kräfte aus dem Erdinnern (endogen), z.B. Erdbeben, Vulkane, Gebirgsbildung', k: ['erdbeben', 'vulkan', 'gebirgsbildung', 'magma', 'erdinner'] },
+    { t: 'Sie tragen Gestein ab (Verwitterung, Erosion)', k: ['abtrag', 'erosion', 'erodier', 'verwitter', 'zerklein', 'zerstoer'] },
+    { t: 'Sie lagern Material ab oder bauen neue Formen auf', k: ['ablager', 'abgelagert', 'sediment', 'akkumul', 'aufbau', 'heben', 'hebt'] } ],
+    a: 'Exogene Kräfte wie Wind, fliessendes Wasser, Gletschereis und Temperaturunterschiede wirken von aussen auf die Erdoberfläche. Sie verwittern und tragen Gestein ab (Erosion), transportieren es und lagern es anderswo ab, z.B. als Delta oder Moräne. Endogene Kräfte aus dem Erdinnern wie Erdbeben, Vulkanismus und Gebirgsbildung heben Gebirge, bauen Vulkane auf oder lassen sie einstürzen (Caldera).' },
+  { lz: 'n3', min: .75, q: 'Was ist der Unterschied zwischen exogenen und endogenen Prozessen? Nenne je zwei Beispiele.', pts: [
+    { t: 'Exogen: wirkt an der Erdoberfläche, von aussen', k: ['oberflaeche', 'aussen'] },
+    { t: 'Endogen: wirkt aus dem Erdinnern', k: ['erdinner', 'innern', 'inneren', 'innen'] },
+    { t: 'Zwei exogene Beispiele (z.B. Wind, Wasser, Eis, Frost)', k: ['wind', 'wasser', 'eis', 'gletscher', 'frost', 'temperatur', 'niederschlag', 'regen'] },
+    { t: 'Zwei endogene Beispiele (z.B. Erdbeben, Vulkan, Gebirgsbildung)', k: ['erdbeben', 'vulkan', 'gebirgsbildung', 'magma'] } ],
+    a: 'Exogene Prozesse wirken an der Erdoberfläche, angetrieben von Sonne und Schwerkraft: z.B. Wind, fliessendes Wasser, Gletscher, Frost. Endogene Prozesse haben ihre Ursache im Erdinnern: z.B. Erdbeben, Vulkanausbrüche und Gebirgsbildung.' },
+  { lz: 'n4', q: 'Definiere Verwitterung, Erosion, Transport und Sedimentation. In welcher Reihenfolge laufen sie ab?', pts: [
+    { t: 'Verwitterung: Gestein wird an Ort und Stelle gelockert, zerkleinert oder aufgelöst', k: ['zerfaell', 'zerfall', 'zerklein', 'gelockert', 'lockert', 'aufgeloest', 'aufloes', 'broeckel', 'zersetz'] },
+    { t: 'Erosion: Material wird abgetragen', k: ['abgetragen', 'abtrag', 'weggeschwemmt', 'abgeschwemmt', 'weggespuelt'] },
+    { t: 'Transport: Wasser, Eis oder Wind tragen das Material weg', k: ['transportiert', 'mitgenommen', 'weggetragen', 'befoerdert', 'getragen', 'mitgefuehrt', 'mitgerissen'] },
+    { t: 'Sedimentation: Material wird abgelagert, wenn das Transportmittel langsamer wird', k: ['abgelagert', 'ablager', 'absinkt', 'liegen bleibt', 'bleibt liegen', 'akkumul'] },
+    { t: 'Reihenfolge: Verwitterung → Erosion → Transport → Sedimentation', k: ['reihenfolge', 'zuerst', 'danach', '->', '→'] } ],
+    a: 'Verwitterung: Gestein wird durch Regen, Frost oder Sonne an Ort und Stelle gelockert, zerkleinert oder aufgelöst. Erosion: Das Material wird abgetragen. Transport: Wasser, Eis oder Wind tragen es weg. Sedimentation (Ablagerung, Akkumulation): Wird das Transportmittel langsamer, bleibt das Material liegen. Reihenfolge: Verwitterung → Erosion → Transport → Sedimentation.' },
+  { lz: 'n5', min: .5, q: 'Erkläre zwei Verwitterungsarten genau und nenne je ein Beispiel.', pts: [
+    { t: 'Physikalisch: Frost, Temperatur oder Salz sprengen das Gestein', k: ['frost', 'temperatur', 'salz', 'sprengung', 'gefrier', 'dehnt'] },
+    { t: 'Chemisch: Wasser mit Kohlensäure oder Schadstoffen löst Gestein auf', k: ['kohlensaeure', 'loest', 'loesung', 'chemisch', 'rauchgas', 'saeure', 'hydrat'] },
+    { t: 'Biologisch: Wurzeln, Flechten, Moose oder Pilze zerkleinern Gestein', k: ['wurzel', 'pflanz', 'flechte', 'moos', 'pilz', 'alge', 'biolog'] },
+    { t: 'Passende Beispiele (z.B. Schlaglöcher, Höhlen, Wurzeln im Asphalt)', k: ['schlagloch', 'asphalt', 'hoehle', 'karren', 'doline', 'tropfstein', 'beispiel', 'z.b'] } ],
+    a: 'Physikalische Verwitterung, z.B. Frostsprengung: Wasser dringt in Risse, gefriert und dehnt sich aus. Das Gestein wird gesprengt (Schlaglöcher im Winter). Chemische Verwitterung: Regenwasser mit Kohlensäure löst Kalk auf. So entstehen Karren, Dolinen und Höhlen. Biologische Verwitterung: Wurzeln dringen in Risse und sprengen Gestein oder Asphalt.' },
+  { lz: 'n6', q: 'Wie entsteht eine Caldera mit Kratersee?', pts: [
+    { t: 'Ein Vulkan bricht aus', k: ['vulkan', 'ausbruch'] },
+    { t: 'Die Magmakammer darunter wird leer', k: ['magmakammer', 'magma', 'leer'] },
+    { t: 'Der Vulkan bricht ein', k: ['einstuerz', 'eingestuerzt', 'einbr', 'eingebrochen', 'zusammenbr', 'zusammengebrochen', 'sackt'] },
+    { t: 'Regenwasser füllt den Kessel zu einem See', k: ['regen', 'see', 'gefuellt', 'fuellt'] } ],
+    a: 'Bei einem Vulkanausbruch leert sich die Magmakammer. Der Vulkan verliert seinen Halt und bricht in sich zusammen. Es entsteht ein grosser Kessel (Caldera), der sich mit Regenwasser zu einem Kratersee füllen kann.' },
+  { lz: 'n6', q: 'Wie entsteht eine Wanderdüne?', pts: [
+    { t: 'Der Wind transportiert Sand', k: ['wind'] },
+    { t: 'Der Sand wird angehäuft', k: ['haeuft', 'angehaeuft', 'abgelagert', 'ablager', 'huegel'] },
+    { t: 'Luv: Sand wird hinaufgeweht, Lee: Sand rutscht ab', k: ['luv', 'lee', 'rutscht', 'kamm'] },
+    { t: 'So wandert die Düne in Windrichtung', k: ['wander', 'bewegt', 'verschieb', 'windrichtung'] } ],
+    a: 'Der Wind transportiert Sand und häuft ihn an. Auf der dem Wind zugewandten Seite (Luv) wird Sand hinaufgeweht, auf der Leeseite rutscht er hinunter. So verschiebt sich die Düne langsam in Windrichtung.' },
+  { lz: 'w1', q: 'Erkläre, wie ein Delta entsteht.', pts: [
+    { t: 'Der Fluss mündet in einen See oder ins Meer', k: ['muendet', 'muendung', 'see', 'meer'] },
+    { t: 'Das Wasser wird fast still, die Fliessgeschwindigkeit sinkt', k: ['langsam', 'still', 'geschwindigkeit', 'bremst'] },
+    { t: 'Sand und Schlamm werden abgelagert', k: ['ablager', 'abgelagert', 'sediment', 'sand', 'schlamm'] },
+    { t: 'Der Fluss teilt sich in mehrere Arme', k: ['arme', 'verzweig', 'teilt', 'aufgeteilt'] } ],
+    a: 'Wo ein Fluss in einen See oder ins Meer mündet, wird er fast still. Er verliert seine Transportkraft und lagert Sand und Schlamm ab. Die Ablagerungen wachsen in den See hinaus, und der Fluss teilt sich in mehrere Arme. Beispiel: Reussdelta im Urnersee.' },
+  { lz: 'w1', q: 'Wie entsteht ein Schwemmkegel?', pts: [
+    { t: 'Ein steiler Seitenbach…', k: ['seitenbach', 'bach', 'steil'] },
+    { t: '…erreicht das flache Haupttal', k: ['flach', 'haupttal', 'gefaelle', 'ebene'] },
+    { t: 'Er wird plötzlich langsamer', k: ['langsam', 'geschwindigkeit', 'bremst'] },
+    { t: 'Er lagert sein Geröll fächerförmig ab', k: ['ablager', 'abgelagert', 'faecher', 'kegel', 'geroell'] } ],
+    a: 'Ein steiler Seitenbach tritt ins flache Haupttal. Weil das Gefälle plötzlich abnimmt, wird er langsamer und kann sein Geröll nicht mehr tragen. Er lagert es fächerförmig ab: Es entsteht ein Schwemmkegel.' },
+  { lz: 'w2', q: 'Erkläre den Zusammenhang zwischen Gefälle, Fliessgeschwindigkeit, Erosion und Sedimentation.', pts: [
+    { t: 'Starkes Gefälle → hohe Fliessgeschwindigkeit', k: ['steil', 'starkes gefaelle', 'grosses gefaelle', 'schnell'] },
+    { t: 'Schnelles Wasser erodiert und transportiert viel und grobes Material', k: ['erosion', 'erodier', 'abtrag', 'transport'] },
+    { t: 'Geringes Gefälle → langsames Wasser', k: ['flach', 'gering', 'langsam'] },
+    { t: 'Langsames Wasser lagert ab (Sedimentation)', k: ['sediment', 'ablager', 'abgelagert', 'liegen'] } ],
+    a: 'Je steiler das Gefälle, desto schneller fliesst das Wasser. Schnelles Wasser hat viel Kraft: Es erodiert und transportiert viel und auch grobes Material (Oberlauf, V-Tal). Wird das Gefälle geringer, fliesst das Wasser langsamer und kann weniger tragen. Zuerst bleiben grosse Steine liegen, zuletzt Sand und Schlamm: Sedimentation (Unterlauf, Delta).' },
+  { lz: 'w3', q: 'Beschreibe, wie sich das Gesteinsmaterial von der Quelle zur Mündung verändert, und begründe.', pts: [
+    { t: 'Bei der Quelle: grosse, kantige Blöcke', k: ['block', 'bloecke', 'kantig', 'gross'] },
+    { t: 'Es wird immer kleiner bzw. feiner', k: ['kleiner', 'feiner', 'zerkleinert'] },
+    { t: 'Es wird runder', k: ['rund', 'gerundet', 'abgeschliffen', 'abgerundet'] },
+    { t: 'Bei der Mündung: Sand und Schlamm', k: ['sand', 'schlamm', 'ton'] },
+    { t: 'Grund: Die Steine reiben beim Transport aneinander', k: ['abrieb', 'aneinander', 'reib', 'schlagen', 'transport'] } ],
+    a: 'Bei der Quelle liegen grosse, kantige Blöcke. Beim Transport schlagen und reiben die Steine aneinander und werden abgeschliffen. Sie werden immer kleiner und runder: Blöcke → Kies → Sand → Schlamm. Weil das Gefälle abnimmt, bleibt das grobe Material zuerst liegen.' },
+  { lz: 'w4', q: 'Erkläre, wie ein Mäander entsteht und wie daraus ein Altwasser wird.', pts: [
+    { t: 'Aussen (Prallhang): schnelles Wasser, Erosion', k: ['prallhang', 'aussen'] },
+    { t: 'Innen (Gleithang): langsames Wasser, Ablagerung', k: ['gleithang', 'innen'] },
+    { t: 'Die Schlinge wächst, der Mäanderhals wird schmal', k: ['hals', 'schmal', 'enger', 'groesser'] },
+    { t: 'Bei Hochwasser bricht der Fluss durch den Hals', k: ['durchbr', 'durchbruch', 'hochwasser'] },
+    { t: 'Die abgeschnittene Schlinge bleibt als Altwasser zurück', k: ['abgeschnitten', 'abgetrennt', 'altwasser', 'altarm'] } ],
+    a: 'In einer Kurve fliesst das Wasser aussen schneller. Am Prallhang erodiert es das Ufer, innen am Gleithang lagert es Sand und Kies ab. So wird die Schlinge (Mäander) immer grösser und der Mäanderhals immer schmaler. Bei einem Hochwasser durchbricht der Fluss den Hals und nimmt den kürzeren Weg. Die abgeschnittene Schlinge bleibt als Altwasser (Altarm) zurück.' },
+  { lz: 'w5', q: 'Wie entsteht Karst? Beschreibe drei typische Karstformen.', pts: [
+    { t: 'Karst gibt es im Kalkgestein', k: ['kalk'] },
+    { t: 'Regenwasser mit Kohlensäure löst den Kalk auf', k: ['kohlensaeure', 'loest', 'loesung', 'aufgeloest', 'co2'] },
+    { t: 'Formen an der Oberfläche (Doline, Karren, Polje, Trockental, Kalktuff)', k: ['doline', 'karren', 'polje', 'trockental', 'kalktuff'] },
+    { t: 'Formen in Höhlen (Stalaktit, Stalagmit, Säule, Sinter)', k: ['stalaktit', 'stalagmit', 'tropfstein', 'hoehle', 'saeule', 'sinter'] } ],
+    a: 'Karst entsteht im Kalkgestein. Regenwasser nimmt Kohlendioxid auf und wird zu Kohlensäure, die den Kalk löst (H₂CO₃ + CaCO₃ → Ca²⁺ + 2 HCO₃⁻). An der Oberfläche entstehen Karren (Rinnen im Fels), Dolinen (trichterförmige Einsturzlöcher) und Trockentäler, weil das Wasser versickert. Unterirdisch entstehen Höhlen mit Tropfsteinen: Stalaktiten hängen von der Decke, Stalagmiten wachsen vom Boden.' },
+  { lz: 'w6', q: 'Erkläre, wie die Gezeiten entstehen und in welchen Zeitabständen sie auftreten.', pts: [
+    { t: 'Die Anziehungskraft des Mondes zieht das Wasser an', k: ['anzieh', 'gravitation', 'mond'] },
+    { t: 'Auf der Gegenseite wirkt die Fliehkraft', k: ['fliehkraft', 'zentrifugal'] },
+    { t: 'Zwei Flutberge, die Erde dreht sich darunter hindurch', k: ['flutberg', 'wasserberg', 'zwei', 'dreht'] },
+    { t: 'Flut etwa alle 12 h 25 min', k: ['12', 'zwoelf'] },
+    { t: 'Zweimal Ebbe und zweimal Flut pro Tag, Flut → Ebbe etwa 6 h', k: ['zweimal', 'sechs', '6 h', '6h', '6 stunden'] } ],
+    a: 'Die Anziehungskraft des Mondes zieht das Wasser auf der mondzugewandten Seite an. Auf der Gegenseite überwiegt die Fliehkraft. So entstehen zwei Flutberge. Die Erde dreht sich darunter hindurch, deshalb gibt es an einem Ort zweimal Flut und zweimal Ebbe pro Tag. Weil der Mond weiterwandert, kommt die nächste Flut nach etwa 12 h 25 min. Von Flut zu Ebbe dauert es rund 6 h.' },
+  { lz: 'w7', q: 'Was ist eine Springtide, was eine Nipptide? Wie entstehen sie?', pts: [
+    { t: 'Springtide: Sonne, Erde und Mond stehen in einer Linie', k: ['linie', 'gerade'] },
+    { t: 'Springtide bei Vollmond und Neumond', k: ['vollmond', 'neumond'] },
+    { t: 'Nipptide: Sonne und Mond im rechten Winkel zur Erde', k: ['winkel', '90'] },
+    { t: 'Nipptide bei Halbmond', k: ['halbmond'] },
+    { t: 'Unterschied im Tidenhub: gross bzw. klein', k: ['tidenhub', 'hoch', 'gross', 'klein', 'stark', 'schwach'] } ],
+    a: 'Springtide: Bei Vollmond und Neumond stehen Sonne, Erde und Mond in einer Linie. Die Kräfte von Sonne und Mond addieren sich, der Tidenhub ist besonders gross. Nipptide: Bei Halbmond stehen Sonne und Mond im rechten Winkel zur Erde. Ihre Kräfte schwächen sich teilweise ab, der Tidenhub ist besonders klein.' },
+  { lz: 'g1', q: 'Zähle zwei Hochwasser in Uri auf. Nenne Jahr, betroffene Gemeinden oder Gebiete und was passiert ist.', pts: [
+    { t: '1977', k: ['1977'] }, { t: '1987', k: ['1987'] }, { t: '2005', k: ['2005'] },
+    { t: 'Betroffene Gemeinde oder Gebiet (z.B. Schattdorf, Attinghausen, Flüelen)', k: ['schattdorf', 'attinghausen', 'fluelen', 'altdorf', 'reusstal', 'reussebene'] },
+    { t: 'Ursache (z.B. Schächen trat über die Ufer, Unwetter am Gotthard)', k: ['schaechen', 'reuss', 'gotthard', 'unwetter', 'regen'] } ],
+    a: '1987: In der Nacht vom 24./25. August wütete ein Unwetter über dem Gotthardmassiv. Das untere Reusstal war von Flüelen bis Attinghausen überflutet, die Gotthardroute wochenlang gesperrt. 2005: Am 22./23. August trat der Schächen über die Ufer und überflutete das Industriegebiet in Schattdorf («Schattdorfer See»). Auch möglich: 1977, der Schächen überflutete das Industriegebiet, in Attinghausen floss der Kummetbach durchs Dorf.' },
+  { lz: 'g2', min: .7, q: 'Nenne mindestens fünf Hochwasserschutzmassnahmen in Uri und sage, wo sie liegen und was sie tun.', pts: [
+    { t: 'Schutzmauer entlang der Stillen Reuss (Industriegebiet Schattdorf)', k: ['mauer'] },
+    { t: 'Notentlastungskanal (unterirdisch)', k: ['kanal', 'notentlast'] },
+    { t: 'Torverschluss Stille Reuss', k: ['tor '] },
+    { t: 'Entlastung über die Autobahn A2', k: ['autobahn', 'a2'] },
+    { t: 'Kaskaden (Treppen) am Reussdamm', k: ['kaskade', 'treppe'] },
+    { t: 'Stiglissammler (Geschiebesammler) in Bürglen', k: ['sammler', 'stiglis', 'geschiebe'] },
+    { t: 'Weitere: Durchlass verbreitert, Palanggenbach, Swissli, Giessen', k: ['durchlass', 'palanggen', 'swissli', 'giessen', 'verbreiter', 'renatur'] } ],
+    a: 'Schattdorf: Hochwasserschutzmauer entlang der Stillen Reuss schützt das Industriegebiet, dazu ein unterirdischer Notentlastungskanal, ein Torverschluss und ein verbreiterter Durchlass an der Stillen Reuss. Reussebene: Bei extremem Hochwasser fliesst Wasser kontrolliert über den Reussdamm auf die Autobahn A2 und Richtung Urnersee. Kaskaden (Treppen) am Damm bremsen überlaufendes Wasser. Bürglen: Der Stiglissammler hält das Geschiebe des Schächens zurück.' },
+  { lz: 'e1', q: 'Wie entsteht ein U-Tal (Trogtal), und woran erkennt man es?', pts: [
+    { t: 'Ein Gletscher fliesst durch das Tal', k: ['gletscher', 'eis'] },
+    { t: 'Er schürft Boden und Wände ab', k: ['schuerf', 'abtrag', 'hobel', 'schleif', 'erod'] },
+    { t: 'Breiter, flacher Talboden', k: ['breit', 'flach', 'u-form', 'u-foermig', 'u form'] },
+    { t: 'Steile Talwände', k: ['steil'] } ],
+    a: 'Ein Gletscher füllt das ganze Tal aus und schürft mit dem mitgeführten Gestein Boden und Wände ab. Er formt so aus einem V-Tal ein U-Tal (Trogtal) mit breitem, flachem Talboden und steilen Wänden.' },
+  { lz: 'e1', q: 'Was sind Moränen? Nenne drei Arten und wo sie liegen.', pts: [
+    { t: 'Vom Gletscher transportierter und abgelagerter Schutt', k: ['schutt', 'gestein', 'material', 'geroell', 'ablager', 'abgelagert'] },
+    { t: 'Seitenmoräne: am Rand des Gletschers', k: ['seiten'] },
+    { t: 'Mittelmoräne: wo zwei Gletscher zusammenfliessen', k: ['mittel'] },
+    { t: 'Endmoräne: Wall vor der Gletscherzunge', k: ['end'] } ],
+    a: 'Moränen sind Schutt, den der Gletscher transportiert und abgelagert hat. Seitenmoränen liegen am Rand des Gletschers, Mittelmoränen entstehen, wo zwei Gletscher zusammenfliessen. Die Endmoräne ist ein Wall vor der Gletscherzunge und zeigt, wie weit der Gletscher einmal reichte.' },
+  { lz: 'e2', q: 'Erkläre grob, wie ein Gletscher entsteht.', pts: [
+    { t: 'Es fällt viel Schnee, und es ist kalt', k: ['schnee', 'kalt', 'niederschlag', 'temperatur'] },
+    { t: 'Der Schnee bleibt länger als ein Jahr liegen', k: ['jahr', 'liegen', 'schmilzt nicht', 'nicht schmilzt'] },
+    { t: 'Neue Schichten drücken ihn zusammen', k: ['druck', 'gewicht', 'zusammengedrueckt', 'presst'] },
+    { t: 'Aus Schnee wird Firn und dann Gletschereis', k: ['firn', 'umwandl', 'gletschereis', 'eis'] } ],
+    a: 'Wo es kalt ist und viel Niederschlag fällt, schmilzt im Sommer nicht der ganze Schnee. Er bleibt länger als ein Jahr liegen. Unter dem Druck neuer Schichten wird er zu körnigem Firn und schliesslich zu Gletschereis. Wird das Eis schwer genug, beginnt es talwärts zu fliessen.' },
+  { lz: 'e3', q: 'Warum schmelzen die Gletscher weltweit, und welchen Nutzen verlieren wir dabei?', pts: [
+    { t: 'Ursache: Klimaerwärmung, wärmere Sommer', k: ['klima', 'erwaerm', 'waermer', 'temperatur'] },
+    { t: 'Weniger Schnee im Winter, mehr Schmelze im Sommer', k: ['weniger schnee', 'schmilzt mehr', 'mehr schmilzt', 'schnee'] },
+    { t: 'Gletscher sind grosse Süsswasserspeicher', k: ['suesswasser', 'speicher', 'trinkwasser'] },
+    { t: 'Schmelzwasser im Sommer für Landwirtschaft und Strom', k: ['landwirtschaft', 'bewaesser', 'strom', 'energie', 'kraftwerk', 'sommer'] },
+    { t: 'Tourismus, Kies aus Moränen', k: ['tourismus', 'touris', 'kies'] } ],
+    a: 'Wegen der Klimaerwärmung sind die Sommer wärmer und im Winter fällt weniger Schnee. Es schmilzt mehr Eis, als neu entsteht. Dabei verlieren wir grosse Süsswasserspeicher: Gletscher liefern im Sommer Schmelzwasser für Trinkwasser, Landwirtschaft und Stromproduktion. Dazu kommen Tourismus und Kies aus Moränen. Gefahr: Gletscherseen können plötzlich auslaufen.' }
+];
+
+/* ---------- Aufgabenpool ---------- */
+const POOL = [];
+Object.entries(MCQ).forEach(([k, arr]) => arr.forEach((q, i) => POOL.push({ id: `mc:${k}:${i}`, lz: q.lz, kind: 'mc', q: q.q, o: q.o, e: q.e })));
+Object.entries(SORTS).forEach(([k, S]) => S.items.forEach(([t, b, lz], i) => POOL.push({ id: `so:${k}:${i}`, lz: lz || S.lz, kind: 'mc', q: S.title, sub: t, o: [S.bins[b], ...S.bins.filter((_, j) => j !== b)], e: `«${t}» gehört zu: ${S.bins[b]}.` })));
+Object.entries(SPOTS).forEach(([key, v]) => POOL.push({ id: `img:fluss:${key}`, lz: v.lz[0], lz2: [...v.lz, 'n2'], kind: 'img', scene: 'fluss', key }));
+Object.entries(GSPOTS).forEach(([key, v]) => POOL.push({ id: `img:eis:${key}`, lz: v.lz[0], lz2: v.lz, kind: 'img', scene: 'eis', key }));
+CARDS.forEach(c => POOL.push({ id: `card:${c.id}`, cid: c.id, lz: c.lz, kind: 'recall', q: c.q, a: c.a }));
+EXPL.forEach((x, i) => POOL.push({ id: `ex:${i}`, lz: x.lz, kind: 'explain', q: x.q, pts: x.pts, a: x.a, min: x.min || .6 }));
+const AREA_SHORT = { nat: 'Naturkräfte', was: 'Wasser formt die Landschaft', gew: 'Naturgewalt Wasser', eis: 'Eis formt die Landschaft' };
+const KIND = { mc: 'Auswahl', img: 'Bild', recall: 'Abrufen', explain: 'Erklären' };
+const WD = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'], WDL = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+const MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+const pad = n => String(n).padStart(2, '0');
+const dkey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const norm = x => String(x).toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+const detect = (text, p) => { const n = ' ' + norm(text) + ' '; return p.k.some(k => n.includes(norm(k))); };
+const hasLz = (t, lz) => t.lz === lz || (t.lz2 || []).includes(lz);
+function daysLeft() { if (!state.exam) return null; const d = new Date(state.exam + 'T00:00'), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((d - t) / 864e5); }
+function weight(lz) { const s = status(lz); return s === 0 ? 4 : s === 3 ? 3 : s === 1 ? 2 + (1 - rate(lz)) * 2 : .6; }
+function wpick(arr, w) { let r = Math.random() * w.reduce((a, b) => a + b, 0); for (let i = 0; i < arr.length; i++) { r -= w[i]; if (r <= 0) return arr[i]; } return arr[arr.length - 1]; }
+function buildTraining(area) {
+  const pool = POOL.filter(t => !area || LZ[t.lz].area === area);
+  const pattern = ['mc', 'recall', 'explain', 'img', 'mc', 'recall', 'explain', 'mc', 'img', 'recall', 'explain', 'mc'];
+  const out = [], used = new Set(), perLz = {};
+  for (const kind of pattern) {
+    let c = pool.filter(t => t.kind === kind && !used.has(t.id));
+    if (!c.length) c = pool.filter(t => !used.has(t.id));
+    if (!c.length) break;
+    const w = c.map(t => weight(t.lz) * (state.mistakes.includes(t.id) ? 4 : 1) / (1 + (perLz[t.lz] || 0) * 2) * ((Date.now() - (state.seen[t.id] || 0)) < 864e5 ? .25 : 1));
+    const t = wpick(c, w); out.push(t); used.add(t.id); perLz[t.lz] = (perLz[t.lz] || 0) + 1;
+  }
+  return out;
+}
+function buildMistakes() { return shuffle(POOL.filter(t => state.mistakes.includes(t.id))).slice(0, 15); }
+function buildForLz(lz) {
+  const c = POOL.filter(t => hasLz(t, lz));
+  const ex = shuffle(c.filter(t => t.kind === 'explain')).slice(0, 2);
+  return shuffle([...shuffle(c.filter(t => t.kind !== 'explain')).slice(0, 7 - ex.length), ...ex]);
+}
+function buildExam() {
+  const out = [], used = new Set();
+  Object.keys(LZ).forEach(lz => {
+    const c = POOL.filter(t => hasLz(t, lz) && t.kind !== 'recall' && !used.has(t.id));
+    const ex = c.filter(t => t.kind === 'explain'), im = c.filter(t => t.kind === 'img'), mc = c.filter(t => t.kind === 'mc');
+    const r = Math.random();
+    const from = (r < .55 && ex.length) ? ex : (r < .8 && im.length) ? im : mc.length ? mc : c;
+    if (!from.length) return;
+    const t = from[Math.floor(Math.random() * from.length)]; out.push(t); used.add(t.id);
+  });
+  out.push(...shuffle(POOL.filter(t => t.kind === 'explain' && !used.has(t.id))).slice(0, Math.max(0, 20 - out.length)));
+  const order = AREAS.map(a => a.id);
+  return out.sort((a, b) => order.indexOf(LZ[a.lz].area) - order.indexOf(LZ[b.lz].area));
+}
+function markDay(kind) { const d = dkey(); state.done[d] = state.done[d] || {}; state.done[d][kind] = (state.done[d][kind] || 0) + 1; save(); }
+function recordTask(t, ok) {
+  [t.lz, ...(t.lz2 || []).filter(x => x !== t.lz)].forEach(id => record(id, ok));
+  state.seen[t.id] = Date.now();
+  state.mistakes = state.mistakes.filter(x => x !== t.id);
+  if (!ok) state.mistakes.push(t.id);
+  save();
+}
+function mapClone(scene, key) {
+  const c = $(SCENES[scene].svg).cloneNode(true);
+  c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+  c.querySelectorAll('.hl, .tapmark').forEach(n => n.remove());
+  const target = c.querySelector(`[data-spot="${key}"]`);
+  if (target) { const h = target.cloneNode(); h.removeAttribute('data-spot'); h.setAttribute('class', `hl ${target.classList.contains('hs-stroke') ? 'stroke' : 'fill'}`); c.appendChild(h); }
+  return c;
+}
+
+/* ---------- Übungsrunde ---------- */
+let sess = null, timer = 0;
+function startSession(mode, tasks, title) {
+  if (!tasks.length) return;
+  sess = { mode, tasks, title, i: 0, ans: [], res: [], start: Date.now(), phase: 'run' };
+  clearInterval(timer); if (mode === 'exam') timer = setInterval(tick, 1000);
+  show('session'); renderTask();
+}
+function tick() { const el = $('#sTimer'); if (!el || !sess) return; const s = Math.floor((Date.now() - sess.start) / 1000); el.textContent = `${Math.floor(s / 60)}:${pad(s % 60)}`; }
+function sessHead() {
+  const n = sess.tasks.length, i = sess.i;
+  return `<div class="sess-head"><div><span class="eyebrow">${esc(sess.title)}</span><h2>Aufgabe ${i + 1} von ${n}</h2></div>
+    <div class="row">${sess.mode === 'exam' ? `<span class="timer">Zeit <b id="sTimer">0:00</b> · Richtwert 35 Min.</span>` : ''}<button class="btn small ghost" data-act="pause">Pause</button></div></div>
+    <div class="bar"><i style="width:${(i / n * 100).toFixed(1)}%"></i></div>`;
+}
+function nextBtn(hidden) { return `<button class="btn primary" data-act="next" data-primary ${hidden ? 'hidden' : ''}>${sess.i + 1 < sess.tasks.length ? 'Weiter' : sess.mode === 'exam' ? 'Abgeben' : 'Fertig'}</button>`; }
+function renderTask() {
+  const t = sess.tasks[sess.i], exam = sess.mode === 'exam', box = $('#sessBox');
+  const meta = `<p class="meta">${KIND[t.kind]} · ${esc(AREA_SHORT[LZ[t.lz].area])}</p>`;
+  const next = nextBtn;
+  let body = '';
+  if (t.kind === 'mc' || t.kind === 'img') {
+    let q, opts;
+    if (t.kind === 'mc') { q = `<p class="tq">${esc(t.q)}</p>${t.sub ? `<p class="tsub">«${esc(t.sub)}»</p>` : ''}`; opts = shuffle(t.o.map((txt, j) => ({ txt, j }))); }
+    else { const sp = SCENES[t.scene].spots; q = `<p class="tq">Wie heisst die markierte Form?</p><div class="sessmap" id="sMap"></div>`; opts = shuffle([t.key, ...shuffle(Object.keys(sp).filter(k => k !== t.key)).slice(0, 3)]).map(k => ({ txt: sp[k].n, j: k === t.key ? 0 : 1 })); }
+    body = q + `<div class="opts">${opts.map((o, n) => `<button class="opt" data-act="opt" data-j="${o.j}"><span class="key">${n + 1}</span>${esc(o.txt)}</button>`).join('')}</div><div id="tFb"></div><div class="row">${next(true)}</div>`;
+  } else if (t.kind === 'recall') {
+    body = `<p class="tq">${esc(t.q)}</p><textarea class="answer" id="tText" rows="3" placeholder="Notiere kurz, was du weisst (freiwillig)."></textarea><div id="tFb"></div><div class="row" id="tFoot"><button class="btn primary" data-act="reveal" data-primary>Antwort zeigen</button></div>`;
+  } else {
+    body = `<p class="tq">${esc(t.q)}</p><textarea class="answer" id="tText" rows="7" placeholder="Schreibe deine Erklärung in ganzen Sätzen oder Stichworten."></textarea><div id="tFb"></div><div class="row" id="tFoot">${exam ? next(false) : '<button class="btn primary" data-act="check" data-primary>Antwort prüfen</button><span class="note"><kbd>Strg</kbd> + <kbd>Enter</kbd></span>'}</div>`;
+  }
+  box.innerHTML = sessHead() + `<div class="panel taskcard">${meta}${body}</div>`;
+  if (t.kind === 'img') $('#sMap').appendChild(mapClone(t.scene, t.key));
+  if (exam) tick();
+  const ta = $('#tText'); if (ta) ta.focus({ preventScroll: true });
+}
+function checklistHtml(t, text) {
+  return `<div class="checklist"><p class="meta">Diese Punkte gehören in eine gute Antwort. Hake ab, was du sinngemäss geschrieben hast:</p>
+    ${t.pts.map((p, i) => { const d = detect(text, p); return `<label class="ck"><input type="checkbox" data-pt="${i}" ${d ? 'checked' : ''}><span>${esc(p.t)}</span>${d ? '<em>erkannt</em>' : ''}</label>`; }).join('')}
+    <details><summary>Musterantwort anzeigen</summary><p>${esc(t.a)}</p></details></div>`;
+}
+function scoreChecklist(scope, t) { const n = $$('input[data-pt]', scope).filter(x => x.checked).length; return { n, of: t.pts.length, ok: n / t.pts.length >= t.min }; }
+function nextTask() {
+  sess.i++;
+  if (sess.i < sess.tasks.length) { renderTask(); return; }
+  if (sess.mode === 'exam') { clearInterval(timer); sess.dur = Date.now() - sess.start; sess.phase = 'review'; renderReview(); }
+  else finishTrain();
+}
+$('#sessBox').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || !sess) return;
+  const act = b.dataset.act, t = sess.tasks[sess.i], exam = sess.mode === 'exam';
+  if (act === 'pause') { show(exam ? 'pruefung' : 'heute'); return; }
+  if (act === 'opt') {
+    if (exam) {
+      $$('#sessBox .opt').forEach(o => o.classList.toggle('picked', o === b));
+      sess.ans[sess.i] = { j: b.dataset.j, txt: b.textContent.slice(1) };
+      $('#sessBox [data-act="next"]').hidden = false; return;
+    }
+    if (sess.res[sess.i] !== undefined) return;
+    const ok = b.dataset.j === '0';
+    $$('#sessBox .opt').forEach(o => { o.disabled = true; if (o.dataset.j === '0') o.classList.add('right'); });
+    if (!ok) b.classList.add('wrong');
+    sess.res[sess.i] = ok; recordTask(t, ok);
+    const expl = t.kind === 'mc' ? t.e : `${SCENES[t.scene].spots[t.key].n}: ${SCENES[t.scene].spots[t.key].t}`;
+    $('#tFb').innerHTML = `<div class="fb ${ok ? 'good' : 'bad'}"><p><b class="k">${ok ? 'Richtig!' : 'Nicht ganz.'}</b> ${esc(expl)}</p></div>`;
+    const nb = $('#sessBox [data-act="next"]'); nb.hidden = false; nb.focus({ preventScroll: true }); return;
+  }
+  if (act === 'reveal') {
+    $('#tFb').innerHTML = `<div class="fb"><p class="meta">Musterantwort</p><p style="margin-top:4px">${esc(t.a)}</p></div>`;
+    $('#tFoot').innerHTML = `<span class="note">Wie gut wusstest du es?</span><button class="btn" data-act="rate" data-r="2" style="border-color:var(--ok)">Sicher gewusst</button><button class="btn" data-act="rate" data-r="1" style="border-color:var(--warn)">Unsicher</button><button class="btn" data-act="rate" data-r="0" style="border-color:var(--bad)">Nicht gewusst</button>`;
+    return;
+  }
+  if (act === 'rate') {
+    const r = +b.dataset.r, bx = state.cards[t.cid] || 1;
+    state.cards[t.cid] = r === 2 ? Math.min(3, bx + 1) : r === 1 ? bx : 1;
+    sess.res[sess.i] = r === 2; recordTask(t, r === 2); nextTask(); return;
+  }
+  if (act === 'check') {
+    $('#tFb').innerHTML = checklistHtml(t, $('#tText').value);
+    $('#tFoot').innerHTML = `<button class="btn primary" data-act="grade" data-primary>Auswerten</button>`; return;
+  }
+  if (act === 'grade') {
+    const sc = scoreChecklist($('#tFb'), t);
+    $$('#tFb .ck').forEach(l => { l.classList.toggle('miss', !$('input', l).checked); $('input', l).disabled = true; });
+    sess.res[sess.i] = sc.ok; recordTask(t, sc.ok);
+    $('#tFoot').innerHTML = `<div class="fb ${sc.ok ? 'good' : 'bad'}" style="flex:1"><b class="k">${sc.n} von ${sc.of} Punkten.</b> ${sc.ok ? 'Gut erklärt!' : 'Lies die rot markierten Punkte und die Musterantwort nochmals durch.'}</div>${nextBtn(false)}`;
+    $('#sessBox [data-act="next"]').focus({ preventScroll: true }); return;
+  }
+  if (act === 'next') {
+    if (exam && t.kind === 'explain') sess.ans[sess.i] = { text: $('#tText').value };
+    nextTask();
+  }
+});
+document.addEventListener('keydown', e => {
+  if ($('#v-session').hidden || !sess) return;
+  if (e.target.matches('textarea')) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { const p = $('#sessBox [data-primary]:not([hidden])'); if (p) { e.preventDefault(); p.click(); } }
+    return;
+  }
+  if (e.target.matches('input, button') && e.key === 'Enter') return;
+  if (/^[1-9]$/.test(e.key)) { const o = $$('#sessBox .opt')[+e.key - 1]; if (o && !o.disabled) o.click(); }
+  if (e.key === 'Enter') { const p = $('#sessBox [data-primary]:not([hidden])'); if (p) { e.preventDefault(); p.click(); } }
+});
+function finishTrain() {
+  const n = sess.res.length, ok = sess.res.filter(Boolean).length;
+  markDay('train'); sess.phase = 'done';
+  const lzs = [...new Set(sess.tasks.map(t => t.lz))];
+  $('#sessBox').innerHTML = `<div class="panel taskcard" style="text-align:left">
+    <span class="eyebrow">${esc(sess.title)}</span><h2>Geschafft, Lily!</h2>
+    <p><span class="result-big">${ok}</span> <span class="lead">von ${n} Aufgaben richtig</span></p>
+    <h3>Diese Lernziele hast du geübt</h3>
+    <ol class="lzlist">${lzs.map(id => `<li>${dotHtml(id)}<div class="txt">Ich kann ${esc(LZ[id].text)}</div></li>`).join('')}</ol>
+    <div class="row"><button class="btn primary" data-act2="train">Noch eine Runde</button><button class="btn" data-go="heute">Zu «Heute üben»</button></div></div>`;
+}
+function renderReview() {
+  const items = sess.tasks.map((t, i) => ({ t, i })).filter(x => x.t.kind === 'explain');
+  if (!items.length) { renderExamResult(); return; }
+  $('#sessBox').innerHTML = `<div class="sess-head"><div><span class="eyebrow">${esc(sess.title)}</span><h2>Korrektur deiner Erklärungen</h2></div></div>
+    <p class="lead">Vergleiche jede Antwort mit der Checkliste und hake ehrlich ab, was du sinngemäss geschrieben hast. Was die App erkannt hat, ist schon angehakt.</p>
+    ${items.map(({ t, i }) => `<div class="panel taskcard" data-rev="${i}"><p class="meta">Aufgabe ${i + 1} · ${esc(AREA_SHORT[LZ[t.lz].area])}</p><p class="tq">${esc(t.q)}</p>
+      <div class="fb"><p class="meta">Deine Antwort</p><p style="white-space:pre-wrap;margin-top:4px">${esc((sess.ans[i] || {}).text || '(keine Antwort)')}</p></div>
+      ${checklistHtml(t, (sess.ans[i] || {}).text || '')}</div>`).join('')}
+    <div class="row"><button class="btn primary big" data-act3="result">Auswertung anzeigen</button></div>`;
+}
+function renderExamResult() {
+  let pts = 0; const per = {}, wrong = [];
+  sess.tasks.forEach((t, i) => {
+    let p, ok, info = '';
+    if (t.kind === 'explain') {
+      const card = $(`#sessBox [data-rev="${i}"]`);
+      const sc = card ? scoreChecklist(card, t) : { n: 0, of: t.pts.length, ok: false };
+      p = sc.n / sc.of; ok = sc.ok;
+      if (!ok) info = 'Fehlende Punkte: ' + t.pts.filter((_, k) => !(card && $(`input[data-pt="${k}"]`, card).checked)).map(x => x.t).join(' · ');
+    } else {
+      ok = (sess.ans[i] || {}).j === '0'; p = ok ? 1 : 0;
+      if (!ok) info = `Richtig wäre: ${t.kind === 'mc' ? t.o[0] : SCENES[t.scene].spots[t.key].n}${t.kind === 'mc' ? '. ' + t.e : ''}`;
+    }
+    pts += p; recordTask(t, ok);
+    const a = LZ[t.lz].area; per[a] = per[a] || [0, 0]; per[a][0] += p; per[a][1] += 1;
+    if (!ok) wrong.push({ t, i, info });
+  });
+  const max = sess.tasks.length, pct = Math.round(pts / max * 100), note = Math.round((1 + 5 * pts / max) * 2) / 2;
+  const mins = Math.round(sess.dur / 60000);
+  state.exams.push({ d: dkey(), pct, note, mins }); markDay('exam'); sess.phase = 'done';
+  $('#sessBox').innerHTML = `<div class="panel taskcard">
+    <span class="eyebrow">Probeprüfung · ${mins} Minuten</span><h2>Dein Ergebnis</h2>
+    <p><span class="result-big">${pct} %</span> <span class="lead">· ungefähre Note ${note.toFixed(1)}</span></p>
+    <p class="note">${pts.toFixed(1)} von ${max} Punkten. Die Note ist nur ein Richtwert, die echte Prüfung kann anders gewichten.</p>
+    <h3>Nach Thema</h3>
+    <div class="areabars">${AREAS.filter(a => per[a.id]).map(a => { const [p, m] = per[a.id], q = p / m; return `<div><span>${esc(a.name)}</span><div class="bar"><i style="width:${(q * 100).toFixed(0)}%;background:${q >= .8 ? 'var(--ok)' : q >= .5 ? 'var(--warn)' : 'var(--bad)'}"></i></div><span>${Math.round(q * 100)} %</span></div>`; }).join('')}</div>
+    ${wrong.length ? `<h3>Das solltest du nochmals anschauen (${wrong.length})</h3><div class="revlist">${wrong.map(w => `<div class="rev"><span class="meta">Aufgabe ${w.i + 1} · ${KIND[w.t.kind]}</span><span>${esc(w.t.kind === 'img' ? 'Markierte Form im Bild' : w.t.q)}${w.t.sub ? ` <b>«${esc(w.t.sub)}»</b>` : ''}</span><span>${esc(w.info)}</span></div>`).join('')}</div>` : '<p>Alles richtig. Super!</p>'}
+    <div class="row">${wrong.length ? '<button class="btn primary" data-act2="mist">Fehler jetzt üben</button>' : ''}<button class="btn" data-go="heute">Zu «Heute üben»</button></div></div>`;
+  window.scrollTo({ top: 0 });
+}
+$('#sessBox').addEventListener('click', e => { if (e.target.closest('[data-act3="result"]')) renderExamResult(); });
+
+/* ---------- Heute, Probeprüfung, Thema ---------- */
+function planHtml() {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const n = daysLeft(); if (n == null || isNaN(n)) return '<li>Gib unter «Fortschritt» das Prüfungsdatum ein.</li>';
+  if (n < 0) return '<li>Die Prüfung ist vorbei.</li>';
+  const out = [];
+  for (let k = 0; k <= Math.min(n, 10); k++) {
+    const d = new Date(today); d.setDate(d.getDate() + k);
+    const left = n - k, done = state.done[dkey(d)] || {};
+    let todo, ok;
+    if (left === 0) { todo = 'Prüfung. Viel Glück!'; ok = false; }
+    else if (left === 1) { todo = 'Probeprüfung, danach Fehler üben'; ok = !!done.exam; }
+    else if (left === 3) { todo = 'Tagestraining und Probeprüfung'; ok = !!done.exam && !!done.train; }
+    else { todo = 'Tagestraining (ca. 15 Min.)'; ok = !!done.train; }
+    out.push(`<li class="${k === 0 ? 'today' : ''} ${left === 0 ? 'exam' : ''}"><span class="pd">${WD[d.getDay()]} ${d.getDate()}.${d.getMonth() + 1}.</span><span>${k === 0 ? 'Heute: ' : ''}${todo}</span><span class="pc">${ok ? '✓' : ''}</span></li>`);
+  }
+  return out.join('');
+}
+function renderHeute() {
+  const n = daysLeft(), all = Object.keys(LZ), green = all.filter(id => status(id) === 2).length;
+  const ex = state.exam ? new Date(state.exam + 'T00:00') : null;
+  const when = ex ? `${WDL[ex.getDay()]}, ${ex.getDate()}. ${MON[ex.getMonth()]}` : '';
+  const line = n == null ? '' : n > 1 ? `Noch ${n} Tage bis zur Prüfung am ${when}.` : n === 1 ? 'Morgen ist die Prüfung. Mach heute die Probeprüfung und übe danach deine Fehler.' : n === 0 ? 'Heute ist die Prüfung. Du hast gut geübt. Viel Glück!' : 'Die Prüfung ist vorbei.';
+  const running = sess && sess.mode !== 'exam' && sess.phase === 'run';
+  const last = state.exams[state.exams.length - 1];
+  const weak = all.map(id => ({ id, w: weight(id) })).filter(x => status(x.id) !== 2).sort((a, b) => b.w - a.w).slice(0, 4);
+  $('#heuteBox').innerHTML = `
+    <div class="hello"><h2>Hallo Lily</h2><p class="lead">${line}</p></div>
+    <div class="grid2">
+      <div class="panel hero-card">
+        <span class="eyebrow">Tagestraining</span>
+        <h3>12 gemischte Aufgaben, etwa 15 Minuten</h3>
+        <p>Die App wählt, was du gerade am meisten brauchst: neue und unsichere Lernziele, deine Fehler und alles, was du seit ${STALE_DAYS} Tagen nicht mehr geübt hast. Dazu gehören immer auch Erklär-Aufgaben wie in der Prüfung.</p>
+        <div class="row">${running ? `<button class="btn primary big" data-act2="resume">Runde fortsetzen (${sess.i + 1}/${sess.tasks.length})</button><button class="btn" data-act2="train">Neue Runde</button>` : '<button class="btn primary big" data-act2="train">Training starten</button>'}</div>
+        <p class="note">Tastatur: <kbd>1</kbd>–<kbd>4</kbd> wählt eine Antwort, <kbd>Enter</kbd> geht weiter.</p>
+      </div>
+      <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Dein Plan bis zur Prüfung</h3><ol class="plan">${planHtml()}</ol></div>
+    </div>
+    <div class="grid3">
+      <div class="panel stat"><span class="meta">Lernziele sicher</span><b>${green} / ${all.length}</b><div class="bar"><i style="width:${(green / all.length * 100).toFixed(0)}%"></i></div></div>
+      <div class="panel stat"><span class="meta">Fehlerheft</span><b>${state.mistakes.length} ${state.mistakes.length === 1 ? 'Aufgabe' : 'Aufgaben'}</b>${state.mistakes.length ? '<button class="btn small" data-act2="mist">Fehler üben</button>' : '<span class="note">Falsche Antworten landen hier.</span>'}</div>
+      <div class="panel stat"><span class="meta">Letzte Probeprüfung</span><b>${last ? `${last.pct} % · Note ≈ ${last.note.toFixed(1)}` : 'noch keine'}</b><button class="btn small" data-go="pruefung">Zur Probeprüfung</button></div>
+    </div>
+    ${weak.length ? `<div class="panel" style="display:grid;gap:12px"><h3>Diese Lernziele brauchen dich am meisten</h3><ol class="lzlist">${weak.map(x => `<li>${dotHtml(x.id)}<div class="txt">Ich kann ${esc(LZ[x.id].text)}<div class="mods"><button class="modlink strong" data-act2="lz" data-lz="${x.id}">Jetzt üben</button><span class="note">${esc(AREA_SHORT[LZ[x.id].area])}</span></div></div></li>`).join('')}</ol></div>` : ''}`;
+}
+function renderPruefung() {
+  const running = sess && sess.mode === 'exam' && sess.phase !== 'done';
+  $('#pruefBox').innerHTML = `
+    <div><span class="eyebrow">Generalprobe</span><h2>Probeprüfung</h2></div>
+    <p class="lead">20 Aufgaben zu allen 18 Lernzielen, wie in der echten Prüfung: ohne Hilfe und ohne Rückmeldung zwischendurch. Am Schluss korrigierst du deine Erklärungen mit einer Checkliste und siehst dein Ergebnis pro Thema.</p>
+    <div class="grid2">
+      <div class="panel hero-card">
+        <ul class="plain"><li>Dauer: etwa 35 Minuten. Die Zeit läuft mit.</li><li>Gut die Hälfte sind Erklär-Aufgaben.</li><li>Alles, was falsch ist, kommt ins Fehlerheft.</li><li>Tipp: Mach sie am Montag und am Mittwoch.</li></ul>
+        <div class="row">${running ? `<button class="btn primary big" data-act2="resume">Fortsetzen (${Math.min(sess.i + 1, sess.tasks.length)}/${sess.tasks.length})</button><button class="btn" data-act2="exam">Neu beginnen</button>` : '<button class="btn primary big" data-act2="exam">Probeprüfung starten</button>'}</div>
+      </div>
+      <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Bisherige Probeprüfungen</h3>
+        ${state.exams.length ? `<table class="hist"><thead><tr><th>Datum</th><th>Ergebnis</th><th>Note ≈</th><th>Zeit</th></tr></thead><tbody>${state.exams.slice().reverse().map(x => { const d = new Date(x.d + 'T00:00'); return `<tr><td>${WD[d.getDay()]} ${d.getDate()}.${d.getMonth() + 1}.</td><td>${x.pct} %</td><td>${x.note.toFixed(1)}</td><td>${x.mins} Min.</td></tr>`; }).join('')}</tbody></table>` : '<p class="note">Noch keine. Die erste zeigt dir, wo du stehst.</p>'}
+      </div>
+    </div>`;
+}
+function renderThema(id) {
+  const a = AREAS.find(x => x.id === id) || AREAS[0];
+  const green = a.lz.filter(l => status(l[0]) === 2).length;
+  $('#themaBox').innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="eyebrow">Thema</span><h2>${esc(a.name)}</h2></div><button class="btn primary big" data-act2="topic" data-area="${a.id}">Thema trainieren</button></div>
+    <div style="display:grid;gap:6px"><div class="bar"><i style="width:${(green / a.lz.length * 100).toFixed(0)}%"></i></div><p class="note">${green} von ${a.lz.length} Lernzielen sicher</p></div>
+    <div class="panel"><ol class="lzlist">${a.lz.map(([lz, text, mods]) => `<li>${dotHtml(lz)}<div class="txt">Ich kann ${esc(text)}<div class="mods"><button class="modlink strong" data-act2="lz" data-lz="${lz}">Lernziel üben</button>${(mods || []).map(m => `<button class="modlink" data-go="${m}" ${m === 'bild' ? `data-scene="${a.id === 'eis' ? 'eis' : 'fluss'}"` : ''}>${MODS[m]}</button>`).join('')}</div></div></li>`).join('')}</ol></div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act2]'); if (!b) return;
+  const act = b.dataset.act2;
+  if (act === 'train') startSession('train', buildTraining(), 'Tagestraining');
+  if (act === 'mist') startSession('train', buildMistakes(), 'Fehlerheft');
+  if (act === 'topic') startSession('train', buildTraining(b.dataset.area), 'Training: ' + AREA_SHORT[b.dataset.area]);
+  if (act === 'lz') startSession('train', buildForLz(b.dataset.lz), 'Lernziel üben');
+  if (act === 'exam') startSession('exam', buildExam(), 'Probeprüfung');
+  if (act === 'resume' && sess) { show('session'); if (sess.phase === 'review') renderReview(); else renderTask(); if (sess.mode === 'exam' && sess.phase === 'run') { clearInterval(timer); timer = setInterval(tick, 1000); } }
+});
+
+/* ---------- Start ---------- */
+drawUriMap(); renderUri();
+(() => {
+  const vb = $('#v-bild'), wf = $('#wrapFluss'), we = $('#wrapEis'), h = [vb.hidden, wf.hidden, we.hidden];
+  vb.hidden = wf.hidden = we.hidden = false; vb.style.visibility = 'hidden';
+  try { drawMapDetails(); drawGlacierDetails(); } finally { [vb.hidden, wf.hidden, we.hidden] = h; vb.style.visibility = ''; }
+})();
+setScene('fluss');
+renderFilter(); buildDeck(); renderCard();
+startSort('prozess');
+drawStage(0); newOrder();
+renderMC('mcG'); renderMC('mcT'); renderMC('mcU');
+drawTide();
+show('heute');
+})();
+</script>
+</body>
+</html>
