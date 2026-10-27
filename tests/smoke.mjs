@@ -4,7 +4,8 @@
 //         npm test -- geografie-naturphaenomene   (ein Thema)
 // Screenshots landen in tests/ausgabe/ (nicht im Git).
 import { chromium } from 'playwright';
-import { readdirSync, existsSync, mkdirSync } from 'node:fs';
+import { readdirSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -16,6 +17,18 @@ const themen = readdirSync(resolve(root, 'themen')).filter(t => existsSync(resol
 const exe = process.env.CHROMIUM_PATH || (existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined);
 const browser = await chromium.launch(exe ? { executablePath: exe } : {});
 let failed = false;
+
+// Repository sauber halten: keine fremden Unterlagen, Schweizer Rechtschreibung
+try {
+  const files = execSync('git ls-files', { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean);
+  const docs = files.filter(f => /\.(pdf|docx?|pptx?|odt|key)$/i.test(f) || f.startsWith('unterlagen/'));
+  const images = files.filter(f => /\.(jpe?g|png|gif|webp|heic)$/i.test(f));
+  const eszett = files.filter(f => /^(themen\/.*\.(js|html)|index\.html)$/.test(f) && readFileSync(resolve(root, f), 'utf8').includes('ß'));
+  if (docs.length) { failed = true; console.log('✗ Unterlagen im Repository (gehören nach unterlagen/): ' + docs.join(', ')); }
+  if (eszett.length) { failed = true; console.log('✗ «ß» gefunden (Schweizer Rechtschreibung: «ss»): ' + eszett.join(', ')); }
+  if (images.length) console.log('! Bilddateien im Repository, Herkunft prüfen (nur eigene Bilder): ' + images.join(', '));
+  if (!docs.length && !eszett.length) console.log('✓ Repository: keine Unterlagen, kein «ß»');
+} catch (e) { console.log('! Repository-Prüfung übersprungen: ' + e.message); }
 
 async function answerCurrent(p, exam) {
   const box = '#sessBox';

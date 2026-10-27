@@ -474,7 +474,7 @@ const WD = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'], WDL = ['Sonntag', 'Montag
 const MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const pad = n => String(n).padStart(2, '0');
 const dkey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const norm = x => String(x).toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+const norm = x => String(x).toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/\u00df/g, 'ss');
 const detect = (text, p) => { const n = ' ' + norm(text) + ' '; return p.k.some(k => n.includes(norm(k))); };
 const hasLz = (t, lz) => t.lz === lz || (t.lz2 || []).includes(lz);
 function daysLeft() { if (!state.exam) return null; const d = new Date(state.exam + 'T00:00'), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((d - t) / 864e5); }
