@@ -32,7 +32,13 @@ try {
 
 async function answerCurrent(p, exam) {
   const box = '#sessBox';
-  if (await p.$(`${box} [data-act="opt"]`)) {
+  if (await p.$(`${box} #tCalc`)) {
+    // Rechenaufgabe: richtige Option jedes Auswahl-Schritts, eine Zahl in jedes Feld
+    for (const b of await p.$$(`${box} .calcstep .opt[data-j="0"]`)) await b.click();
+    for (const f of await p.$$(`${box} .calcnum`)) await f.fill('1');
+    if (!exam) await p.click(`${box} [data-act="calccheck"]`);
+    await p.click(`${box} [data-act="next"]`);
+  } else if (await p.$(`${box} [data-act="opt"]`)) {
     await p.click(`${box} [data-act="opt"] >> nth=0`);
     await p.click(`${box} [data-act="next"]`);
   } else if (await p.$(`${box} [data-act="reveal"]`)) {
@@ -97,6 +103,15 @@ for (const t of themen) {
     }
     await p.screenshot({ path: `${out}/${t}-zeitstrahl.png` });
     await p.click('[data-zmode="jahr"]'); await p.click('#zBody [data-zj] >> nth=0'); await p.click('#zNext');
+  }
+
+  // Rechnen: eine Aufgabe prüfen und zur nächsten
+  if (await p.$('#t-rechnen')) {
+    await p.click('#t-rechnen');
+    for (const b of await p.$$('#rBox .calcstep .opt[data-j="0"]')) await b.click();
+    await p.click('#rCheck'); await p.waitForSelector('#rNext');
+    await p.screenshot({ path: `${out}/${t}-rechnen.png`, fullPage: true });
+    await p.click('#rNext');
   }
 
   // Tagestraining komplett

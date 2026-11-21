@@ -1,6 +1,6 @@
 /* Lern-App Grundgerüst
    Gemeinsame Logik für alle Themen: Navigation, Tagestraining, Erklär-Aufgaben, Probeprüfung,
-   Fortschritt mit Ampel, Karteikarten, Sortieren, Bild-Quiz, Zeitstrahl.
+   Fortschritt mit Ampel, Karteikarten, Sortieren, Bild-Quiz, Zeitstrahl, Rechenaufgaben.
    Ein Thema liefert nur Daten (inhalt.js) und optional eigene Werkzeuge (werkzeuge.js).
    Aufbau und Datenformat: siehe CLAUDE.md im Hauptordner. */
 (() => {
@@ -56,6 +56,7 @@ const SORTS = C.sortieren || {};
 const EXPL = C.erklaeren || [];
 const SCENES = (C.bildquiz && C.bildquiz.szenen) || {};
 const TL = C.zeitstrahl || {};
+const CALC = (C.rechnen && C.rechnen.aufgaben) || [];
 
 /* ---------- Seite aufbauen ---------- */
 const tools = $$('#vorlagen section[data-werkzeug]').map(s => ({ id: s.dataset.werkzeug, name: s.dataset.name, el: s }));
@@ -64,6 +65,7 @@ if (Object.keys(SCENES).length) MODS.bild = 'Bild-Quiz';
 if (CARDS.length) MODS.karten = 'Karteikarten';
 if (Object.keys(SORTS).length) MODS.sortieren = 'Sortieren';
 if (Object.keys(TL).length) MODS.zeitstrahl = 'Zeitstrahl';
+if (CALC.length) MODS.rechnen = 'Rechnen';
 tools.forEach(t => MODS[t.id] = t.name);
 buildPage();
 function buildPage() {
@@ -184,6 +186,16 @@ function buildPage() {
       <div id="zBody"></div>
       <div id="zFb" aria-live="polite"></div>
     </div>
+  </section>` : ''}
+
+  ${MODS.rechnen ? `<section class="view" id="v-rechnen" role="tabpanel" aria-labelledby="t-rechnen" hidden>
+    <div class="row" style="justify-content:space-between">
+      <h2>${esc(C.rechnen.titel || 'Rechnen')}</h2>
+      <span class="score" id="rScore"></span>
+    </div>
+    ${C.rechnen.text ? `<p class="lead">${esc(C.rechnen.text)}</p>` : ''}
+    <div class="row" id="rSets"></div>
+    <div class="panel taskcard" id="rBox"></div>
   </section>` : ''}
 </main>
 </div>
@@ -555,6 +567,76 @@ if (MODS.zeitstrahl) {
   $('#zFb').addEventListener('click', e => { if (e.target.id === 'zNext') nextYear(); });
 }
 
+/* ---------- Rechenaufgaben ---------- */
+// Daten: rechnen: { titel, text, aufgaben: [ { id, lz, lz2?, titel, q, schritte: [ { f, o: [richtig, …], e } | { f, z: Zahl, einheit, einheiten?: [], tol?, e } ], loesung: ['Zeile', …] } ] }
+// Ein Schritt ist eine Auswahl (o, richtige Antwort zuerst) oder eine Zahl (z) mit Einheit.
+// Bei «einheiten» wählt man die Einheit selbst, sonst steht sie fest neben dem Eingabefeld.
+const parseNum = x => { const t = String(x).trim().replace(/[\s'’]/g, '').replace(',', '.').replace(/^[−–]/, '-'); return /^-?(\d+\.?\d*|\.\d+)$/.test(t) ? +t : NaN; };
+const fmtNum = n => { const [i, d] = String(Math.round(n * 1e6) / 1e6).split('.'); return i.replace(/\B(?=(\d{3})+$)/g, "'") + (d ? '.' + d : ''); };
+const calcTol = st => st.tol != null ? st.tol : Math.max(Math.abs(st.z) * .01, .005);
+function calcHtml(t) {
+  return `<ol class="calcsteps">${t.schritte.map((st, s) => `<li class="calcstep" data-s="${s}"><p class="cs-f">${esc(st.f)}</p>${st.o
+    ? `<div class="opts">${shuffle(st.o.map((txt, j) => ({ txt, j }))).map(o => `<button class="opt" data-cs="${s}" data-j="${o.j}">${esc(o.txt)}</button>`).join('')}</div>`
+    : `<div class="cs-in"><input class="calcnum" data-cs="${s}" inputmode="decimal" autocomplete="off" aria-label="${esc(st.f)}">${st.einheiten
+      ? `<select class="calcunit" data-cs="${s}" aria-label="Einheit"><option value="">Einheit</option>${shuffle(st.einheiten).map(u => `<option>${esc(u)}</option>`).join('')}</select>`
+      : `<span class="cs-unit">${esc(st.einheit || '')}</span>`}</div>`}<div class="cs-fb"></div></li>`).join('')}</ol>
+    <div class="cs-loes" hidden></div>`;
+}
+function readCalc(scope, t) {
+  return t.schritte.map((st, s) => {
+    if (st.o) { const b = $(`.opt.picked[data-cs="${s}"]`, scope); return { j: b ? b.dataset.j : null }; }
+    const u = $(`.calcunit[data-cs="${s}"]`, scope);
+    return { v: $(`.calcnum[data-cs="${s}"]`, scope).value, u: u ? u.value : st.einheit };
+  });
+}
+function gradeCalc(t, ans) {
+  return t.schritte.map((st, s) => {
+    const a = ans[s] || {};
+    if (st.o) return a.j === '0';
+    const v = parseNum(a.v);
+    return !isNaN(v) && Math.abs(v - st.z) <= calcTol(st) + 1e-9 && (!st.einheiten || a.u === st.einheit);
+  });
+}
+function calcRight(st) { return st.o ? st.o[0] : `${fmtNum(st.z)} ${st.einheit || ''}`.trim(); }
+function showCalc(scope, t, ans, oks) {
+  t.schritte.forEach((st, s) => {
+    const li = $(`.calcstep[data-s="${s}"]`, scope), ok = oks[s];
+    li.classList.add(ok ? 'good' : 'bad');
+    $$('.opt', li).forEach(b => { b.disabled = true; if (b.dataset.j === '0') b.classList.add('right'); else if (b.classList.contains('picked')) b.classList.add('wrong'); });
+    $$('input, select', li).forEach(x => x.disabled = true);
+    $('.cs-fb', li).innerHTML = `<p class="note"><b style="color:var(${ok ? '--ok' : '--bad'})">${ok ? 'Richtig.' : 'Nicht ganz.'}</b> ${ok ? '' : `Richtig ist: <b>${esc(calcRight(st))}</b>. `}${esc(st.e || '')}</p>`;
+  });
+  const lo = $('.cs-loes', scope);
+  if (t.loesung) { lo.innerHTML = `<p class="meta">Vollständiger Lösungsweg</p><pre>${t.loesung.map(esc).join('\n')}</pre>`; lo.hidden = false; }
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.calcstep .opt'); if (!b || b.disabled) return;
+  $$(`.opt[data-cs="${b.dataset.cs}"]`, b.closest('.calcstep')).forEach(o => o.classList.toggle('picked', o === b));
+});
+const rc = { i: 0, done: false, score: 0, total: 0 };
+function startCalc(i) {
+  rc.i = i; rc.done = false;
+  const t = CALC[i];
+  $('#rSets').innerHTML = CALC.map((x, k) => `<button class="chip" data-rset="${k}" aria-pressed="${k === i}">${esc(x.titel || 'Aufgabe ' + (k + 1))}</button>`).join('');
+  $('#rBox').innerHTML = `<p class="meta">${esc(t.titel || '')}</p><p class="tq">${esc(t.q)}</p>${calcHtml(t)}<div class="row" id="rFoot"><button class="btn primary" id="rCheck">Prüfen</button></div>`;
+  $('#rScore').textContent = rc.total ? `${rc.score} von ${rc.total} vollständig richtig` : '';
+}
+if (MODS.rechnen) {
+  $('#rSets').addEventListener('click', e => { const b = e.target.closest('[data-rset]'); if (b) startCalc(+b.dataset.rset); });
+  $('#rBox').addEventListener('click', e => {
+    if (e.target.id === 'rNext') { startCalc((rc.i + 1) % CALC.length); return; }
+    if (e.target.id !== 'rCheck' || rc.done) return;
+    const t = CALC[rc.i], ans = readCalc($('#rBox'), t), oks = gradeCalc(t, ans), ok = oks.every(Boolean);
+    rc.done = true; rc.total++; if (ok) rc.score++;
+    showCalc($('#rBox'), t, ans, oks);
+    const task = POOL.find(x => x.id === 'calc:' + t.id); if (task) recordTask(task, ok);
+    $('#rFoot').innerHTML = `<div class="fb ${ok ? 'good' : 'bad'}" style="flex:1"><b class="k">${oks.filter(Boolean).length} von ${oks.length} Schritten richtig.</b> ${ok ? 'Vollständig gelöst!' : 'Vergleiche deine Schritte mit dem Lösungsweg.'}</div><button class="btn primary" id="rNext">Nächste Aufgabe</button>`;
+    $('#rScore').textContent = `${rc.score} von ${rc.total} vollständig richtig`;
+    $('#rNext').focus({ preventScroll: true });
+  });
+  $('#rBox').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input, select')) { e.preventDefault(); (rc.done ? $('#rNext') : $('#rCheck'))?.click(); } });
+}
+
 /* ---------- Aufgabenpool ---------- */
 const POOL = [];
 Object.entries(MCQ).forEach(([k, arr]) => arr.forEach((q, i) => POOL.push({ id: `mc:${k}:${i}`, lz: q.lz, kind: 'mc', q: q.q, o: q.o, e: q.e })));
@@ -563,8 +645,9 @@ Object.entries(SCENES).forEach(([sc, S]) => Object.entries(S.spots).forEach(([ke
 Object.entries(TL).forEach(([k, S]) => S.items.forEach((it, i) => POOL.push({ id: `tl:${k}:${i}`, lz: tlz(S, it), kind: 'mc', q: 'Wann war das?', sub: it.t, o: yearOpts(S, it), e: `${it.j}: ${it.e || it.t}` })));
 CARDS.forEach(c => POOL.push({ id: `card:${c.id}`, cid: c.id, lz: c.lz, kind: 'recall', q: c.q, a: c.a }));
 EXPL.forEach((x, i) => POOL.push({ id: `ex:${i}`, lz: x.lz, kind: 'explain', q: x.q, pts: x.pts, a: x.a, min: x.min || .6 }));
+CALC.forEach(x => POOL.push({ id: `calc:${x.id}`, lz: x.lz, lz2: x.lz2, kind: 'calc', calc: x, q: x.q }));
 const AREA_SHORT = Object.fromEntries(AREAS.map(a => [a.id, a.kurz || a.name]));
-const KIND = { mc: 'Auswahl', img: 'Bild', recall: 'Abrufen', explain: 'Erklären' };
+const KIND = { mc: 'Auswahl', img: 'Bild', recall: 'Abrufen', explain: 'Erklären', calc: 'Rechnen' };
 const WD = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'], WDL = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 const MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const pad = n => String(n).padStart(2, '0');
@@ -577,7 +660,9 @@ function weight(lz) { const s = status(lz); return s === 0 ? 4 : s === 3 ? 3 : s
 function wpick(arr, w) { let r = Math.random() * w.reduce((a, b) => a + b, 0); for (let i = 0; i < arr.length; i++) { r -= w[i]; if (r <= 0) return arr[i]; } return arr[arr.length - 1]; }
 function buildTraining(area) {
   const pool = POOL.filter(t => !area || LZ[t.lz].area === area);
-  const pattern = ['mc', 'recall', 'explain', 'img', 'mc', 'recall', 'explain', 'mc', 'img', 'recall', 'explain', 'mc'];
+  const pattern = CALC.length
+    ? ['mc', 'recall', 'explain', 'calc', 'img', 'mc', 'explain', 'recall', 'calc', 'mc', 'img', 'explain']
+    : ['mc', 'recall', 'explain', 'img', 'mc', 'recall', 'explain', 'mc', 'img', 'recall', 'explain', 'mc'];
   const out = [], used = new Set(), perLz = {};
   for (const kind of pattern) {
     let c = pool.filter(t => t.kind === kind && !used.has(t.id));
@@ -596,8 +681,12 @@ function buildForLz(lz) {
 }
 function buildExam() {
   const out = [], used = new Set();
+  // Rechenaufgaben wie in der Prüfung (Standard: 2), ihre Lernziele sind damit abgedeckt
+  const calcs = shuffle(POOL.filter(t => t.kind === 'calc')).slice(0, C.pruefungsRechnen != null ? C.pruefungsRechnen : 2);
+  calcs.forEach(t => { out.push(t); used.add(t.id); });
   Object.keys(LZ).forEach(lz => {
-    const c = POOL.filter(t => hasLz(t, lz) && t.kind !== 'recall' && !used.has(t.id));
+    if (calcs.some(t => t.lz === lz)) return;
+    const c = POOL.filter(t => hasLz(t, lz) && t.kind !== 'recall' && t.kind !== 'calc' && !used.has(t.id));
     const ex = c.filter(t => t.kind === 'explain'), im = c.filter(t => t.kind === 'img'), mc = c.filter(t => t.kind === 'mc');
     const r = Math.random();
     const from = (r < .55 && ex.length) ? ex : (r < .8 && im.length) ? im : mc.length ? mc : c;
@@ -651,6 +740,8 @@ function renderTask() {
     if (t.kind === 'mc') { q = `<p class="tq">${esc(t.q)}</p>${t.sub ? `<p class="tsub">«${esc(t.sub)}»</p>` : ''}`; opts = shuffle(t.o.map((txt, j) => ({ txt, j }))); }
     else { const sp = SCENES[t.scene].spots; q = `<p class="tq">${esc(FRAGE(SCENES[t.scene]))}</p><div class="sessmap" id="sMap"></div>`; opts = shuffle([t.key, ...shuffle(Object.keys(sp).filter(k => k !== t.key)).slice(0, 3)]).map(k => ({ txt: sp[k].n, j: k === t.key ? 0 : 1 })); }
     body = q + `<div class="opts">${opts.map((o, n) => `<button class="opt" data-act="opt" data-j="${o.j}"><span class="key">${n + 1}</span>${esc(o.txt)}</button>`).join('')}</div><div id="tFb"></div><div class="row">${next(true)}</div>`;
+  } else if (t.kind === 'calc') {
+    body = `<p class="tq">${esc(t.q)}</p><div id="tCalc">${calcHtml(t.calc)}</div><div id="tFb"></div><div class="row" id="tFoot">${exam ? next(false) : '<button class="btn primary" data-act="calccheck" data-primary>Prüfen</button>'}</div>`;
   } else if (t.kind === 'recall') {
     body = `<p class="tq">${esc(t.q)}</p><textarea class="answer" id="tText" rows="3" placeholder="Notiere kurz, was du weisst (freiwillig)."></textarea><div id="tFb"></div><div class="row" id="tFoot"><button class="btn primary" data-act="reveal" data-primary>Antwort zeigen</button></div>`;
   } else {
@@ -692,6 +783,13 @@ $('#sessBox').addEventListener('click', e => {
     $('#tFb').innerHTML = `<div class="fb ${ok ? 'good' : 'bad'}"><p><b class="k">${ok ? 'Richtig!' : 'Nicht ganz.'}</b> ${esc(expl)}</p></div>`;
     const nb = $('#sessBox [data-act="next"]'); nb.hidden = false; nb.focus({ preventScroll: true }); return;
   }
+  if (act === 'calccheck') {
+    const ans = readCalc($('#tCalc'), t.calc), oks = gradeCalc(t.calc, ans), ok = oks.every(Boolean);
+    showCalc($('#tCalc'), t.calc, ans, oks);
+    sess.res[sess.i] = ok; recordTask(t, ok);
+    $('#tFoot').innerHTML = `<div class="fb ${ok ? 'good' : 'bad'}" style="flex:1"><b class="k">${oks.filter(Boolean).length} von ${oks.length} Schritten richtig.</b> ${ok ? 'Vollständig gelöst!' : 'Vergleiche deine Schritte mit dem Lösungsweg.'}</div>${nextBtn(false)}`;
+    $('#sessBox [data-act="next"]').focus({ preventScroll: true }); return;
+  }
   if (act === 'reveal') {
     $('#tFb').innerHTML = `<div class="fb"><p class="meta">Musterantwort</p><p style="margin-top:4px">${esc(t.a)}</p></div>`;
     $('#tFoot').innerHTML = `<span class="note">Wie gut wusstest du es?</span><button class="btn" data-act="rate" data-r="2" style="border-color:var(--ok)">Sicher gewusst</button><button class="btn" data-act="rate" data-r="1" style="border-color:var(--warn)">Unsicher</button><button class="btn" data-act="rate" data-r="0" style="border-color:var(--bad)">Nicht gewusst</button>`;
@@ -715,6 +813,7 @@ $('#sessBox').addEventListener('click', e => {
   }
   if (act === 'next') {
     if (exam && t.kind === 'explain') sess.ans[sess.i] = { text: $('#tText').value };
+    if (exam && t.kind === 'calc') sess.ans[sess.i] = { calc: readCalc($('#tCalc'), t.calc) };
     nextTask();
   }
 });
@@ -724,8 +823,12 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { const p = $('#sessBox [data-primary]:not([hidden])'); if (p) { e.preventDefault(); p.click(); } }
     return;
   }
-  if (e.target.matches('input, button') && e.key === 'Enter') return;
-  if (/^[1-9]$/.test(e.key)) { const o = $$('#sessBox .opt')[+e.key - 1]; if (o && !o.disabled) o.click(); }
+  if (e.target.matches('input, select')) {
+    if (e.key === 'Enter') { const p = $('#sessBox [data-primary]:not([hidden])'); if (p) { e.preventDefault(); p.click(); } }
+    return;
+  }
+  if (e.target.matches('button') && e.key === 'Enter') return;
+  if (/^[1-9]$/.test(e.key)) { const o = $$('#sessBox .opt[data-act="opt"]')[+e.key - 1]; if (o && !o.disabled) o.click(); }
   if (e.key === 'Enter') { const p = $('#sessBox [data-primary]:not([hidden])'); if (p) { e.preventDefault(); p.click(); } }
 });
 function finishTrain() {
@@ -758,6 +861,10 @@ function renderExamResult() {
       const sc = card ? scoreChecklist(card, t) : { n: 0, of: t.pts.length, ok: false };
       p = sc.n / sc.of; ok = sc.ok;
       if (!ok) info = 'Fehlende Punkte: ' + t.pts.filter((_, k) => !(card && $(`input[data-pt="${k}"]`, card).checked)).map(x => x.t).join(' · ');
+    } else if (t.kind === 'calc') {
+      const oks = gradeCalc(t.calc, (sess.ans[i] || {}).calc || []);
+      p = oks.filter(Boolean).length / oks.length; ok = oks.every(Boolean);
+      if (!ok) info = 'Lösungsweg: ' + (t.calc.loesung || t.calc.schritte.map(calcRight)).join(' · ');
     } else {
       ok = (sess.ans[i] || {}).j === '0'; p = ok ? 1 : 0;
       if (!ok) info = `Richtig wäre: ${t.kind === 'mc' ? t.o[0] : SCENES[t.scene].spots[t.key].n}${t.kind === 'mc' ? '. ' + t.e : ''}`;
@@ -882,6 +989,7 @@ if (MODS.bild) setScene(Object.keys(SCENES)[0]);
 if (MODS.karten) { renderFilter(); buildDeck(); renderCard(); }
 if (MODS.sortieren) startSort(Object.keys(SORTS)[0]);
 if (MODS.zeitstrahl) startTl(Object.keys(TL)[0]);
+if (MODS.rechnen) startCalc(0);
 Object.keys(MCQ).forEach(renderMC);
 show('heute');
 }

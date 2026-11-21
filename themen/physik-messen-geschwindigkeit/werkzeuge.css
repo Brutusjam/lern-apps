@@ -1,0 +1,98 @@
+/* Stile der Physik-App: gezeichnete Messgeräte, Umrechnen, Ablesen, Diagramme */
+
+/* Zeichnungen (Bild-Quiz und Ablesen) */
+.szene, .sessmap svg { background: var(--paper); }
+.d-bg { fill: var(--paper); }
+.d-cell { fill: var(--sheet); stroke: var(--line); stroke-width: 1.5; }
+.d-fill { fill: var(--sheet); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.d-fill.thick { stroke-width: 3; }
+.d-face { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.5; }
+.d-dark { fill: var(--ink); }
+.d-line { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.d-tick { stroke: var(--ink); stroke-width: 1.2; stroke-linecap: round; }
+.d-hand { stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
+.d-hand.thin { stroke-width: 2; }
+.d-hand.red { stroke: var(--bad); stroke-width: 2.5; }
+.d-small { font-family: var(--f-mono); font-size: 13px; fill: var(--ink); }
+.d-tiny { font-family: var(--f-mono); font-size: 10px; fill: var(--ink); }
+.d-lcd { font-family: var(--f-mono); font-size: 15px; font-weight: 500; fill: var(--ink); }
+.d-lcd.big { font-size: 30px; fill: var(--bad); }
+.d-lcd.small { font-size: 13px; fill: var(--bad); }
+.d-screen { fill: var(--water-soft); stroke: var(--ink); stroke-width: 1.5; }
+.d-screen.dark { fill: var(--ink); }
+.d-btn { fill: var(--line); stroke: var(--ink); stroke-width: 1.2; }
+.d-red { fill: var(--bad); }
+.d-red.stroke, .d-silver.stroke { stroke: var(--ink); stroke-width: 1.5; }
+.d-silver { fill: var(--rock); }
+.d-metal { fill: var(--relief-soft); stroke: var(--relief); stroke-width: 2; }
+.d-rim { fill: none; stroke: var(--relief); stroke-width: 9; }
+.d-rim2 { fill: none; stroke: var(--ink); stroke-width: 9; }
+.d-sand { fill: var(--sand); }
+.d-sandline { stroke: var(--sand); stroke-width: 2; }
+.d-soft { fill: var(--water-soft); stroke: var(--ink); stroke-width: 1.5; fill-opacity: .7; }
+.d-water { fill: var(--water-soft); }
+.d-meniscus { fill: none; stroke: var(--water); stroke-width: 2; }
+.d-glass { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.d-glass-fill { fill: var(--water-soft); fill-opacity: .4; stroke: var(--ink); stroke-width: 2; }
+.d-spring { fill: none; stroke: var(--relief); stroke-width: 2; stroke-linejoin: round; }
+.d-bim1 { fill: none; stroke: var(--relief); stroke-width: 3; }
+.d-bim2 { fill: none; stroke: var(--rock); stroke-width: 3; }
+.d-wave { fill: none; stroke: var(--trail); stroke-width: 2; stroke-linecap: round; }
+.d-ball { stroke: var(--ink); stroke-width: 1.2; }
+.d-ball.b1 { fill: var(--bad); } .d-ball.b2 { fill: var(--sun); } .d-ball.b3 { fill: var(--earth); } .d-ball.b4 { fill: var(--mark); } .d-ball.b5 { fill: var(--water); }
+.d-tag { fill: var(--sand); stroke: var(--ink); stroke-width: .8; }
+.d-wood { fill: var(--relief); }
+.d-wood-fill { fill: var(--relief-soft); stroke: var(--relief); stroke-width: 2.5; }
+.d-sun { fill: var(--sun); }
+.d-ray { stroke: var(--sun); stroke-width: 2.5; stroke-linecap: round; }
+.d-stone { fill: var(--rock); stroke: var(--ink); stroke-width: 1.5; fill-opacity: .55; }
+.d-shadow { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; opacity: .55; }
+.d-pot { fill: none; stroke: var(--relief); stroke-width: 4; stroke-linejoin: round; }
+.d-drop { stroke: var(--water); stroke-width: 2; stroke-dasharray: 3 3; }
+.d-drop-fill { fill: var(--water); }
+
+/* Umrechnen: Zahlenstrahl */
+.strahl-wrap { overflow-x: auto; }
+.strahl { border-collapse: collapse; font-family: var(--f-mono); font-size: .82rem; font-variant-numeric: tabular-nums; min-width: 560px; width: 100%; }
+.strahl td, .strahl th { border: 1px solid var(--line); padding: 5px 4px; text-align: center; }
+.strahl th { font-weight: 500; color: var(--muted); background: var(--paper); }
+.strahl td.from { background: var(--water-soft); font-weight: 700; outline: 2px solid var(--water); outline-offset: -2px; }
+.strahl td.to { background: color-mix(in srgb, var(--ok) 18%, var(--sheet)); font-weight: 700; outline: 2px solid var(--ok); outline-offset: -2px; }
+.strahl td.between { background: color-mix(in srgb, var(--sun) 18%, var(--sheet)); }
+.big-q { font-family: var(--f-display); font-size: clamp(1.25rem, 3.4vw, 1.6rem); font-weight: 700; }
+
+/* Ablesen und Diagramme */
+.plot svg, .plotbox { width: 100%; height: auto; display: block; }
+.plot { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; padding: 6px; }
+.dg-grid { stroke: var(--line); stroke-width: 1; }
+.dg-grid.major { stroke: color-mix(in srgb, var(--muted) 45%, var(--line)); }
+.dg-axis { stroke: var(--ink); stroke-width: 1.8; }
+.dg-lab { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
+.dg-title { font-family: var(--f-mono); font-size: 12px; fill: var(--ink); }
+.dg-line { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.dg-line.c1 { stroke: var(--water); } .dg-line.c2 { stroke: var(--trail); } .dg-line.c3 { stroke: var(--mark); } .dg-line.c4 { stroke: var(--relief); } .dg-line.c5 { stroke: var(--bad); }
+.dg-line.mine { stroke: var(--water); }
+.dg-line.ok { stroke: var(--ok); stroke-dasharray: 7 5; }
+.dg-line.dim { opacity: .35; }
+.dg-line.hl { stroke-width: 5; }
+.dg-num { font-family: var(--f-display); font-weight: 800; font-size: 14px; }
+.dg-num.c1 { fill: var(--water); } .dg-num.c2 { fill: var(--trail); } .dg-num.c3 { fill: var(--mark); } .dg-num.c4 { fill: var(--relief); } .dg-num.c5 { fill: var(--bad); }
+.dg-pt { fill: var(--water); }
+.dg-hit { fill: transparent; cursor: crosshair; }
+.dg-cursor { fill: var(--water); opacity: .35; pointer-events: none; }
+.dg-zero { stroke: var(--ink); stroke-width: 1.4; }
+.dg-train { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.dg-train.express { stroke-dasharray: none; }
+.dg-train.hl { stroke: var(--water); stroke-width: 4; }
+.dg-station { stroke: color-mix(in srgb, var(--muted) 45%, var(--line)); stroke-width: 1.2; }
+.choice-plots { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.choice-plots .opt { padding: 6px; }
+.choice-plots .opt svg { width: 100%; height: auto; display: block; }
+.desc { font-family: var(--f-display); font-size: 1.15rem; font-weight: 700; padding: 14px 16px; border-radius: 12px; border: 2px dashed var(--water); background: var(--water-soft); }
+.vrow { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.vrow label { display: flex; gap: 8px; align-items: center; font-weight: 700; }
+.step-h { font-family: var(--f-display); font-size: 1.1rem; font-weight: 700; }
+.step-h span { font-family: var(--f-mono); color: var(--water); margin-right: 6px; }
+.tool-step { display: grid; gap: 10px; }
+.tool-step + .tool-step { border-top: 1px solid var(--line); padding-top: 14px; }
+.d-cut { fill: var(--sheet); }

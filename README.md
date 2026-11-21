@@ -11,6 +11,7 @@ Lern-Apps für Prüfungen am Gymnasium (Schweiz). Jede App deckt die Lernziele e
 |---|---|---|
 | Landschaft im Wandel | Geografie, 2. Gymnasium | [`themen/geografie-naturphaenomene`](themen/geografie-naturphaenomene) |
 | Napoleon und die Schweiz | Geschichte, Neuzeit | [`themen/geschichte-napoleon`](themen/geschichte-napoleon) |
+| Messen und Geschwindigkeit | Physik, Naturlehre | [`themen/physik-messen-geschwindigkeit`](themen/physik-messen-geschwindigkeit) |
 
 ## Benutzen
 

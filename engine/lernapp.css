@@ -298,6 +298,22 @@ kbd { font-family: var(--f-mono); font-size: .8em; border: 1px solid var(--line)
 .mapwrap > svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
 #zBody { display: grid; gap: 16px; }
 
+/* Rechenaufgaben: Schritt für Schritt nach dem Lösungsrezept */
+.calcsteps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: cs; }
+.calcstep { display: grid; gap: 8px; padding: 12px 14px 12px 48px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--sheet); position: relative; }
+.calcstep::before { counter-increment: cs; content: counter(cs); position: absolute; left: 12px; top: 11px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--water-soft); color: var(--water); font-family: var(--f-mono); font-weight: 500; font-size: .85rem; }
+.calcstep.good { border-color: var(--ok); }
+.calcstep.bad { border-color: var(--bad); }
+.cs-f { font-weight: 700; }
+.cs-in { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.calcnum, .calcunit, .num-in { font: inherit; font-size: 1.05rem; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); }
+.calcnum, .num-in { width: 9em; max-width: 100%; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.calcnum:focus, .calcunit:focus, .num-in:focus { border-color: var(--water); outline: none; box-shadow: 0 0 0 3px var(--water-soft); }
+.cs-unit { font-family: var(--f-mono); font-weight: 500; }
+.cs-fb:empty { display: none; }
+.cs-loes { border-radius: 12px; padding: 12px 14px; background: var(--paper); border: 1px solid var(--line); display: grid; gap: 6px; }
+.cs-loes pre { margin: 0; font-family: var(--f-mono); font-size: .92rem; white-space: pre-wrap; line-height: 1.6; }
+
 /* Farbschemas: jede App wählt in inhalt.js «farbe». Ohne Angabe gilt das Blau aus :root.
    Alle hell und pastellig; die Akzentfarbe trägt weisse Schrift (Kontrast mind. 4.5:1).
    Als Attribut auf <html> (App) oder auf einer Karte der Startseite. */
